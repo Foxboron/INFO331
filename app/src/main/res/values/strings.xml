@@ -13,4 +13,7 @@
     <string name="error_field_required">This field is required</string>
 
     <string name="wants_to">Do you want to…</string>
+    <string name="action_join_group">Join a group</string>
+    <string name="or">or</string>
+    <string name="action_create_group">Create a group?</string>
 </resources>
