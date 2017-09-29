@@ -1,9 +1,12 @@
 package no.uib.info331.models;
 
+import java.util.ArrayList;
+
 /**
  * Class for modelling a user.
  * @author Fredrik V. Heimsæter
  * @version 1.0
+ * TODO: Speak with backend and actually do changes there.
  */
 
 public class User {
@@ -11,7 +14,7 @@ public class User {
     private String password;
     private String photo;
     private int points;
-    private Group[] groups;
+    private ArrayList<Group> groups;
 
     public User(String username, String password, String photo, int points) {
         this.username = username;
@@ -52,11 +55,24 @@ public class User {
         this.points = points;
     }
 
-    public Group[] getGroups() {
+    public ArrayList<Group> getGroups() {
         return groups;
     }
 
-    public void setGroups(Group[] groups) {
+    public void setGroups(ArrayList<Group> groups) {
         this.groups = groups;
+    }
+
+    /**
+     * Adds a group to this users list of groups
+     * @param group The group to add
+     * @return true if the group was added successfully, false otherwise
+     */
+    public boolean addGroup(Group group) {
+        if(!groups.contains(group)) {
+            groups.add(group);
+            return true;
+        }
+        return false;
     }
 }
