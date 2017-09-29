@@ -1,27 +1,29 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.pchmn.materialchips.ChipsInput;
-import com.pchmn.materialchips.model.Chip;
-import com.pchmn.materialchips.model.ChipInterface;
-
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
+import no.uib.info331.models.User;
 import no.uib.info331.util.Animations;
+import no.uib.info331.util.ApiClient;
+import no.uib.info331.util.ApiInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Micromanaging af here
@@ -33,24 +35,24 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
 
-    private float topYOfParentLayout;
 
     //ButterKnife gui
 
-    @BindView(R.id.choose_action_card) CardView chooseActionCard;
-    @BindView(R.id.join_group_card) CardView joinGroupCard;
+    @BindView(R.id.choose_action_card) CardView cardChooseAction;
+    @BindView(R.id.join_group_card) CardView cardJoinGroup;
 
-    @BindView(R.id.create_group_card) CardView createGroupCard;
-    @BindView(R.id.add_member_card) CardView addMemberToNewGroupCard;
+    @BindView(R.id.create_group_card) CardView cardCreateGroup;
+    @BindView(R.id.add_member_card) CardView cardAddMemberToNewGroup;
     @BindView(R.id.show_join_group) Button btnJoinGroupShow;
 
     @BindView(R.id.show_create_group) Button btnCreateGroupShow;
     @BindView(R.id.join_search_group) EditText editTextSearchJoinGroup;
 
-    @BindView(R.id.chips_input) ChipsInput chipsInput;
-    @BindView(R.id.member_search) RelativeLayout addMemberLayoutBtn;
+    @BindView(R.id.member_search) RelativeLayout layoutBtnAddMember;
 
-    @BindView(R.id.number_of_members_added_text) TextView noOfMembersAddedTextView;
+    @BindView(R.id.number_of_members_added_text) TextView textViewNoOfMembersAdded;
+
+    @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
 
 
     boolean joinGroupBtnClicked;
@@ -62,7 +64,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     int longAnimTime;
 
     Animations anim = new Animations();
-    private ArrayList<Chip> contactList;
     Context context;
 
 
@@ -72,8 +73,47 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_join_group);
         ButterKnife.bind(this);
         context = getApplicationContext();
+
+        //getAllUsers();
         initGui();
         btnClickListener();
+
+    }
+
+    private void getAllUsers() {
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        //username:password
+        String credentials = "edd:edd";
+
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+
+        Call<List<User>> call = apiService.users(basic);
+        call.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+
+                if(response.code()==200) {
+                    for(User user: response.body()) {
+                        System.out.println(user.getUsername());
+                    }
+
+                } else {
+                    System.out.println("APA: " + response.body());
+                    System.out.println("response: " + response);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                System.out.println(t.getMessage());
+
+            }
+        });
 
     }
 
@@ -89,66 +129,12 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         anim.fadeInView(textViewTitle, 200, shortAnimTime);
 
         //Sets the members search card to gone and under the screen
-        anim.moveViewToTranslationY(addMemberToNewGroupCard,0 , 0, 2000, false);
+        anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , 0, 2000, false);
 
-        contactList = new ArrayList<>();
-        contactList.add(new Chip("Kjell Gunnlaug", "MEVI 5.året"));
-        contactList.add(new Chip("Gunnar Laugesen", "Infovit 4.året"));
-        contactList.add(new Chip("Morten Fjell Potetskrell", "Journalistikk 4.året"));
-        contactList.add(new Chip("Fat Finger Freddy", "Infovit 4.året"));
-        contactList.add(new Chip("Tor Raymond Carlsen", "Infovit 4.året"));
-        contactList.add(new Chip("Morten Mr.Go", "Infovit 4.året"));
-        contactList.add(new Chip("Perikles DuPlantier", "Infovit 4.året"));
-        contactList.add(new Chip("Eddie the Eagle", "Infovit 4.året"));
 
-        chipsInput.setFilterableList(contactList);
 
 
     }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-
-
-            chipsInput.addChipsListener(new ChipsInput.ChipsListener() {
-                @Override
-                public void onChipAdded(ChipInterface chip, int newSize) {
-                    // chip added
-                    // newSize is the size of the updated selected chip list
-                    noOfMembersAddedTextView.setText("You have added " + newSize + " members to this group!");
-                }
-
-                @Override
-                public void onChipRemoved(ChipInterface chip, int newSize) {
-                    // chip removed
-                    // newSize is the size of the updated selected chip list
-                    noOfMembersAddedTextView.setText("You have added " + newSize + " members to this group!");
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence text) {
-                    // text changed
-//                    anim.moveViewToTranslationY(chipsInput,0, 200, Math.round(topYOfParentLayout), false);
-//                    anim.fadeBackgroundFromColorToColor(chipsInput, 200, ContextCompat.getColor(getApplicationContext(), R.color.colorTransp), Color.WHITE);
-//
-//                    chipsInput.setBackgroundColor(Color.WHITE);
-//                    if(text.length() == 0){
-//                        anim.moveViewToTranslationY(chipsInput,0, 200, Math.round(0), false);
-//                        anim.fadeBackgroundFromColorToColor(chipsInput, 200, Color.WHITE, ContextCompat.getColor(getApplicationContext(), R.color.colorTransp));
-//                        chipsInput.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorTransp));
-//
-//                    }
-                }
-            });
-
-
-        }
-    }
-
-
 
     private void btnClickListener() {
 
@@ -159,8 +145,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                 joinGroupBtnClicked = true;
 
-                anim.fadeOutView(chooseActionCard, 0, shortAnimTime);
-                anim.moveViewToTranslationY(chooseActionCard,0 , shortAnimTime, chooseActionCard.getHeight(), true);
+                anim.fadeOutView(cardChooseAction, 0, shortAnimTime);
+                anim.moveViewToTranslationY(cardChooseAction,0 , shortAnimTime, cardChooseAction.getHeight(), true);
 
             }
         });
@@ -172,22 +158,24 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                 createGroupBtnClicked = true;
 
-                anim.fadeOutView(chooseActionCard, 0, longAnimTime);
-                anim.moveViewToTranslationY(chooseActionCard, 0 , shortAnimTime, chooseActionCard.getHeight(), true);
+                anim.fadeOutView(cardChooseAction, 0, longAnimTime);
+                anim.moveViewToTranslationY(cardChooseAction, 0 , shortAnimTime, cardChooseAction.getHeight(), true);
 
-                anim.fadeOutView(joinGroupCard, 0, longAnimTime);
-                anim.moveViewToTranslationY(joinGroupCard, 100, shortAnimTime, joinGroupCard.getHeight(), true);
+                anim.fadeOutView(cardJoinGroup, 0, longAnimTime);
+                anim.moveViewToTranslationY(cardJoinGroup, 100, shortAnimTime, cardJoinGroup.getHeight(), true);
 
             }
         });
 
-        addMemberLayoutBtn.setOnClickListener(new View.OnClickListener() {
+        layoutBtnAddMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addMemberLayoutBtnClicked = true;
 
-                anim.fadeInView(addMemberToNewGroupCard, 0, shortAnimTime);
-                anim.moveViewToTranslationY(addMemberToNewGroupCard,0 , shortAnimTime, 0, false);
+
+
+                anim.fadeInView(cardAddMemberToNewGroup, 0, shortAnimTime);
+                anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
             }
         });
 
@@ -198,8 +186,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     public void addMemberCardDisappear(){
         if(addMemberLayoutBtnClicked){
             addMemberLayoutBtnClicked = false;
-            anim.fadeOutView(addMemberToNewGroupCard, 0, longAnimTime);
-            anim.moveViewToTranslationY(addMemberToNewGroupCard, 100, shortAnimTime, addMemberToNewGroupCard.getHeight(), false);
+            anim.fadeOutView(cardAddMemberToNewGroup, 0, longAnimTime);
+            anim.moveViewToTranslationY(cardAddMemberToNewGroup, 100, shortAnimTime, cardAddMemberToNewGroup.getHeight(), false);
         }
     }
 
@@ -210,12 +198,12 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             return;
         }
 
-         if(joinGroupBtnClicked) {
+        if(joinGroupBtnClicked) {
             joinGroupBtnClicked = false;
 
             //Animates the card for choosing what to do
-            anim.fadeInView(chooseActionCard, 0, shortAnimTime);
-            anim.moveViewToTranslationY(chooseActionCard, 50 , shortAnimTime, 0, false);
+            anim.fadeInView(cardChooseAction, 0, shortAnimTime);
+            anim.moveViewToTranslationY(cardChooseAction, 50 , shortAnimTime, 0, false);
 
         }
 
@@ -224,11 +212,11 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             createGroupBtnClicked = false;
 
             //Animates the card for choosing what to do
-            anim.fadeInView(joinGroupCard, 50, shortAnimTime);
-            anim.moveViewToTranslationY(joinGroupCard, 50 , shortAnimTime, 0, false);
+            anim.fadeInView(cardJoinGroup, 50, shortAnimTime);
+            anim.moveViewToTranslationY(cardJoinGroup, 50 , shortAnimTime, 0, false);
 
-            anim.fadeInView(chooseActionCard, 0, shortAnimTime);
-            anim.moveViewToTranslationY(chooseActionCard, 100 , shortAnimTime, 0, false);
+            anim.fadeInView(cardChooseAction, 0, shortAnimTime);
+            anim.moveViewToTranslationY(cardChooseAction, 100 , shortAnimTime, 0, false);
         } else if( !createGroupBtnClicked && !joinGroupBtnClicked && !addMemberLayoutBtnClicked){
 
             super.onBackPressed();
