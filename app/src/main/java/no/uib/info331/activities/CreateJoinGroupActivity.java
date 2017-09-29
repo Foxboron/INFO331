@@ -2,13 +2,13 @@ package no.uib.info331.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.support.v7.app.AppCompatActivity;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import no.uib.info331.R;
@@ -21,7 +21,7 @@ import no.uib.info331.R;
  */
 public class CreateJoinGroupActivity extends AppCompatActivity {
 
-    TextView title;
+    TextView textViewTitle;
 
     CardView chooseActionCard;
     CardView joinGroupCard;
@@ -30,11 +30,14 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     Button btnJoinGroupShow;
     Button btnCreateGroupShow;
 
-    boolean joinGroupBtnClicked;
-    boolean createGroupBtnClicked;
+    EditText editTextSearchJoinGroup;
 
-    int longAnimTime;
-    Animation slideDownAnim;
+    boolean joinGroupBtnClicked;
+
+    boolean createGroupBtnClicked;
+    int shortAnimTime;
+
+    int mediumAnimTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     private void initGui() {
 
-        title = (TextView) findViewById(R.id.text_create_join_group_title);
+        textViewTitle = (TextView) findViewById(R.id.text_create_join_group_title);
 
         chooseActionCard = (CardView) findViewById(R.id.choose_action_card);
         joinGroupCard = (CardView) findViewById(R.id.join_group_card);
@@ -56,12 +59,30 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         btnJoinGroupShow = (Button) findViewById(R.id.show_join_group);
         btnCreateGroupShow = (Button) findViewById(R.id.show_create_group);
 
-        longAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-        slideDownAnim = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.down_slide);
+        shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        mediumAnimTime = getResources().getInteger(android.R.integer.config_mediumAnimTime);
+
+        editTextSearchJoinGroup = (EditText) findViewById(R.id.join_search_group);
 
         joinGroupBtnClicked = false;
         createGroupBtnClicked = false;
 
+        fadeInView(textViewTitle, 200, shortAnimTime);
+
+    }
+
+    private void fadeInView(View view, int startDelay, int duration) {
+        view.setAlpha(0);
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha",  0, 1f);
+        fadeIn.setStartDelay(startDelay);
+        fadeIn.setDuration(duration);
+        fadeIn.start();
+    }
+    private void fadeOutView(View view, int startDelay, int duration) {
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha",  1f, 0);
+        fadeIn.setStartDelay(startDelay);
+        fadeIn.setDuration(duration);
+        fadeIn.start();
     }
 
     private void btnClickListener() {
@@ -71,16 +92,16 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                 joinGroupBtnClicked = true;
                 chooseActionCard.animate()
-                        .setDuration(longAnimTime)
+                        .setDuration(shortAnimTime)
                         .alpha(joinGroupBtnClicked ? 0 : 1)
                         .translationY(view.getHeight())
                         .alpha(0.0f)
                         .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        chooseActionCard.setVisibility(joinGroupBtnClicked ? View.GONE : View.VISIBLE);
-                    }
-                });
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                chooseActionCard.setVisibility(joinGroupBtnClicked ? View.GONE : View.VISIBLE);
+                            }
+                        });
 
 
             }
@@ -93,25 +114,28 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                 createGroupBtnClicked = true;
                 chooseActionCard.animate()
-                        .setDuration(longAnimTime)
-                        .alpha(joinGroupBtnClicked ? 0 : 1)
+                        .setDuration(mediumAnimTime)
                         .translationY(view.getHeight())
                         .alpha(0.0f)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                chooseActionCard.setVisibility(joinGroupBtnClicked ? View.GONE : View.VISIBLE);
+                                chooseActionCard.setVisibility(View.GONE);
+                                chooseActionCard.animate()
+                                        .translationY(chooseActionCard.getHeight());
                             }
                         });
                 joinGroupCard.animate()
-                        .setDuration(longAnimTime)
-                        .alpha(createGroupBtnClicked ? 0 : 1)
+                        .setDuration(mediumAnimTime)
                         .translationY(view.getHeight())
                         .alpha(0.0f)
+                        .setStartDelay(200)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                joinGroupCard.setVisibility(createGroupBtnClicked ? View.GONE : View.VISIBLE);
+                                joinGroupCard.setVisibility(View.GONE);
+                                joinGroupCard.animate()
+                                        .translationY(joinGroupCard.getHeight());
                             }
                         });
 
@@ -121,6 +145,64 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
 
     }
+
+
+    public void onBackPressed() {
+
+
+        if(joinGroupBtnClicked) {
+            joinGroupBtnClicked = false;
+            //Animates the card for choosing what to do
+
+            chooseActionCard.animate()
+                    .alpha(1.0f)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            chooseActionCard.setVisibility(View.VISIBLE);
+                            chooseActionCard.animate()
+                                    .setDuration(shortAnimTime)
+                                    .translationY(0);
+                        }
+                    });
+        } else if(createGroupBtnClicked) {
+            joinGroupBtnClicked = false;
+            createGroupBtnClicked = false;
+            //Animates the card for choosing what to do
+            chooseActionCard.animate()
+                    .setDuration(shortAnimTime)
+                    .alpha(1.0f)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            chooseActionCard.setVisibility(View.VISIBLE);
+                            chooseActionCard.animate()
+                                    .translationY(0)
+                                    .alpha(1.0f);
+                        }
+                    });
+
+            joinGroupCard.animate()
+                    .setDuration(shortAnimTime)
+
+                    .setStartDelay(100)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            joinGroupCard.setVisibility(View.VISIBLE);
+                            joinGroupCard.animate()
+                                    .translationY(0)
+                                    .alpha(1.0f);
+                        }
+                    });
+        }  else{
+
+            super.onBackPressed();
+        }
+
+
+    }
+
 
 
 
