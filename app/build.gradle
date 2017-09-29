@@ -6,6 +6,7 @@ android {
     defaultConfig {
         applicationId "no.uib.info331"
         minSdkVersion 23
+        //noinspection OldTargetApi
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
