@@ -1,4 +1,4 @@
-package no.uib.info331;
+package no.uib.info331.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -28,6 +28,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import no.uib.info331.R;
 
 /**
  * A login screen that offers login via email/password.
