@@ -16,4 +16,6 @@
     <string name="action_join_group">Join a group</string>
     <string name="or">or</string>
     <string name="action_create_group">Create a group?</string>
+    <string name="prompt_name">Name</string>
+    <string name="prompt_repeat_password">Repeat password</string>
 </resources>
