@@ -54,6 +54,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View loginProgressView;
     private View viewLoginForm;
     private Button btnEmailSignIn;
+    private Button btnRegisterAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+        btnRegisterAccount.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                registerUser();
+            }
+        });
+
     }
 
     private void initGui() {
@@ -89,6 +97,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         autoCompleteTextEmail = (AutoCompleteTextView) findViewById(R.id.email);
         editTextPassword = (EditText) findViewById(R.id.password);
         btnEmailSignIn = (Button) findViewById(R.id.email_sign_in_button);
+        btnRegisterAccount = (Button) findViewById(R.id.register_account);
         viewLoginForm = findViewById(R.id.login_form);
         loginProgressView = findViewById(R.id.login_progress);
 
@@ -120,19 +129,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             editTextPassword.setError(getString(R.string.error_field_required));
             focusView = editTextPassword;
             cancel = true;
-        } else if (!isPasswordValid(password)) {
-            editTextPassword.setError(getString(R.string.error_invalid_password));
-            focusView = editTextPassword;
-            cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             autoCompleteTextEmail.setError(getString(R.string.error_field_required));
-            focusView = autoCompleteTextEmail;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            autoCompleteTextEmail.setError(getString(R.string.error_invalid_email));
             focusView = autoCompleteTextEmail;
             cancel = true;
         }
@@ -150,16 +151,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        //return email.contains("@");
-        return true;
-    }
-
-    private boolean isPasswordValid(String password) {
-        //fuckn annoying
-        //return password.length() > 8;
-        return true;
+    private void registerUser() {
+        Intent intent = new Intent(getApplicationContext(), Register_User.class);
+        startActivity(intent);
     }
 
     /**
@@ -267,7 +261,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }
 
-            // TODO: register the new account here.
             return true;
         }
 
