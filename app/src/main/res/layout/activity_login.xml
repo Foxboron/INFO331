@@ -7,7 +7,7 @@
     android:paddingLeft="28dp"
     android:paddingRight="28dp"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="no.uib.info331.LoginActivity"
+    tools:context="no.uib.info331.activities.LoginActivity"
     android:background="@drawable/login_splash"
     android:orientation="vertical"
     android:scaleType="centerCrop"

@@ -1,4 +1,4 @@
-package no.uib.info331;
+package no.uib.info331.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,6 +10,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+
+import no.uib.info331.R;
 
 /**
  * Micromanaging af here
