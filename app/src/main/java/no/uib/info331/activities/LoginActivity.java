@@ -21,7 +21,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -49,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView autoCompleteTextEmail;
+    private EditText editTextUsername;
     private EditText editTextPassword;
     private View loginProgressView;
     private View viewLoginForm;
@@ -94,9 +93,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void initGui() {
 
-        autoCompleteTextEmail = (AutoCompleteTextView) findViewById(R.id.email);
-        editTextPassword = (EditText) findViewById(R.id.password);
-        btnEmailSignIn = (Button) findViewById(R.id.email_sign_in_button);
+        editTextUsername = (EditText) findViewById(R.id.login_username);
+        editTextPassword = (EditText) findViewById(R.id.login_password);
+        btnEmailSignIn = (Button) findViewById(R.id.user_sign_in_button);
         btnRegisterAccount = (Button) findViewById(R.id.register_account);
         viewLoginForm = findViewById(R.id.login_form);
         loginProgressView = findViewById(R.id.login_progress);
@@ -114,11 +113,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Reset errors.
-        autoCompleteTextEmail.setError(null);
+        editTextUsername.setError(null);
         editTextPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = autoCompleteTextEmail.getText().toString();
+        String email = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
 
         boolean cancel = false;
@@ -133,8 +132,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            autoCompleteTextEmail.setError(getString(R.string.error_field_required));
-            focusView = autoCompleteTextEmail;
+            editTextUsername.setError(getString(R.string.error_field_required));
+            focusView = editTextUsername;
             cancel = true;
         }
 
@@ -234,11 +233,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String mUsername;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String username, String password) {
+            mUsername = username;
             mPassword = password;
         }
 
@@ -255,7 +254,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
+                if (pieces[0].equals(mUsername)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
