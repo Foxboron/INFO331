@@ -1,21 +1,17 @@
 package no.uib.info331.activities;
 
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import no.uib.info331.R;
 
 public class Register_User extends AppCompatActivity {
 
     //UI references
-    private AutoCompleteTextView autoCompleteTextEmail;
-    private EditText editTextName;
+    private EditText editTextUsername;
     private EditText editTextPassword;
     private EditText editTextRepeatPassword;
     private Button btnRegisterUser;
@@ -27,8 +23,7 @@ public class Register_User extends AppCompatActivity {
     }
 
     private void initGUI() {
-        autoCompleteTextEmail = (AutoCompleteTextView) findViewById(R.id.email_register);
-        editTextName = (EditText) findViewById(R.id.name_register);
+        editTextUsername = (EditText) findViewById(R.id.register_username);
         editTextPassword = (EditText) findViewById(R.id.password_register);
         editTextRepeatPassword = (EditText) findViewById(R.id.repeat_password_register);
         btnRegisterUser = (Button) findViewById(R.id.register_button);
