@@ -15,12 +15,25 @@ import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import no.uib.info331.R;
+import no.uib.info331.models.Group;
+
 /**
  * Created by Per-Niklas Longberg on 02.10.2017.
  *
  * Activity that displays the list of groups using the custom adapter GroupListViewAdapter.class
  *
- */
+ **/
 
 public class ActiveGroupsList extends AppCompatActivity {
 
