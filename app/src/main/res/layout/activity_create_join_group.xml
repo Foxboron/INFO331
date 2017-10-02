@@ -64,9 +64,10 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/ic_search"
+                            android:background="@drawable/ic_group"
                             android:layout_gravity="bottom"
                             android:layout_marginBottom="8dp"
+                            android:backgroundTint="@color/colorGray3"
                             />
                         <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
@@ -77,7 +78,7 @@
                                 android:id="@+id/create_group_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/search_for_group"
+                                android:hint="@string/create_group_name"
                                 android:imeActionId="@+id/login"
                                 android:imeActionLabel="@string/action_sign_in_short"
                                 android:imeOptions="actionUnspecified"
@@ -86,6 +87,77 @@
                                 />
                         </android.support.design.widget.TextInputLayout>
                     </LinearLayout>
+                    <RelativeLayout
+                        android:id="@+id/member_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:focusableInTouchMode="true"
+                        android:layout_marginTop="4dp"
+                        >
+                        <ImageView
+                            android:id="@+id/persons_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ic_person_add"
+                            android:layout_marginBottom="8dp"
+                            android:backgroundTint="@color/colorGray3"
+                            />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="24dp"
+                                android:text="@string/search_for_member"
+                                android:textSize="16sp"
+                                android:layout_toEndOf="@id/persons_icon"
+                                android:layout_marginStart="4dp"
+
+                                />
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ic_arrow_right"
+                            android:layout_marginBottom="8dp"
+                            android:backgroundTint="@color/colorGray3"
+                            android:layout_alignParentEnd="true"
+                            />
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:id="@+id/member_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:focusableInTouchMode="true"
+                        android:layout_marginTop="4dp"
+                        >
+                        <ImageView
+                            android:id="@+id/"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ic_person_add"
+                            android:layout_marginBottom="8dp"
+                            android:backgroundTint="@color/colorGray3"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:text="@string/search_for_member"
+                            android:textSize="16sp"
+                            android:layout_toEndOf="@id/persons_icon"
+                            android:layout_marginStart="4dp"
+
+                            />
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ic_arrow_right"
+                            android:layout_marginBottom="8dp"
+                            android:backgroundTint="@color/colorGray3"
+                            android:layout_alignParentEnd="true"
+                            />
+                    </RelativeLayout>
+
                 </LinearLayout>
 
 
