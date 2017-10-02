@@ -7,6 +7,9 @@
     <color name="colorNavBar">#273820</color>
     <color name="colorDarkGray">#363636</color>
 
+    <color name="colorGray1">#efefef</color>
+    <color name="colorGray2">#e1e1e1</color>
+
 
     <color name="colorAccentPushed">#fd6060</color>
     <color name="colorAccentFocused">#fd6464</color>
