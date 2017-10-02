@@ -18,4 +18,8 @@
     <string name="prompt_name">Name</string>
     <string name="prompt_repeat_password">Repeat password</string>
     <string name="prompt_username">Username</string>
+
+    <!-- Group related -->
+    <string name="groups_active_list_title">Active groups</string>
+    <string name="my_groups">My groups</string>
 </resources>
