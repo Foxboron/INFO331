@@ -11,6 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.pchmn.materialchips.ChipsInput;
+import com.pchmn.materialchips.model.Chip;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import no.uib.info331.R;
 
 /**
@@ -21,16 +29,19 @@ import no.uib.info331.R;
  */
 public class CreateJoinGroupActivity extends AppCompatActivity {
 
-    TextView textViewTitle;
+    @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
 
-    CardView chooseActionCard;
-    CardView joinGroupCard;
-    CardView createGroupCard;
+    @BindView(R.id.choose_action_card) CardView chooseActionCard;
 
-    Button btnJoinGroupShow;
-    Button btnCreateGroupShow;
 
-    EditText editTextSearchJoinGroup;
+    @BindView(R.id.join_group_card) CardView joinGroupCard;
+    @BindView(R.id.create_group_card) CardView createGroupCard;
+
+    @BindView(R.id.show_join_group) Button btnJoinGroupShow;
+    @BindView(R.id.show_create_group) Button btnCreateGroupShow;
+
+    @BindView(R.id.join_search_group) EditText editTextSearchJoinGroup;
+    @BindView(R.id.chips_input) ChipsInput chipsInput;
 
     boolean joinGroupBtnClicked;
 
@@ -39,35 +50,33 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     int mediumAnimTime;
 
+    //Butterknfe gui
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_join_group);
-
+        ButterKnife.bind(this);
         initGui();
         btnClickListener();
     }
 
     private void initGui() {
-
-        textViewTitle = (TextView) findViewById(R.id.text_create_join_group_title);
-
-        chooseActionCard = (CardView) findViewById(R.id.choose_action_card);
-        joinGroupCard = (CardView) findViewById(R.id.join_group_card);
-        createGroupCard = (CardView) findViewById(R.id.create_group_card);
-
-        btnJoinGroupShow = (Button) findViewById(R.id.show_join_group);
-        btnCreateGroupShow = (Button) findViewById(R.id.show_create_group);
-
         shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         mediumAnimTime = getResources().getInteger(android.R.integer.config_mediumAnimTime);
-
-        editTextSearchJoinGroup = (EditText) findViewById(R.id.join_search_group);
 
         joinGroupBtnClicked = false;
         createGroupBtnClicked = false;
 
         fadeInView(textViewTitle, 200, shortAnimTime);
+
+        List<Chip> contactList = new ArrayList<>();
+        contactList.add(new Chip("Mega", "Magnus"));
+        contactList.add(new Chip("Bjarne", "Betjent"));
+        contactList.add(new Chip("Taco", "Tveit"));
+        contactList.add(new Chip("Test", "testo"));
+
+        chipsInput.setFilterableList(contactList);
 
     }
 
@@ -114,7 +123,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                 createGroupBtnClicked = true;
                 chooseActionCard.animate()
-                        .setDuration(mediumAnimTime)
+                        .setDuration(shortAnimTime)
                         .translationY(view.getHeight())
                         .alpha(0.0f)
                         .setListener(new AnimatorListenerAdapter() {
@@ -126,7 +135,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                             }
                         });
                 joinGroupCard.animate()
-                        .setDuration(mediumAnimTime)
+                        .setDuration(shortAnimTime)
                         .translationY(view.getHeight())
                         .alpha(0.0f)
                         .setStartDelay(200)
@@ -145,7 +154,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
 
     }
-
 
     public void onBackPressed() {
 

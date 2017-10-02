@@ -11,9 +11,6 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
 
-    <string name="wants_to">Do you want to…</string>
-    <string name="action_join_group">Join a group</string>
-    <string name="or">or</string>
     <string name="action_create_group">Create a group?</string>
     <string name="prompt_name">Name</string>
     <string name="prompt_repeat_password">Repeat password</string>
@@ -21,7 +18,16 @@
     <string name="error_password_match">Passwords doesn\'t match</string>
     <string name="error_username_exists">Username already exists</string>
     <string name="error_register">Something went wrong. Please try again</string>
+
+
+    <string name="wants_to">Do you want to…</string>
+    <string name="action_join_group">Join a group</string>
+    <string name="or">or</string>
+
     <string name="search_for_group">Search for a group…</string>
     <string name="create_group_name">Enter a group name…</string>
     <string name="search_for_member">Search for members</string>
+    <string name="search_for_beacon">Search for beacons</string>
+    <string name="create_the_group">Create the group</string>
+    <string name="members">Members</string>
 </resources>
