@@ -21,5 +21,9 @@
     <string name="error_password_match">Passwords doesn\'t match</string>
     <string name="error_username_exists">Username already exists</string>
     <string name="error_register">Something went wrong. Please try again</string>
+
+
     <string name="search_for_group">Search for a group…</string>
+    <string name="create_group_name">Enter a group name…</string>
+    <string name="search_for_member">Search for members</string>
 </resources>
