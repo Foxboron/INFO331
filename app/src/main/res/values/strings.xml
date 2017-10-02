@@ -18,5 +18,9 @@
     <string name="prompt_name">Name</string>
     <string name="prompt_repeat_password">Repeat password</string>
     <string name="prompt_username">Username</string>
+
+
     <string name="search_for_group">Search for a group…</string>
+    <string name="create_group_name">Enter a group name…</string>
+    <string name="search_for_member">Search for members</string>
 </resources>
