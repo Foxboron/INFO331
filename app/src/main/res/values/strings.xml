@@ -18,4 +18,7 @@
     <string name="prompt_name">Name</string>
     <string name="prompt_repeat_password">Repeat password</string>
     <string name="prompt_username">Username</string>
+    <string name="error_password_match">Passwords doesn\'t match</string>
+    <string name="error_username_exists">Username already exists</string>
+    <string name="error_register">Something went wrong. Please try again</string>
 </resources>
