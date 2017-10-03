@@ -27,4 +27,9 @@
     <string name="search_for_beacon">Search for beacons</string>
     <string name="create_the_group">Create the group</string>
     <string name="members">Members</string>
+
+    <string name="start_beacon_search">Start searching for beacons!</string>
+    <string name="continue_beacons">Continue</string>
+
+
 </resources>
