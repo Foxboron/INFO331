@@ -12,6 +12,7 @@ import java.util.List;
 
 import no.uib.info331.R;
 import no.uib.info331.models.Group;
+import no.uib.info331.models.GroupAdapter;
 import no.uib.info331.models.User;
 
 /**
@@ -46,8 +47,7 @@ public class ActiveGroupsList extends AppCompatActivity {
         test.setText(group.getName());
         //THE CODE ABOVE IS USED FOR TESTING, DO NOT INCLUDE IN FINAL BUILD
 
-        ArrayAdapter<Group> adapter = new ArrayAdapter<>(this.getApplicationContext(), R.layout.activity_active_groups, R.id.active_groups_list, groups);
+        GroupAdapter adapter = new GroupAdapter(groups, getApplicationContext());
         groupList.setAdapter(adapter);
-
     }
 }
