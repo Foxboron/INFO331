@@ -11,6 +11,7 @@
     <color name="colorGray2">#e1e1e1</color>
     <color name="colorGray3">#cacaca</color>
 
+    <color name="colorTransp">#00000000</color>
 
     <color name="colorAccentPushed">#fd6060</color>
     <color name="colorAccentFocused">#fd6464</color>
