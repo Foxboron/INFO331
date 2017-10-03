@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:orientation="vertical"
+    android:padding="6dp"
+    tools:context="no.uib.info331.activities.ActiveGroupsList"
+    android:id="@+id/listContent">
+
+    <ImageView
+        android:id="@+id/groupIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="6dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:contentDescription="@string/image_description"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/memberList"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/groupIcon"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/group_members"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/groupName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/memberList"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toEndOf="@id/groupIcon"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/group_name_filler"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/joingGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="26dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="end"
+        android:layout_toEndOf="@id/memberList"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        android:paddingStart="12dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/group_join"
+        android:textSize="12sp" />
+
+</RelativeLayout>

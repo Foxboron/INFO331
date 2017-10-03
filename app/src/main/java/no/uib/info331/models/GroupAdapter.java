@@ -2,6 +2,7 @@ package no.uib.info331.models;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +22,17 @@ import no.uib.info331.R;
  *
  * This class should work because everyone on the internet says that just a normal adapter won't
  * work with objects in ListView
+ *
+ * Still a work in progress - reading up on guides and figuring out what's what at the moment
+ * 
  **/
 
 
 public class GroupAdapter extends ArrayAdapter<Group> {
 
-    Context context;
-    int layoutResourceID;
-    ArrayList<Group> groupList = null;
+    private Context context;
+    private int layoutResourceID;
+    private ArrayList<Group> groupList = null;
 
     public GroupAdapter(Context context, int resource, List<Group> groups){
         super(context, resource, groups);
@@ -37,8 +41,10 @@ public class GroupAdapter extends ArrayAdapter<Group> {
         this.groupList = (ArrayList<Group>) groups;
     }
 
+
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View row = convertView;
         HeaderHolder holder = null;
 

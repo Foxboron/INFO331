@@ -22,4 +22,8 @@
     <!-- Group related -->
     <string name="groups_active_list_title">Active groups</string>
     <string name="my_groups">My groups</string>
+    <string name="image_description">This image needs a description</string>
+    <string name="group_members">Members</string>
+    <string name="group_join">Join group</string>
+    <string name="group_name_filler">GROUP NAME</string>
 </resources>
