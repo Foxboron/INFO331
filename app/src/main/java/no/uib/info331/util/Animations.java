@@ -18,6 +18,16 @@ import no.uib.info331.R;
 
 public class Animations {
 
+    public int getShortAnimTime(Context context) {
+        return context.getResources().getInteger(android.R.integer.config_shortAnimTime);
+    }
+    public int getMediumAnimTime(Context context) {
+        return context.getResources().getInteger(android.R.integer.config_mediumAnimTime);
+    }
+    public int getLongAnimTime(Context context) {
+        return context.getResources().getInteger(android.R.integer.config_longAnimTime);
+    }
+
     public void fadeInView(View view, int startDelay, int duration) {
         view.setAlpha(0);
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha",  0, 1f);
