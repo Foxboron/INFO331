@@ -7,9 +7,13 @@
     <color name="colorNavBar">#273820</color>
     <color name="colorDarkGray">#363636</color>
 
+    <color name="colorLightGrayBlue">#bccbff</color>
+
     <color name="colorGray1">#efefef</color>
     <color name="colorGray2">#e1e1e1</color>
     <color name="colorGray3">#cacaca</color>
+
+    <color name="colorDarkBlue">#3763ff</color>
 
     <color name="colorTransp">#00000000</color>
 
