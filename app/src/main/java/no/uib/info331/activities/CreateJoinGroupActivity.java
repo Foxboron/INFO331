@@ -80,14 +80,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         chooseActionCard.setVisibility(joinGroupBtnClicked ? View.GONE : View.VISIBLE);
-
-                        //TEST vvv
-
+                        
                         Intent intent = new Intent(getApplicationContext(), ActiveGroupsList.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
-
-                        //TEST ^^^
                     }
                 });
 
