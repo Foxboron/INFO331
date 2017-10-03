@@ -8,6 +8,7 @@
     android:background="@color/colorPrimary"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
+    android:id="@+id/active_groups_activity"
     >
     <!--    I want this to match the "active groups" text except for it being expandable,
     revealing a hidden list of the groups the user is already a member of. Or maybe drop the
