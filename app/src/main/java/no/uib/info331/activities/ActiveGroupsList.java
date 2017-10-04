@@ -28,6 +28,7 @@ public class ActiveGroupsList extends AppCompatActivity {
     private Group group;
     private TextView text;
     private ListView groupList;
+    private String[] groupNameList;
 
     //Code for populating list goes here
     @Override
@@ -36,18 +37,33 @@ public class ActiveGroupsList extends AppCompatActivity {
         setContentView(R.layout.activity_active_groups);
         //groups = database.get(list_of_groups); haha hvordan skal dette gå gutter
         groups = new ArrayList<>();
-        groupList = (ListView) findViewById(R.id.active_groups_list);
 
         //THE CODE BELOW IS USED FOR TESTING, DO NOT INCLUDE IN FINAL BUILD
         User user1 = new User("user", "pass", "pic", 5);
-
+        setContentView(R.layout.group_list_element);
+        groupNameList = new String[100];
         for(int i=0; i < 100; i++){
-            Group g = new Group("temp", user1, 10);
+            String goodName = getString(R.string.group_name_filler) + Integer.toString(i);
+            Group g = new Group(goodName, user1, 10);
             groups.add(g);
-            text = (TextView) findViewById(R.id.groupName);
-            //text.setText(getString(R.string.group_name_filler));
         }
 
+        for(int j = 0; j < 100; j++){
+            if(j < groups.size()) {
+                Group g = groups.get(j);
+                String gName = g.getName();
+                groupNameList[j] = gName;
+            }
+        }
+
+        text = (TextView) findViewById(R.id.groupName);
+
+        for(int k = 0; k < 100; k++){
+            text.setText(groupNameList[k]);
+        }
+
+        setContentView(R.layout.activity_active_groups);
+        groupList = (ListView) findViewById(R.id.active_groups_list);
         //THE CODE ABOVE IS USED FOR TESTING, DO NOT INCLUDE IN FINAL BUILD
 
         GroupAdapter adapter = new GroupAdapter(groups, getApplicationContext());
@@ -56,9 +72,7 @@ public class ActiveGroupsList extends AppCompatActivity {
         groupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Group g = groups.get(position);
-
                 Snackbar.make(view, g.getName(), Snackbar.LENGTH_LONG)
                         .setAction("No action", null).show();
             }
