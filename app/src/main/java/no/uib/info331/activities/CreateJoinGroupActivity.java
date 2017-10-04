@@ -31,9 +31,6 @@ import no.uib.info331.util.Animations;
  */
 public class CreateJoinGroupActivity extends AppCompatActivity {
 
-    private float topYOfParentLayout;
-
-    //ButterKnife gui
 
     @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
 

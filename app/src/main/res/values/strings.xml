@@ -19,7 +19,6 @@
     <string name="error_username_exists">Username already exists</string>
     <string name="error_register">Something went wrong. Please try again</string>
 
-
     <string name="wants_to">Do you want to…</string>
     <string name="action_join_group">Join a group</string>
     <string name="or">or</string>
