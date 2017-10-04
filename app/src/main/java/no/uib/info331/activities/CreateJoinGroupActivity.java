@@ -27,6 +27,7 @@ import no.uib.info331.util.Animations;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import retrofit2.Call;
+import no.uib.info331.util.Animations;
 
 /**
  * Micromanaging af here
@@ -159,7 +160,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence text) {
-
                 }
             });
 
@@ -204,6 +204,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addMemberLayoutBtnClicked = true;
+
+
 
                 anim.fadeInView(addMemberToNewGroupCard, 0, shortAnimTime);
                 anim.moveViewToTranslationY(addMemberToNewGroupCard,0 , shortAnimTime, 0, false);
