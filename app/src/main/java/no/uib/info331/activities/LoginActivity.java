@@ -29,24 +29,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.uib.info331.R;
-import no.uib.info331.util.ApiClient;
-import no.uib.info331.util.ApiInterface;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
- * A login screen that offers login via username/password.
+ * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+
+    /**
+     * A dummy authentication store containing known user names and passwords.
+     * TODO: remove after connecting to a real authentication system.
+     */
+    private static final String[] DUMMY_CREDENTIALS = new String[]{
+            "foo@example.com:hello", "bar@example.com:world"
+    };
+    /**
+     * Keep track of the login task to ensure we can cancel it if requested.
+     */
+    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private EditText editTextUsername;
     private EditText editTextPassword;
     private View loginProgressView;
     private View viewLoginForm;
-    private Button btnUsernameSignIn;
+    private Button btnEmailSignIn;
     private Button btnRegisterAccount;
 
     @Override
@@ -69,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        btnUsernameSignIn.setOnClickListener(new OnClickListener() {
+        btnEmailSignIn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -89,27 +95,29 @@ public class LoginActivity extends AppCompatActivity {
 
         editTextUsername = (EditText) findViewById(R.id.login_username);
         editTextPassword = (EditText) findViewById(R.id.login_password);
-        btnUsernameSignIn = (Button) findViewById(R.id.user_sign_in_button);
-        btnRegisterAccount = (Button) findViewById(R.id.register_account);
-
+        btnEmailSignIn = (Button) findViewById(R.id.user_sign_in_button);
+        btnRegisterAccount = (Button) findViewById(R.id.register_account_button);
         viewLoginForm = findViewById(R.id.login_form);
         loginProgressView = findViewById(R.id.login_progress);
 
     }
 
     /**
-     * Attempts to sign in the account specified by the login form.
-     * If there are form errors (invalid username, missing fields, etc.), the
+     * Attempts to sign in or register the account specified by the login form.
+     * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
+        if (mAuthTask != null) {
+            return;
+        }
 
         // Reset errors.
         editTextUsername.setError(null);
         editTextPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = editTextUsername.getText().toString();
+        String email = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
 
         boolean cancel = false;
@@ -123,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(username)) {
+        if (TextUtils.isEmpty(email)) {
             editTextUsername.setError(getString(R.string.error_field_required));
             focusView = editTextUsername;
             cancel = true;
@@ -137,31 +145,8 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            Call<ResponseBody> call = apiService.login(username, password);
-            call.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if(response.code()==200) {
-                        Intent intent = new Intent(getApplicationContext(), CreateJoinGroupActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    } else {
-                        showProgress(false);
-                        editTextPassword.setError(getString(R.string.error_incorrect_password));
-                        editTextPassword.requestFocus();
-                    }
-
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    showProgress(false);
-                    btnUsernameSignIn.setError(getString(R.string.error_register));
-                    btnUsernameSignIn.requestFocus();
-
-                }
-            });
+            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask.execute((Void) null);
         }
     }
 
@@ -301,6 +286,4 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
         }
     }
->>>>>>> finished card animations, added edittext in join group search
 }
-

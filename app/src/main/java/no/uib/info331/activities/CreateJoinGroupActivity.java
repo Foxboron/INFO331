@@ -31,11 +31,11 @@ import no.uib.info331.util.Animations;
  */
 public class CreateJoinGroupActivity extends AppCompatActivity {
 
-    @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
-
     private float topYOfParentLayout;
 
     //ButterKnife gui
+
+    @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
 
     @BindView(R.id.choose_action_card) CardView chooseActionCard;
     @BindView(R.id.join_group_card) CardView joinGroupCard;
