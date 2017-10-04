@@ -1,19 +1,13 @@
 package no.uib.info331.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -47,21 +41,21 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @BindView(R.id.join_group_card) CardView joinGroupCard;
 
     @BindView(R.id.create_group_card) CardView createGroupCard;
-    @BindView(R.id.add_beacon_card) CardView addBeaconToNewGroupCard;
+    @BindView(R.id.add_member_card) CardView addMemberToNewGroupCard;
     @BindView(R.id.show_join_group) Button btnJoinGroupShow;
 
     @BindView(R.id.show_create_group) Button btnCreateGroupShow;
     @BindView(R.id.join_search_group) EditText editTextSearchJoinGroup;
 
     @BindView(R.id.chips_input) ChipsInput chipsInput;
-    @BindView(R.id.beacon_search) RelativeLayout addBeaconLayoutBtn;
+    @BindView(R.id.member_search) RelativeLayout addMemberLayoutBtn;
 
-    @BindView(R.id.number_of_beacons_added_text) TextView noOfBeaconsAddedTextView;
+    @BindView(R.id.number_of_members_added_text) TextView noOfMembersAddedTextView;
 
 
     boolean joinGroupBtnClicked;
     boolean createGroupBtnClicked;
-    boolean addBeaconLayoutBtnClicked;
+    boolean addMemberLayoutBtnClicked;
 
     int shortAnimTime;
     int mediumAnimTime;
@@ -71,7 +65,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     private ArrayList<Chip> contactList;
     Context context;
 
-    int noOfBeaconsAdded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,24 +84,22 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
         joinGroupBtnClicked = false;
         createGroupBtnClicked = false;
-        addBeaconLayoutBtnClicked = false;
+        addMemberLayoutBtnClicked = false;
 
         anim.fadeInView(textViewTitle, 200, shortAnimTime);
 
-        //Sets the beacon search card to gone and under the screen
-        anim.moveViewToTranslationY(addBeaconToNewGroupCard,0 , 0, 2000, false);
-        Drawable btIcon =  context.getDrawable(R.drawable.ic_bt_beacon_blue);
+        //Sets the members search card to gone and under the screen
+        anim.moveViewToTranslationY(addMemberToNewGroupCard,0 , 0, 2000, false);
 
         contactList = new ArrayList<>();
-        contactList.add(new Chip(btIcon,"642-gangstas", "Beacon for: " + "rom 642/SV-Bygget, UiB"));
-        contactList.add(new Chip(btIcon, "Tacolause", "Beacon for: " + "rom 542/SV-Bygget, UiB"));
-        contactList.add(new Chip(btIcon, "Hjelmeland Drikkelag", "Beacon for: " + "rom 639/SV-Bygget, UiB"));
-        contactList.add(new Chip(btIcon, "Nørdså", "Beacon for: " + "rom 638/SV-Bygget Uib"));
-        contactList.add(new Chip(btIcon, "Hemså", "Beacon for: " + "rom 123/SV-Bygget Uib"));
-        contactList.add(new Chip(btIcon, "De svettaste", "Beacon for: " + "rom 923/SV-Bygget Uib"));
-        contactList.add(new Chip(btIcon, "Mafioso", "Beacon for: " + "rom 123/Stein Rokkans hus, Uib"));
-        contactList.add(new Chip(btIcon, "GeoGale", "Beacon for: " + "rom 1030/Stein Rokkans hus, Uib"));
-        contactList.add(new Chip(btIcon, "Luringane", "Beacon for: " + "rom 1040/Stein Rokkans hus, Uib"));
+        contactList.add(new Chip("Kjell Gunnlaug", "MEVI 5.året"));
+        contactList.add(new Chip("Gunnar Laugesen", "Infovit 4.året"));
+        contactList.add(new Chip("Morten Fjell Potetskrell", "Journalistikk 4.året"));
+        contactList.add(new Chip("Fat Finger Freddy", "Infovit 4.året"));
+        contactList.add(new Chip("Tor Raymond Carlsen", "Infovit 4.året"));
+        contactList.add(new Chip("Morten Mr.Go", "Infovit 4.året"));
+        contactList.add(new Chip("Perikles DuPlantier", "Infovit 4.året"));
+        contactList.add(new Chip("Eddie the Eagle", "Infovit 4.året"));
 
         chipsInput.setFilterableList(contactList);
 
@@ -126,14 +117,14 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 public void onChipAdded(ChipInterface chip, int newSize) {
                     // chip added
                     // newSize is the size of the updated selected chip list
-                    noOfBeaconsAddedTextView.setText("You have added " + newSize + " beacons!");
+                    noOfMembersAddedTextView.setText("You have added " + newSize + " members to this group!");
                 }
 
                 @Override
                 public void onChipRemoved(ChipInterface chip, int newSize) {
                     // chip removed
                     // newSize is the size of the updated selected chip list
-                    noOfBeaconsAddedTextView.setText("You have added " + newSize + " beacons!");
+                    noOfMembersAddedTextView.setText("You have added " + newSize + " members to this group!");
 
                 }
 
@@ -190,33 +181,34 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             }
         });
 
-        addBeaconLayoutBtn.setOnClickListener(new View.OnClickListener() {
+        addMemberLayoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addBeaconLayoutBtnClicked = true;
+                addMemberLayoutBtnClicked = true;
 
-                anim.fadeInView(addBeaconToNewGroupCard, 0, shortAnimTime);
-                anim.moveViewToTranslationY(addBeaconToNewGroupCard,0 , shortAnimTime, 0, false);
+                anim.fadeInView(addMemberToNewGroupCard, 0, shortAnimTime);
+                anim.moveViewToTranslationY(addMemberToNewGroupCard,0 , shortAnimTime, 0, false);
             }
         });
 
 
     }
     //ButterKnife magic? Yes it is
-    @OnClick(R.id.accept_searched_beacons_button)
-    public void addBeaconCardDisappear(){
-        if(addBeaconLayoutBtnClicked){
-            addBeaconLayoutBtnClicked = false;
-            anim.fadeOutView(addBeaconToNewGroupCard, 0, longAnimTime);
-            anim.moveViewToTranslationY(addBeaconToNewGroupCard, 100, shortAnimTime, addBeaconToNewGroupCard.getHeight(), false);
-            return;
+    @OnClick(R.id.accept_searched_members_button)
+    public void addMemberCardDisappear(){
+        if(addMemberLayoutBtnClicked){
+            addMemberLayoutBtnClicked = false;
+            anim.fadeOutView(addMemberToNewGroupCard, 0, longAnimTime);
+            anim.moveViewToTranslationY(addMemberToNewGroupCard, 100, shortAnimTime, addMemberToNewGroupCard.getHeight(), false);
         }
     }
 
     public void onBackPressed() {
 
-
-        addBeaconCardDisappear();
+        if(addMemberLayoutBtnClicked){
+            addMemberCardDisappear();
+            return;
+        }
 
          if(joinGroupBtnClicked) {
             joinGroupBtnClicked = false;
@@ -227,7 +219,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
         }
 
-        else if(createGroupBtnClicked && !addBeaconLayoutBtnClicked) {
+        else if(createGroupBtnClicked) {
             joinGroupBtnClicked = false;
             createGroupBtnClicked = false;
 
@@ -237,7 +229,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
             anim.fadeInView(chooseActionCard, 0, shortAnimTime);
             anim.moveViewToTranslationY(chooseActionCard, 100 , shortAnimTime, 0, false);
-        } else if( !createGroupBtnClicked && !joinGroupBtnClicked && !addBeaconLayoutBtnClicked){
+        } else if( !createGroupBtnClicked && !joinGroupBtnClicked && !addMemberLayoutBtnClicked){
 
             super.onBackPressed();
         }
