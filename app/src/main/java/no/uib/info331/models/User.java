@@ -16,6 +16,11 @@ public class User {
     private int points;
     private ArrayList<Group> groups;
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public User(String username, String password, String photo, int points) {
         this.username = username;
         this.password = password;

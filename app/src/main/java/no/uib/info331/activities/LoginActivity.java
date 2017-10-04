@@ -29,30 +29,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.uib.info331.R;
+import no.uib.info331.util.ApiClient;
+import no.uib.info331.util.ApiInterface;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
- * A login screen that offers login via email/password.
+ * A login screen that offers login via username/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
+public class LoginActivity extends AppCompatActivity {
 
     // UI references.
     private EditText editTextUsername;
     private EditText editTextPassword;
     private View loginProgressView;
     private View viewLoginForm;
-    private Button btnEmailSignIn;
+    private Button btnUsernameSignIn;
     private Button btnRegisterAccount;
 
     @Override
@@ -75,7 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        btnEmailSignIn.setOnClickListener(new OnClickListener() {
+        btnUsernameSignIn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -95,7 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         editTextUsername = (EditText) findViewById(R.id.login_username);
         editTextPassword = (EditText) findViewById(R.id.login_password);
-        btnEmailSignIn = (Button) findViewById(R.id.user_sign_in_button);
+        btnUsernameSignIn = (Button) findViewById(R.id.user_sign_in_button);
         btnRegisterAccount = (Button) findViewById(R.id.register_account);
         viewLoginForm = findViewById(R.id.login_form);
         loginProgressView = findViewById(R.id.login_progress);
@@ -103,21 +97,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
+     * Attempts to sign in the account specified by the login form.
+     * If there are form errors (invalid username, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         editTextUsername.setError(null);
         editTextPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = editTextUsername.getText().toString();
+        String username = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
 
         boolean cancel = false;
@@ -131,7 +122,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(username)) {
             editTextUsername.setError(getString(R.string.error_field_required));
             focusView = editTextUsername;
             cancel = true;
@@ -145,8 +136,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+            Call<ResponseBody> call = apiService.login(username, password);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if(response.code()==200) {
+                        Intent intent = new Intent(getApplicationContext(), CreateJoinGroupActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    } else {
+                        showProgress(false);
+                        editTextPassword.setError(getString(R.string.error_incorrect_password));
+                        editTextPassword.requestFocus();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    showProgress(false);
+                    btnUsernameSignIn.setError(getString(R.string.error_register));
+                    btnUsernameSignIn.requestFocus();
+
+                }
+            });
         }
     }
 
@@ -182,109 +196,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 loginProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mUsername;
-        private final String mPassword;
-
-        UserLoginTask(String username, String password) {
-            mUsername = username;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mUsername)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                //finish();
-                Intent intent = new Intent(getApplicationContext(), CreateJoinGroupActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-
-            } else {
-                editTextPassword.setError(getString(R.string.error_incorrect_password));
-                editTextPassword.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
     }
 }
 
