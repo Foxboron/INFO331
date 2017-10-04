@@ -16,12 +16,17 @@ import com.pchmn.materialchips.model.Chip;
 import com.pchmn.materialchips.model.ChipInterface;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
+import no.uib.info331.models.User;
 import no.uib.info331.util.Animations;
+import no.uib.info331.util.ApiClient;
+import no.uib.info331.util.ApiInterface;
+import retrofit2.Call;
 
 /**
  * Micromanaging af here
@@ -72,9 +77,33 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_join_group);
         ButterKnife.bind(this);
         context = getApplicationContext();
+
+        testLoadAllUsers();
+
         initGui();
         btnClickListener();
 
+    }
+
+    private void testLoadAllUsers() {
+        private void loadSize() {
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+            Call<List<User>> loadSizeCall = apiService.login(username, password);;
+            loadSizeCall.enqueue(new Callback<List<Size>>() {
+                @Override
+                public void onResponse(Call<List<Size>> call, Response<List<Size>> response) {
+                    for(Size size: response.body()) {
+                        System.out.println(size.toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Size>> call, Throwable t) {
+                    System.out.println(t.getMessage());
+                }
+            });
+        }
     }
 
     private void initGui() {
@@ -130,17 +159,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence text) {
-                    // text changed
-//                    anim.moveViewToTranslationY(chipsInput,0, 200, Math.round(topYOfParentLayout), false);
-//                    anim.fadeBackgroundFromColorToColor(chipsInput, 200, ContextCompat.getColor(getApplicationContext(), R.color.colorTransp), Color.WHITE);
-//
-//                    chipsInput.setBackgroundColor(Color.WHITE);
-//                    if(text.length() == 0){
-//                        anim.moveViewToTranslationY(chipsInput,0, 200, Math.round(0), false);
-//                        anim.fadeBackgroundFromColorToColor(chipsInput, 200, Color.WHITE, ContextCompat.getColor(getApplicationContext(), R.color.colorTransp));
-//                        chipsInput.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorTransp));
-//
-//                    }
+
                 }
             });
 

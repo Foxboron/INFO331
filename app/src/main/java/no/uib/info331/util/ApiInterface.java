@@ -21,5 +21,9 @@ public interface ApiInterface {
     @POST("/register")
     Call<ResponseBody> register(@Field("username") String username, @Field("password") String password);
 
+    @FormUrlEncoded
+    @GET("/users")
+    Call<ResponseBody> allUsers(@Field("username") String username, @Field("password") String password);
+
 
 }
