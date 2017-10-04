@@ -5,10 +5,11 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
     tools:context="no.uib.info331.activities.ActiveGroupsList"
     android:id="@+id/listContent">
 
-    <!-- android:layout_height="?android:attr/listPreferredItemHeight" -->
     <ImageView
         android:id="@+id/groupIcon"
         android:layout_width="wrap_content"
@@ -33,8 +34,10 @@
         android:maxLines="1"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/group_members"
-        android:textSize="16sp" />
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/groupName"
@@ -47,13 +50,9 @@
         android:gravity="center_vertical"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
+        android:layout_marginTop="10dp"
         android:text="@string/group_name_filler"
         android:textSize="20sp" />
-
-        <!--
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"-->
-
 
     <TextView
         android:id="@+id/joingGroup"
@@ -66,9 +65,10 @@
         android:maxLines="1"
         android:paddingStart="12dp"
         android:paddingEnd="20dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/group_join"
-        android:textSize="12sp" />
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp" />
 
 </RelativeLayout>

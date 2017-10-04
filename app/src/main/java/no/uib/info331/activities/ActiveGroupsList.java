@@ -1,17 +1,14 @@
 package no.uib.info331.activities;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import no.uib.info331.R;
 import no.uib.info331.models.Group;
@@ -19,7 +16,10 @@ import no.uib.info331.models.GroupAdapter;
 import no.uib.info331.models.User;
 
 /**
- * Created by perni on 02.10.2017.
+ * Created by Per-Niklas Longberg on 02.10.2017.
+ *
+ * Activity that displays the list of groups using the custom adapter GroupAdapter.class
+ *
  */
 
 public class ActiveGroupsList extends AppCompatActivity {
@@ -35,10 +35,14 @@ public class ActiveGroupsList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_groups);
-        //groups = database.get(list_of_groups); haha hvordan skal dette gå gutter
+
+        //groups = database.get(list_of_groups); Placeholder code - need DB endpoint
+
         groups = new ArrayList<>();
 
-        //THE CODE BELOW IS USED FOR TESTING, DO NOT INCLUDE IN FINAL BUILD
+        // The code below is used for testing - while it is not supposed to be included in the final
+        // build it will successfully display the list of groups. Might use some of this code later.
+
         User user1 = new User("user", "pass", "pic", 5);
         setContentView(R.layout.group_list_element);
         groupNameList = new String[100];
@@ -64,17 +68,21 @@ public class ActiveGroupsList extends AppCompatActivity {
 
         setContentView(R.layout.activity_active_groups);
         groupList = (ListView) findViewById(R.id.active_groups_list);
-        //THE CODE ABOVE IS USED FOR TESTING, DO NOT INCLUDE IN FINAL BUILD
+
+        // End of test code.
 
         GroupAdapter adapter = new GroupAdapter(groups, getApplicationContext());
         groupList.setAdapter(adapter);
+
+        // This method will be altered to start the activities of each groups own group page.
+        // For now it does nothing.
 
         groupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Group g = groups.get(position);
                 Snackbar.make(view, g.getName(), Snackbar.LENGTH_LONG)
-                        .setAction("No action", null).show();
+                        .setAction("Feature to be implemented", null).show();
             }
         });
     }
