@@ -1,10 +1,12 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,8 +28,12 @@ import no.uib.info331.models.User;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
+import okhttp3.Credentials;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import no.uib.info331.util.Animations;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Micromanaging af here
@@ -70,6 +76,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     Animations anim = new Animations();
     private ArrayList<Chip> contactList;
     Context context;
+    List<User> listOfAllUsers = new ArrayList<User>();
 
 
     @Override
@@ -79,9 +86,47 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         context = getApplicationContext();
 
-
+        //getAllUsers();
         initGui();
         btnClickListener();
+
+    }
+
+    private void getAllUsers() {
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        //username:password
+        String credentials = "edd:edd";
+
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+
+        Call<List<User>> call = apiService.users(basic);
+        call.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+
+                if(response.code()==200) {
+                    for(User user: response.body()) {
+                        listOfAllUsers.add(user);
+                        System.out.println(user.getUsername());
+                    }
+
+                } else {
+                    System.out.println("APA: " + response.body());
+                    System.out.println("response: " + response);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                System.out.println(t.getMessage());
+
+            }
+        });
 
     }
 
@@ -100,14 +145,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         anim.moveViewToTranslationY(addMemberToNewGroupCard,0 , 0, 2000, false);
 
         contactList = new ArrayList<>();
-        contactList.add(new Chip("Kjell Gunnlaug", "MEVI 5.året"));
-        contactList.add(new Chip("Gunnar Laugesen", "Infovit 4.året"));
-        contactList.add(new Chip("Morten Fjell Potetskrell", "Journalistikk 4.året"));
-        contactList.add(new Chip("Fat Finger Freddy", "Infovit 4.året"));
-        contactList.add(new Chip("Tor Raymond Carlsen", "Infovit 4.året"));
-        contactList.add(new Chip("Morten Mr.Go", "Infovit 4.året"));
-        contactList.add(new Chip("Perikles DuPlantier", "Infovit 4.året"));
-        contactList.add(new Chip("Eddie the Eagle", "Infovit 4.året"));
+        for(User user : listOfAllUsers){
+            contactList.add(new Chip(user.getID(), user.getUsername(), "") );
+        }
+        contactList.add(new Chip("100", "user.getUsername()", "") );
 
         chipsInput.setFilterableList(contactList);
 
