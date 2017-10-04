@@ -26,4 +26,9 @@
     <string name="group_members">Members</string>
     <string name="group_join">Join group</string>
     <string name="group_name_filler">GROUP NAME</string>
+
+    <string name="error_password_match">Passwords doesn\'t match</string>
+    <string name="error_username_exists">Username already exists</string>
+    <string name="error_register">Something went wrong. Please try again</string>
+
 </resources>
