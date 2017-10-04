@@ -79,32 +79,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         context = getApplicationContext();
 
-        testLoadAllUsers();
 
         initGui();
         btnClickListener();
 
-    }
-
-    private void testLoadAllUsers() {
-        private void loadSize() {
-            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-
-            Call<List<User>> loadSizeCall = apiService.login(username, password);;
-            loadSizeCall.enqueue(new Callback<List<Size>>() {
-                @Override
-                public void onResponse(Call<List<Size>> call, Response<List<Size>> response) {
-                    for(Size size: response.body()) {
-                        System.out.println(size.toString());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<Size>> call, Throwable t) {
-                    System.out.println(t.getMessage());
-                }
-            });
-        }
     }
 
     private void initGui() {
@@ -231,7 +209,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             return;
         }
 
-         if(joinGroupBtnClicked) {
+        if(joinGroupBtnClicked) {
             joinGroupBtnClicked = false;
 
             //Animates the card for choosing what to do
