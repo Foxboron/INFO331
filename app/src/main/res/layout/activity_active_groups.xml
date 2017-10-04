@@ -50,7 +50,9 @@
         <ListView
             android:id="@+id/active_groups_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10dp">
         </ListView>
 
     </android.support.v7.widget.CardView>
