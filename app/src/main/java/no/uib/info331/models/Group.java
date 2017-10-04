@@ -19,6 +19,7 @@ public class Group {
         this.name = name;
         this.owner = owner;
         this.points = points;
+        members = new ArrayList<>();
     }
 
     public String getName() {
@@ -54,11 +55,13 @@ public class Group {
     }
 
     public boolean addMember(User member) {
-        if(!members.contains(member)) {
-            members.add(member);
-            return true;
-        }
-        return false;
+        if(member!=null) {
+            if (!members.contains(member)) {
+                members.add(member);
+                return true;
+            }
+            return false;
+        }return false;
     }
 
     public boolean deleteMember(User member) {

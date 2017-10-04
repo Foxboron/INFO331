@@ -22,6 +22,7 @@
         </activity>
         <activity android:name=".activities.Register_User"></activity>
         <activity android:name=".activities.CreateJoinGroupActivity"></activity>
+        <activity android:name=".activities.ActiveGroupsList"></activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package no.uib.info331.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -79,6 +80,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         chooseActionCard.setVisibility(joinGroupBtnClicked ? View.GONE : View.VISIBLE);
+                        
+                        Intent intent = new Intent(getApplicationContext(), ActiveGroupsList.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     }
                 });
 
