@@ -1,12 +1,18 @@
 package no.uib.info331.queries;
 
+import android.content.Context;
 import android.util.Base64;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
+import no.uib.info331.util.DataManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,12 +24,12 @@ import retrofit2.Response;
 public class UserQueries {
 
     ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+    DataManager dataManager = new DataManager();
 
-    public void getUsersByStringFromDb(String query, String username, String password) {
-
+    public List<User> getUsersByStringFromDb(final Context context, String query, String username, String password) {
         //username:password
         String credentials = username + ":" + password;
-
+        final String prefKey = "userSearch";
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
@@ -32,11 +38,18 @@ public class UserQueries {
         call.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                List<User> allUsers = new ArrayList<User>();
+                System.out.println("onResponse ok");
+                System.out.println("response code: " + response.code());
 
                 if(response.code()==200) {
+                    System.out.println(response.body());
+
                     for(User user: response.body()) {
-                        System.out.println(user.getUsername());
+                        allUsers.add(user);
+
                     }
+                    dataManager.storeObjectInSharedPref(context, prefKey, allUsers);
 
                 } else {
                     System.out.println("APA: " + response.body());
@@ -51,7 +64,9 @@ public class UserQueries {
 
             }
         });
+        Type type = new TypeToken<List<User>>(){}.getType();
 
+        return dataManager.getSavedObjectFromSharedPref(context, prefKey, type);
     }
 
     private void getAllUsersFromDb() {

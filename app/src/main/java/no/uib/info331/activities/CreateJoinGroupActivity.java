@@ -4,13 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -18,13 +19,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
+import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.User;
+import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
-import no.uib.info331.util.ApiClient;
-import no.uib.info331.util.ApiInterface;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import no.uib.info331.util.DataManager;
 
 /**
  * Micromanaging af here
@@ -54,8 +53,9 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @BindView(R.id.number_of_members_added_text) TextView textViewNoOfMembersAdded;
 
     @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
-
     @BindView(R.id.add_member_list) ListView listViewMemberList;
+    @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
+
 
 
     boolean joinGroupBtnClicked;
@@ -68,6 +68,9 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     Animations anim = new Animations();
     Context context;
+    private DataManager dataManager = new DataManager();
+
+    UserQueries userQueries = new UserQueries();
 
 
     @Override
@@ -84,9 +87,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     }
 
 
-
-
-
     private void initGui() {
         shortAnimTime = anim.getShortAnimTime(context);
         mediumAnimTime = anim.getMediumAnimTime(context);
@@ -101,13 +101,13 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         //Sets the members search card to gone and under the screen
         anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , 0, 2000, false);
 
-        initListViewMemberList();
-
+        List<User> allUsers = userQueries.getUsersByStringFromDb(context, "edd", "edd", "edd");
 
     }
 
-    private void initListViewMemberList() {
-
+    private void initListViewMemberList(List<User> searchedUsers) {
+        UserListViewAdapter adapter  = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
+        listViewMemberList.setAdapter(adapter);
 
 
     }
@@ -151,6 +151,14 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                 anim.fadeInView(cardAddMemberToNewGroup, 0, shortAnimTime);
                 anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
+            }
+        });
+
+        imageBtnSearchForUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = String.valueOf(editTextSearchForUsers.getText());
+                Toast.makeText(context, query, Toast.LENGTH_SHORT).show();
             }
         });
 

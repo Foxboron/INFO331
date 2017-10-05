@@ -348,7 +348,16 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentBottom="true"
                     />
+                <ImageButton
+                    android:id="@+id/imagebutton_search_for_user"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    style="?android:borderlessButtonStyle"
+                    android:src="@drawable/ic_search_accentcolor"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
 
+                    />
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -371,16 +380,7 @@
 
                         />
                 </android.support.design.widget.TextInputLayout>
-                <ImageButton
-                    android:id="@+id/imagebutton_search_for_user"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_search_accentcolor"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
 
-                    />
             </RelativeLayout>
 
             <ListView
