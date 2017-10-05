@@ -42,7 +42,7 @@ public class GroupProfilePage extends AppCompatActivity {
         gname = (TextView) findViewById(R.id.group_display_name);
         gname.setText(currentGroup.getName());
 
-        userList = (ExpandableListView) findViewById(R.id.exp_mem_list_grp);
+        userList = (ListView) findViewById(R.id.user_member_list);
 
         UserAdapter adapt = new UserAdapter(users, this.getApplicationContext());
         userList.setAdapter(adapt);

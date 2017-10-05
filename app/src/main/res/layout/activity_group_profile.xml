@@ -69,11 +69,21 @@
 
         </RelativeLayout>
 
-        <ExpandableListView
-            android:id="@+id/exp_mem_list_grp"
+        <TextView
+            android:id="@+id/header_member_list"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_below="@id/group_point_box" />
+            android:layout_below="@id/group_point_box"
+            android:textSize="20sp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/group_memberlist_header" />
+
+        <ListView
+            android:id="@+id/user_member_list"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_below="@id/header_member_list" />
 
     </RelativeLayout>
 </RelativeLayout>
