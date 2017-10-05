@@ -8,6 +8,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -54,6 +55,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
 
+    @BindView(R.id.add_member_list) ListView listViewMemberList;
+
 
     boolean joinGroupBtnClicked;
     boolean createGroupBtnClicked;
@@ -80,42 +83,9 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     }
 
-    private void getAllUsers() {
-
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-
-        //username:password
-        String credentials = "edd:edd";
-
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
 
-        Call<List<User>> call = apiService.users(basic);
-        call.enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
 
-                if(response.code()==200) {
-                    for(User user: response.body()) {
-                        System.out.println(user.getUsername());
-                    }
-
-                } else {
-                    System.out.println("APA: " + response.body());
-                    System.out.println("response: " + response);
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                System.out.println(t.getMessage());
-
-            }
-        });
-
-    }
 
     private void initGui() {
         shortAnimTime = anim.getShortAnimTime(context);
@@ -131,6 +101,12 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         //Sets the members search card to gone and under the screen
         anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , 0, 2000, false);
 
+        initListViewMemberList();
+
+
+    }
+
+    private void initListViewMemberList() {
 
 
 
@@ -142,7 +118,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         btnJoinGroupShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 joinGroupBtnClicked = true;
 
                 anim.fadeOutView(cardChooseAction, 0, shortAnimTime);
