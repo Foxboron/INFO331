@@ -5,17 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,9 +17,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import no.uib.info331.R;
 import no.uib.info331.util.ApiClient;
@@ -44,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private EditText editTextUsername;
     private EditText editTextPassword;
-    private View loginProgressView;
+    private View progressViewlogin;
     private View viewLoginForm;
     private Button btnUsernameSignIn;
     private Button btnRegisterAccount;
@@ -90,9 +80,9 @@ public class LoginActivity extends AppCompatActivity {
         editTextUsername = (EditText) findViewById(R.id.login_username);
         editTextPassword = (EditText) findViewById(R.id.login_password);
         btnUsernameSignIn = (Button) findViewById(R.id.user_sign_in_button);
-        btnRegisterAccount = (Button) findViewById(R.id.register_account);
+        btnRegisterAccount = (Button) findViewById(R.id.register_account_button);
         viewLoginForm = findViewById(R.id.login_form);
-        loginProgressView = findViewById(R.id.login_progress);
+        progressViewlogin = findViewById(R.id.login_progress);
 
     }
 
@@ -188,14 +178,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        loginProgressView.animate().setDuration(shortAnimTime).alpha(
+        progressViewlogin.setVisibility(show ? View.VISIBLE : View.GONE);
+        progressViewlogin.animate().setDuration(shortAnimTime).alpha(
                 show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                loginProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                progressViewlogin.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
     }
 }
-

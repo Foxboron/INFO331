@@ -71,8 +71,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="72dp"
                 android:orientation="vertical"
-                android:paddingStart="32dp"
                 android:paddingEnd="32dp"
+                android:paddingStart="32dp"
 
                 >
 
@@ -93,7 +93,8 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:focusableInTouchMode="true">
 
                     <EditText
                         android:id="@+id/login_password"
@@ -116,15 +117,15 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="192dp"
                     android:layout_height="36dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="36dp"
                     android:background="@drawable/button_colored"
                     android:padding="8dp"
                     android:text="@string/action_sign_in_short"
-                    android:textColor="#fff"
-                    android:layout_gravity="center_horizontal"/>
+                    android:textColor="#fff" />
 
                 <Button
-                    android:id="@+id/register_account"
+                    android:id="@+id/register_account_button"
                     style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -10,72 +10,79 @@ import java.util.ArrayList;
  */
 
 public class User {
-    private String username;
-    private String password;
-    private String photo;
-    private int points;
-    private ArrayList<Group> groups;
+
+
+    private int ID;
+    private String Username;
+    private String Password;
+    private String Photo;
+    private int Points;
+    private ArrayList<Group> Groups;
 
     public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+        this.Username = username;
+        this.Password = password;
     }
 
     public User(String username, String password, String photo, int points) {
-        this.username = username;
-        this.password = password;
-        this.photo = photo;
-        this.points = points;
+        this.Username = username;
+        this.Password = password;
+        this.Photo = photo;
+        this.Points = points;
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public String getUsername() {
-        return username;
+        return Username;
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.Username = username;
     }
 
     public String getPassword() {
-        return password;
+        return Password;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.Password = password;
     }
 
     public String getPhoto() {
-        return photo;
+        return Photo;
     }
 
     public void setPhoto(String photo) {
-        this.photo = photo;
+        this.Photo = photo;
     }
 
     public int getPoints() {
-        return points;
+        return Points;
     }
 
     public void setPoints(int points) {
-        this.points = points;
+        this.Points = points;
     }
 
     public ArrayList<Group> getGroups() {
-        return groups;
+        return Groups;
     }
 
     public void setGroups(ArrayList<Group> groups) {
-        this.groups = groups;
+        this.Groups = groups;
     }
 
     /**
-     * Adds a group to this users list of groups
+     * Adds a group to this users list of Groups
      * @param group The group to add
      * @return true if the group was added successfully, false otherwise
      */
     public boolean addGroup(Group group) {
-        if(!groups.contains(group)) {
-            groups.add(group);
+        if(!Groups.contains(group)) {
+            Groups.add(group);
             return true;
         }
         return false;

@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * TODO: Speak with backend and actually do changes there.
  */
 
-public class Group {
+public class    Group {
     private String name;
     private User owner;
     private int points;
