@@ -61,9 +61,9 @@ public class UserAdapter extends ArrayAdapter<User> {
             result=convertView;
         }
 
-        //Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-        //result.startAnimation(animation);
-        //lastPosition = position;
+        Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+        result.startAnimation(animation);
+        lastPosition = position;
 
         viewHolder.grpName.setText(data.getUsername());
         viewHolder.info.setTag(position);

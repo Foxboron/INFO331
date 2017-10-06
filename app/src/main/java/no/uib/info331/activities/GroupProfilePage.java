@@ -1,7 +1,10 @@
 package no.uib.info331.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -47,5 +50,13 @@ public class GroupProfilePage extends AppCompatActivity {
         UserAdapter adapt = new UserAdapter(users, this.getApplicationContext());
         userList.setAdapter(adapt);
 
+        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                User g = users.get(position);
+                Snackbar.make(view, g.getUsername(), Snackbar.LENGTH_LONG)
+                        .setAction("Redirect this action to open user profile page instead", null).show();
+            }
+        });
     }
 }
