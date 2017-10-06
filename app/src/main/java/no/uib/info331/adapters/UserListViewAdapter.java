@@ -77,7 +77,7 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
 
         Drawable imageResource = ContextCompat.getDrawable(context, R.drawable.avatar);
 
-        String url = "https://www.jamf.com/jamf-nation/img/default-avatars/generic-user-purple.png";
+        String url = "url";
         Picasso.with(context)
                 .load(url)
                 .centerCrop()
@@ -85,14 +85,17 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
                 .placeholder(imageResource)
                 .into(holder.circleImageViewUserImage);
 
-        row.setOnClickListener(new View.OnClickListener(){
+        /*row.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View arg0) {
+                System.out.println("LIST CLICK FROM ADAPTER");
 
 
 
             }
-        });
+        });*/
+
+
 
         return row;
     }

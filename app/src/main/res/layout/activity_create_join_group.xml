@@ -384,13 +384,13 @@
             </RelativeLayout>
 
             <ListView
-                android:id="@+id/add_member_list"
+                android:id="@+id/listview_add_member_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/add_member_name" />
 
             <ImageView
-                android:id="@+id/add_member_logo"
+                android:id="@+id/imageview_add_member_logo"
                 android:layout_width="140dp"
                 android:layout_height="140dp"
                 android:layout_centerHorizontal="true"
@@ -400,9 +400,10 @@
                 android:background="@drawable/ic_person_add" />
 
             <TextView
+                android:id="@+id/textview_add_member_underlogo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/add_member_logo"
+                android:layout_below="@+id/imageview_add_member_logo"
                 android:layout_centerInParent="true"
                 android:alpha="0.3"
                 android:text="@string/start_member_search" />

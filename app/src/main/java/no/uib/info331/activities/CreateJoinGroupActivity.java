@@ -1,13 +1,20 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -53,8 +60,11 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @BindView(R.id.number_of_members_added_text) TextView textViewNoOfMembersAdded;
 
     @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
-    @BindView(R.id.add_member_list) ListView listViewMemberList;
+    @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
     @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
+
+    @BindView(R.id.imageview_add_member_logo) ImageView imageViewAddMemberIcon;
+    @BindView(R.id.textview_add_member_underlogo) TextView textViewAddMemberUnderLogo;
 
 
 
@@ -68,9 +78,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     Animations anim = new Animations();
     Context context;
-    private DataManager dataManager = new DataManager();
+    DataManager dataManager = new DataManager();
 
     UserQueries userQueries = new UserQueries();
+    UserListViewAdapter userListViewAdapter;
 
 
     @Override
@@ -82,7 +93,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
         //getAllUsers();
         initGui();
-        btnClickListener();
+        listeners();
 
     }
 
@@ -106,13 +117,13 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     }
 
     private void initListViewMemberList(List<User> searchedUsers) {
-        UserListViewAdapter adapter  = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
-        listViewMemberList.setAdapter(adapter);
+        userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
+        listViewMemberList.setAdapter(userListViewAdapter);
 
 
     }
 
-    private void btnClickListener() {
+    private void listeners() {
 
 
         btnJoinGroupShow.setOnClickListener(new View.OnClickListener() {
@@ -146,11 +157,25 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addMemberLayoutBtnClicked = true;
-
-
-
                 anim.fadeInView(cardAddMemberToNewGroup, 0, shortAnimTime);
                 anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
+            }
+        });
+
+        editTextSearchForUsers.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //TODO: insert code
             }
         });
 
@@ -160,10 +185,19 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 String query = String.valueOf(editTextSearchForUsers.getText());
                 List<User> userSearch = userQueries.getUsersByStringFromDb(context, query, "edd", "edd");
                 initListViewMemberList(userSearch);
+
             }
         });
 
+        listViewMemberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                User user = userListViewAdapter.getItem(position);
+                createUserProfileDialog(user);
+            }
 
+        });
     }
     //ButterKnife magic? Yes it is
     @OnClick(R.id.accept_searched_members_button)
@@ -173,6 +207,15 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             anim.fadeOutView(cardAddMemberToNewGroup, 0, longAnimTime);
             anim.moveViewToTranslationY(cardAddMemberToNewGroup, 100, shortAnimTime, cardAddMemberToNewGroup.getHeight(), false);
         }
+    }
+
+    public void createUserProfileDialog(User user){
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(R.layout.dialog_add_member_profile)
+                .create();
+        dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
     }
 
     public void onBackPressed() {
