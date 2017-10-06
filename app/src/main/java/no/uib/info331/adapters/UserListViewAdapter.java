@@ -2,12 +2,13 @@ package no.uib.info331.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -51,18 +52,19 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
         return position;
     }
 
+    @NonNull
     @Override
     public View getView(final int position, View convertView, ViewGroup parent){
         View row = convertView;
         UserHolder holder = null;
 
         if (row == null) {
-            holder = new UserHolder(row);
-            //LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            holder = new UserHolder();
             row = inflater.inflate(textViewResourceId, parent, false);
 
+            holder.circleImageViewUserImage = (CircleImageView) row.findViewById(R.id.circleimageview_user_image);
+            holder.userName = (TextView) row.findViewById(R.id.textview_username_list);
 
-            holder.userName.setText("John Doe");
 
             row.setTag(holder);
 
@@ -71,10 +73,11 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
 
             holder = (UserHolder) row.getTag();
         }
+        holder.userName.setText(users.get(position).getUsername());
 
         Drawable imageResource = ContextCompat.getDrawable(context, R.drawable.avatar);
 
-        String url = "";
+        String url = "https://www.jamf.com/jamf-nation/img/default-avatars/generic-user-purple.png";
         Picasso.with(context)
                 .load(url)
                 .centerCrop()
@@ -95,14 +98,9 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
     }
 
 
-    public class UserHolder {
-        @BindView(R.id.circleimageview_user_image) CircleImageView circleImageViewUserImage;
-        @BindView(R.id.textview_username_list) TextView userName;
-
-        public UserHolder(View view) {
-            ButterKnife.bind(this, view);
-        }
-
+    static class UserHolder {
+        CircleImageView circleImageViewUserImage;
+        TextView userName;
     }
 
 }

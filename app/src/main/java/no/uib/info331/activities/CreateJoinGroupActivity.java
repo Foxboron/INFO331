@@ -158,7 +158,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForUsers.getText());
-                Toast.makeText(context, query, Toast.LENGTH_SHORT).show();
+                List<User> userSearch = userQueries.getUsersByStringFromDb(context, query, "edd", "edd");
+                initListViewMemberList(userSearch);
             }
         });
 
