@@ -86,11 +86,12 @@
                                 />
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="match_parent"
-                                android:id="@+id/create_group_name"
+                                android:id="@+id/textinputlayout_create_group_name"
                                 android:layout_height="wrap_content"
                                 >
 
                                 <EditText
+                                    android:id="@+id/edittext_create_group_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:hint="@string/create_group_name"
@@ -115,7 +116,7 @@
 
 
                         <RelativeLayout
-                            android:id="@+id/member_search"
+                            android:id="@+id/relativelayout_member_search"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -165,16 +166,16 @@
                             android:layout_marginBottom="4dp"
 
                             />
-                        <TextView
-                            android:id="@+id/number_of_members_added_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=""/>
+                        <ListView
+                            android:id="@+id/listview_added_members"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            />
 
 
 
                         <Button
-                            android:id="@+id/register_account_button"
+                            android:id="@+id/button_register_group_button"
                             style="?android:borderlessButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

@@ -2,13 +2,15 @@ package no.uib.info331.activities;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,7 +33,6 @@ import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.User;
 import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
-import no.uib.info331.util.DataManager;
 
 /**
  * Micromanaging af here
@@ -55,9 +57,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @BindView(R.id.show_create_group) Button btnCreateGroupShow;
     @BindView(R.id.join_search_group) EditText editTextSearchJoinGroup;
 
-    @BindView(R.id.member_search) RelativeLayout layoutBtnAddMember;
+    @BindView(R.id.edittext_create_group_name) EditText editTextCreateGroupName;
+    @BindView(R.id.relativelayout_member_search) RelativeLayout layoutBtnAddMember;
+    @BindView(R.id.listview_added_members) ListView listViewAddedMembersToGroup;
 
-    @BindView(R.id.number_of_members_added_text) TextView textViewNoOfMembersAdded;
 
     @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
     @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
@@ -65,6 +68,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.imageview_add_member_logo) ImageView imageViewAddMemberIcon;
     @BindView(R.id.textview_add_member_underlogo) TextView textViewAddMemberUnderLogo;
+
+    @BindView(R.id.button_register_group_button) Button buttonRegisterGroup;
+
+
 
 
 
@@ -78,10 +85,12 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     Animations anim = new Animations();
     Context context;
-    DataManager dataManager = new DataManager();
 
     UserQueries userQueries = new UserQueries();
-    UserListViewAdapter userListViewAdapter;
+    UserListViewAdapter searchedMembersUserListViewAdapter;
+
+    List<User> addedUsersToGroup = new ArrayList<>();
+    UserListViewAdapter addedMembersUserListAdapter;
 
 
     @Override
@@ -112,13 +121,17 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         //Sets the members search card to gone and under the screen
         anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , 0, 2000, false);
 
-        List<User> allUsers = userQueries.getUsersByStringFromDb(context, "edd", "edd", "edd");
+
+        addedMembersUserListAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, addedUsersToGroup);
+        listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
+
+
 
     }
 
     private void initListViewMemberList(List<User> searchedUsers) {
-        userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
-        listViewMemberList.setAdapter(userListViewAdapter);
+        searchedMembersUserListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
+        listViewMemberList.setAdapter(searchedMembersUserListViewAdapter);
 
 
     }
@@ -161,24 +174,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
             }
         });
-
-        editTextSearchForUsers.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //TODO: insert code
-            }
-        });
-
+        
         imageBtnSearchForUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,13 +189,49 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                User user = userListViewAdapter.getItem(position);
+                User user = searchedMembersUserListViewAdapter.getItem(position);
                 createUserProfileDialog(user);
             }
 
         });
+
+        listViewAddedMembersToGroup.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User user = addedMembersUserListAdapter.getItem(i);
+                addedMembersUserListAdapter.remove(user);
+                addedMembersUserListAdapter.notifyDataSetChanged();
+                Toast.makeText(context, "TEMPORARY WAY OF REMOVING USERS! User " + user.getUsername() + " removed", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
+
+
+
     }
-    //ButterKnife magic? Yes it is
+
+    @OnClick(R.id.button_register_group_button)
+    public void registerGroup(){
+        String groupName = editTextCreateGroupName.getText().toString();
+
+
+        StringBuilder storage = new StringBuilder();
+        //Redundant but only to show what data is to be stored in db
+        List<User> usersToAdd = addedUsersToGroup;
+        String users="";
+        if(usersToAdd.size() > 0) {
+            for (User user : usersToAdd) {
+                storage.append(user.getUsername()).append(", ");
+            }
+
+            Toast.makeText(context, "Group name: " + groupName + " Members: " + storage.toString(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "Can't make group without members.", Toast.LENGTH_LONG).show();
+
+        }
+
+    }
+
     @OnClick(R.id.accept_searched_members_button)
     public void addMemberCardDisappear(){
         if(addMemberLayoutBtnClicked){
@@ -216,6 +248,42 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         dialog.setCancelable(true);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
+
+
+        TextView textViewDialogUserName = (TextView) dialog.findViewById(R.id.dialog_textview_add_member_username);
+        textViewDialogUserName.setText(user.getUsername());
+        fabAddUserToGroup(context, user, dialog);
+
+    }
+    private void fabAddUserToGroup(final Context CONTEXT, final User USER, final AlertDialog DIALOG) {
+        FloatingActionButton fab = (FloatingActionButton) DIALOG.findViewById(R.id.fabCal);
+        if(fab != null)
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar snack = Snackbar.make(view, getResources().getString(R.string.member_added), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null);
+                    View sbView = snack.getView();
+
+                    //Set custom typeface
+                    TextView tv = (TextView) (sbView).findViewById(android.support.design.R.id.snackbar_text);
+                    Typeface font = Typeface.createFromAsset(getBaseContext().getAssets(), "fonts/roboto_thin.ttf");
+                    tv.setTypeface(font);
+                    tv.setTextSize(16);
+                    snack.show();
+
+                    //Countdown to when to start the calendar intent, this for showing user the snackbar of whats happening next
+                    new CountDownTimer(800, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {}
+                        public void onFinish() {
+                            addedMembersUserListAdapter.add(USER);
+                            addedMembersUserListAdapter.notifyDataSetChanged();
+                            DIALOG.cancel();
+                        }
+                    }.start();
+                }
+            });
     }
 
     public void onBackPressed() {

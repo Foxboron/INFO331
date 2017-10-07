@@ -125,7 +125,7 @@
                     android:textColor="#fff" />
 
                 <Button
-                    android:id="@+id/register_account_button"
+                    android:id="@+id/button_register_group_button"
                     style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

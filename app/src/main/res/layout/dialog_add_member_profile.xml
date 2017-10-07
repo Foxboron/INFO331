@@ -33,31 +33,31 @@
             >
 
             <TextView
-                android:text="Name "
-                android:fontFamily="sans-serif-thin"
+                android:id="@+id/dialog_textview_add_member_username"
+                android:text="Name"
+                android:fontFamily="sans-serif-light"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/dialog_event_title"
                 android:textSize="32sp"
 
                 />
 
             <TextView
+                android:id="@+id/dialog_event_desc"
                 android:text="Details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/dialog_event_desc"
                 android:textSize="18sp"
-                android:fontFamily="sans-serif-thin"
+                android:fontFamily="sans-serif-light"
 
                 />
             <TextView
+                android:id="@+id/dialog_event_time"
                 android:text="TEXT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/dialog_event_time"
                 android:textSize="24sp"
-                android:fontFamily="sans-serif-thin"
+                android:fontFamily="sans-serif-light"
 
                 />
         </LinearLayout>
@@ -91,7 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
-        android:src="@drawable/ic_person_add"
+        android:src="@drawable/ic_person_add_white"
         app:layout_anchor="@id/viewA"
         app:layout_anchorGravity="bottom|right|end"/>
 
