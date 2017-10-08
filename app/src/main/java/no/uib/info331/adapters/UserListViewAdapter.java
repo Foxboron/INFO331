@@ -75,7 +75,7 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
         }
         holder.userName.setText(users.get(position).getUsername());
 
-        Drawable imageResource = ContextCompat.getDrawable(context, R.drawable.avatar);
+        Drawable imageResource = ContextCompat.getDrawable(context, R.drawable.avatar2);
 
         String url = "url";
         Picasso.with(context)

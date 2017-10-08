@@ -37,6 +37,7 @@
 
     <string name="continue_members">Continue</string>
 
+    <string name="something_wrong">Something went wrong, try again…</string>
 
     <!-- Group related -->
     <string name="groups_active_list_title">Active groups</string>
@@ -45,4 +46,8 @@
     <string name="group_members">Members</string>
     <string name="group_join">Join group</string>
     <string name="group_name_filler">GROUP NAME</string>
+
+
+    <string name="points">Points</string>
+
 </resources>

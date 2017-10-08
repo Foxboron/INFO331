@@ -20,10 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.Register_User"></activity>
-        <activity android:name=".activities.CreateJoinGroupActivity"></activity>
-        <activity android:name=".activities.ActiveGroupsList"></activity>
+        <activity android:name=".activities.Register_User" />
+        <activity android:name=".activities.CreateJoinGroupActivity" />
+        <activity android:name=".activities.ActiveGroupsList" />
+        <activity android:name=".activities.UserProfileActivity"
+            android:theme="@style/AppThemeTranspStatusBar">
 
+        </activity>
     </application>
 
 </manifest>
