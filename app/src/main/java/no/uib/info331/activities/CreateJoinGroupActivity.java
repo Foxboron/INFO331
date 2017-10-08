@@ -1,6 +1,7 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -22,7 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.spec.ECField;
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,6 +124,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         //Sets the members search card to gone and under the screen
         anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , 0, 2000, false);
 
+        addedUsersToGroup.add(new User("Testie", "", "", 345));
 
         addedMembersUserListAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, addedUsersToGroup);
         listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
@@ -133,7 +136,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     private void initListViewMemberList(List<User> searchedUsers) {
         searchedMembersUserListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
         listViewMemberList.setAdapter(searchedMembersUserListViewAdapter);
-
 
     }
 
@@ -185,7 +187,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                     initListViewMemberList(userSearch);
                 } catch (Exception e){
                     e.printStackTrace();
-                    Toast.makeText(context, "Something went wrong, try again.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
 
                 }
             }
@@ -209,6 +211,23 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 addedMembersUserListAdapter.notifyDataSetChanged();
                 Toast.makeText(context, "TEMPORARY WAY OF REMOVING USERS! User " + user.getUsername() + " removed", Toast.LENGTH_LONG).show();
                 return false;
+            }
+        });
+
+
+        /*Only for testing user profile*/
+
+        listViewAddedMembersToGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User user = addedMembersUserListAdapter.getItem(i);
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(user);
+                Intent intent = new Intent(context, UserProfileActivity.class);
+                intent.putExtra("user", userStringObject);
+                startActivity(intent);
+
+
             }
         });
 
