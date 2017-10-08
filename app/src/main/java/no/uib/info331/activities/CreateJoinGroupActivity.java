@@ -1,29 +1,39 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.util.Base64;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.security.spec.ECField;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
+import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.User;
+import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
-import no.uib.info331.util.ApiClient;
-import no.uib.info331.util.ApiInterface;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Micromanaging af here
@@ -48,11 +58,22 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @BindView(R.id.show_create_group) Button btnCreateGroupShow;
     @BindView(R.id.join_search_group) EditText editTextSearchJoinGroup;
 
-    @BindView(R.id.member_search) RelativeLayout layoutBtnAddMember;
+    @BindView(R.id.edittext_create_group_name) EditText editTextCreateGroupName;
+    @BindView(R.id.relativelayout_member_search) RelativeLayout layoutBtnAddMember;
+    @BindView(R.id.listview_added_members) ListView listViewAddedMembersToGroup;
 
-    @BindView(R.id.number_of_members_added_text) TextView textViewNoOfMembersAdded;
 
     @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
+    @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
+    @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
+
+    @BindView(R.id.imageview_add_member_logo) ImageView imageViewAddMemberIcon;
+    @BindView(R.id.textview_add_member_underlogo) TextView textViewAddMemberUnderLogo;
+
+    @BindView(R.id.button_register_group_button) Button buttonRegisterGroup;
+
+
+
 
 
     boolean joinGroupBtnClicked;
@@ -66,6 +87,12 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     Animations anim = new Animations();
     Context context;
 
+    UserQueries userQueries = new UserQueries();
+    UserListViewAdapter searchedMembersUserListViewAdapter;
+
+    List<User> addedUsersToGroup = new ArrayList<>();
+    UserListViewAdapter addedMembersUserListAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,46 +103,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
         //getAllUsers();
         initGui();
-        btnClickListener();
+        listeners();
 
     }
 
-    private void getAllUsers() {
-
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-
-        //username:password
-        String credentials = "edd:edd";
-
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
-
-        Call<List<User>> call = apiService.users(basic);
-        call.enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-
-                if(response.code()==200) {
-                    for(User user: response.body()) {
-                        System.out.println(user.getUsername());
-                    }
-
-                } else {
-                    System.out.println("APA: " + response.body());
-                    System.out.println("response: " + response);
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                System.out.println(t.getMessage());
-
-            }
-        });
-
-    }
 
     private void initGui() {
         shortAnimTime = anim.getShortAnimTime(context);
@@ -132,17 +123,26 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , 0, 2000, false);
 
 
+        addedMembersUserListAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, addedUsersToGroup);
+        listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
+
 
 
     }
 
-    private void btnClickListener() {
+    private void initListViewMemberList(List<User> searchedUsers) {
+        searchedMembersUserListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
+        listViewMemberList.setAdapter(searchedMembersUserListViewAdapter);
+
+
+    }
+
+    private void listeners() {
 
 
         btnJoinGroupShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 joinGroupBtnClicked = true;
 
                 anim.fadeOutView(cardChooseAction, 0, shortAnimTime);
@@ -171,17 +171,73 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addMemberLayoutBtnClicked = true;
-
-
-
                 anim.fadeInView(cardAddMemberToNewGroup, 0, shortAnimTime);
                 anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
             }
         });
+        
+        imageBtnSearchForUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = String.valueOf(editTextSearchForUsers.getText());
+                List<User> userSearch = userQueries.getUsersByStringFromDb(context, query, "edd", "edd");
+                try {
+                    initListViewMemberList(userSearch);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(context, "Something went wrong, try again.", Toast.LENGTH_LONG).show();
+
+                }
+            }
+        });
+
+        listViewMemberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                User user = searchedMembersUserListViewAdapter.getItem(position);
+                createUserProfileDialog(user);
+            }
+
+        });
+
+        listViewAddedMembersToGroup.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User user = addedMembersUserListAdapter.getItem(i);
+                addedMembersUserListAdapter.remove(user);
+                addedMembersUserListAdapter.notifyDataSetChanged();
+                Toast.makeText(context, "TEMPORARY WAY OF REMOVING USERS! User " + user.getUsername() + " removed", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
+
 
 
     }
-    //ButterKnife magic? Yes it is
+
+    @OnClick(R.id.button_register_group_button)
+    public void registerGroup(){
+        String groupName = editTextCreateGroupName.getText().toString();
+
+
+        StringBuilder storage = new StringBuilder();
+        //Redundant but only to show what data is to be stored in db
+        List<User> usersToAdd = addedUsersToGroup;
+        String users="";
+        if(usersToAdd.size() > 0) {
+            for (User user : usersToAdd) {
+                storage.append(user.getUsername()).append(", ");
+            }
+
+            Toast.makeText(context, "Group name: " + groupName + " Members: " + storage.toString(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "Can't make group without members.", Toast.LENGTH_LONG).show();
+
+        }
+
+    }
+
     @OnClick(R.id.accept_searched_members_button)
     public void addMemberCardDisappear(){
         if(addMemberLayoutBtnClicked){
@@ -189,6 +245,51 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             anim.fadeOutView(cardAddMemberToNewGroup, 0, longAnimTime);
             anim.moveViewToTranslationY(cardAddMemberToNewGroup, 100, shortAnimTime, cardAddMemberToNewGroup.getHeight(), false);
         }
+    }
+
+    public void createUserProfileDialog(User user){
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(R.layout.dialog_add_member_profile)
+                .create();
+        dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+
+        TextView textViewDialogUserName = (TextView) dialog.findViewById(R.id.dialog_textview_add_member_username);
+        textViewDialogUserName.setText(user.getUsername());
+        fabAddUserToGroup(context, user, dialog);
+
+    }
+    private void fabAddUserToGroup(final Context CONTEXT, final User USER, final AlertDialog DIALOG) {
+        FloatingActionButton fab = (FloatingActionButton) DIALOG.findViewById(R.id.fabCal);
+        if(fab != null)
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar snack = Snackbar.make(view, getResources().getString(R.string.member_added), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null);
+                    View sbView = snack.getView();
+
+                    //Set custom typeface
+                    TextView tv = (TextView) (sbView).findViewById(android.support.design.R.id.snackbar_text);
+                    Typeface font = Typeface.createFromAsset(getBaseContext().getAssets(), "fonts/roboto_thin.ttf");
+                    tv.setTypeface(font);
+                    tv.setTextSize(16);
+                    snack.show();
+
+                    //Countdown to when to start the calendar intent, this for showing user the snackbar of whats happening next
+                    new CountDownTimer(800, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {}
+                        public void onFinish() {
+                            addedMembersUserListAdapter.add(USER);
+                            addedMembersUserListAdapter.notifyDataSetChanged();
+                            DIALOG.cancel();
+                        }
+                    }.start();
+                }
+            });
     }
 
     public void onBackPressed() {

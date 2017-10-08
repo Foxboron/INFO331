@@ -1,5 +1,6 @@
 package no.uib.info331.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -9,8 +10,7 @@ import java.util.ArrayList;
  * TODO: Speak with backend and actually do changes there.
  */
 
-public class User {
-
+public class User implements Serializable{
 
     private int ID;
     private String Username;
@@ -76,7 +76,7 @@ public class User {
     }
 
     /**
-     * Adds a group to this users list of Groups
+     * Adds a group to this allUsers list of Groups
      * @param group The group to add
      * @return true if the group was added successfully, false otherwise
      */

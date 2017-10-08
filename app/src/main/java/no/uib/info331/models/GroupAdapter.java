@@ -29,7 +29,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
     private int lastPosition = -1;
 
     public GroupAdapter(ArrayList<Group> groups, Context context){
-        super(context, R.layout.group_list_element, groups);
+        super(context, R.layout.list_element_join_group, groups);
         this.context = context;
         this.groupList = groups;
     }
@@ -48,7 +48,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
         if (convertView == null) {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.group_list_element, parent, false);
+            convertView = inflater.inflate(R.layout.list_element_join_group, parent, false);
 
             viewHolder.grpName = (TextView) convertView.findViewById(R.id.groupName);
             viewHolder.info = (ImageView) convertView.findViewById(R.id.groupIcon);

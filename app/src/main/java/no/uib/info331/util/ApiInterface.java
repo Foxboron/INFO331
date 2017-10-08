@@ -11,6 +11,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * Created by fredrik on 10/1/17.
@@ -27,7 +28,10 @@ public interface ApiInterface {
     Call<ResponseBody> register(@Field("username") String username, @Field("password") String password);
 
     @GET ("/v1/users")
-    Call<List<User>> users(@Header("Authorization") String credentials);
+    Call<List<User>> allUsers(@Header("Authorization") String credentials);
+
+    @GET ("/v1/user/{username}")
+    Call<List<User>> userSearch(@Header("Authorization") String credentials, @Path("username") String query);
 
 
 }
