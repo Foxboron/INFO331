@@ -61,7 +61,7 @@ public class UserQueries {
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
                 System.out.println(t.getMessage());
-
+                System.out.println("FAIL");
             }
         });
         Type type = new TypeToken<List<User>>(){}.getType();

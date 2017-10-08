@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,8 +181,13 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForUsers.getText());
                 List<User> userSearch = userQueries.getUsersByStringFromDb(context, query, "edd", "edd");
-                initListViewMemberList(userSearch);
+                try {
+                    initListViewMemberList(userSearch);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(context, "Something went wrong, try again.", Toast.LENGTH_LONG).show();
 
+                }
             }
         });
 
