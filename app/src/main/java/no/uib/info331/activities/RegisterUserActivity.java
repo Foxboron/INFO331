@@ -22,7 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Register_User extends AppCompatActivity {
+public class RegisterUserActivity extends AppCompatActivity {
 
     //UI references
     private EditText editTextUsername;

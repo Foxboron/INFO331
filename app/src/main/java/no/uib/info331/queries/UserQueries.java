@@ -26,9 +26,10 @@ public class UserQueries {
     ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
     DataManager dataManager = new DataManager();
 
-    public List<User> getUsersByStringFromDb(final Context context, String query, String username, String password) {
+    public List<User> getUsersByStringFromDb(final Context context, String query) {
         //username:password
-        String credentials = username + ":" + password;
+        User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        String credentials = signedInUser.getUsername() + ":" + signedInUser;
         final String prefKey = "userSearch";
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -69,12 +70,13 @@ public class UserQueries {
         return dataManager.getSavedObjectFromSharedPref(context, prefKey, type);
     }
 
-    private void getAllUsersFromDb() {
+    private void getAllUsersFromDb(final Context CONTEXT) {
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         //username:password
-        String credentials = "edd:edd";
+        User signedInUser = dataManager.getSavedObjectFromSharedPref(CONTEXT, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        String credentials = signedInUser.getUsername() + ":" + signedInUser;
 
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);

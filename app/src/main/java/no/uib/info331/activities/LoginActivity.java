@@ -19,9 +19,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import no.uib.info331.R;
+import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
-import okhttp3.ResponseBody;
+import no.uib.info331.util.DataManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -99,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Store values at the time of the login attempt.
         String username = editTextUsername.getText().toString();
-        String password = editTextPassword.getText().toString();
+        final String password = editTextPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -127,14 +128,24 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             showProgress(true);
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            Call<ResponseBody> call = apiService.login(username, password);
-            call.enqueue(new Callback<ResponseBody>() {
+            Call<User> call = apiService.login(username, password);
+            call.enqueue(new Callback<User>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<User> call, Response<User> response) {
                     if(response.code()==200) {
-                        Intent intent = new Intent(getApplicationContext(), CreateJoinGroupActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        User currentUser = response.body();
+                        currentUser.setPassword(password); //Save password in plaintext, hehe :/
+                        DataManager dataManager = new DataManager();
+                        dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", currentUser);
+                        if(currentUser.getGroups() == null || currentUser.getGroups().size()<1) {
+                            Intent intent = new Intent(getApplicationContext(), CreateJoinGroupActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
                     } else {
                         showProgress(false);
                         editTextPassword.setError(getString(R.string.error_incorrect_password));
@@ -144,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<User> call, Throwable t) {
                     showProgress(false);
                     btnUsernameSignIn.setError(getString(R.string.error_register));
                     btnUsernameSignIn.requestFocus();
@@ -155,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
-        Intent intent = new Intent(getApplicationContext(), Register_User.class);
+        Intent intent = new Intent(getApplicationContext(), RegisterUserActivity.class);
         startActivity(intent);
     }
 
