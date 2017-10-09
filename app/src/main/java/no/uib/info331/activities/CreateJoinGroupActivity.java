@@ -182,7 +182,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForUsers.getText());
-                List<User> userSearch = userQueries.getUsersByStringFromDb(context, query, "edd", "edd");
+                List<User> userSearch = userQueries.getUsersByStringFromDb(context, query);
                 try {
                     initListViewMemberList(userSearch);
                 } catch (Exception e){

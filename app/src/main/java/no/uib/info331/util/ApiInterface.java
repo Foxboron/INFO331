@@ -21,7 +21,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("/login")
-    Call<ResponseBody> login(@Field("username") String username, @Field("password") String password);
+    Call<User> login(@Field("username") String username, @Field("password") String password);
 
     @FormUrlEncoded
     @POST("/register")
