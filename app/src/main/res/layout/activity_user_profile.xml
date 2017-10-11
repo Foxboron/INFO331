@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context="no.uib.info331.activities.UserProfileActivity"
     android:clipToPadding="false"
+
     >
 
 
@@ -58,6 +59,8 @@
                     app:angle="12"
                     app:gravity="right"
                     android:elevation="1dp"
+                    android:tintMode="add"
+                    app:tint="@color/colorPrimary"
                     />
 
                 <de.hdodenhof.circleimageview.CircleImageView

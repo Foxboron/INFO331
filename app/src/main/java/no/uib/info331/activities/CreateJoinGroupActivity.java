@@ -134,7 +134,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         anim.fadeInView(textViewTitle, 200, shortAnimTime);
 
         //Sets the members search card to gone and under the screen
-        anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , 0, 2000, false);
+        anim.moveViewToTranslationY(cardAddMemberToNewGroup, 0 , 0, 5000, false);
 
         //addedUsersToGroup.add(new User("Testie", "", "", 345));
 
