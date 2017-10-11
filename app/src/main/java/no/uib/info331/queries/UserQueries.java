@@ -29,13 +29,13 @@ public class UserQueries {
     public List<User> getUsersByStringFromDb(final Context context, String query) {
         //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
-        String credentials = signedInUser.getUsername() + ":" + signedInUser;
-        final String prefKey = "userSearch";
+        String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
+        final String prefKey = "searchUserByUsername";
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
 
-        Call<List<User>> call = apiService.userSearch(basic, query);
+        Call<List<User>> call = apiService.searchUserByUsername(basic, query);
         call.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
@@ -44,7 +44,7 @@ public class UserQueries {
                 System.out.println("response code: " + response.code());
 
                 if(response.code()==200) {
-                    System.out.println(response.body());
+                    //System.out.println(response.body());
 
                     for(User user: response.body()) {
                         allUsers.add(user);
@@ -82,7 +82,7 @@ public class UserQueries {
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
 
-        Call<List<User>> call = apiService.allUsers(basic);
+        Call<List<User>> call = apiService.getAllUsers(basic);
         call.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {

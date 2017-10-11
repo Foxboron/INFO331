@@ -64,7 +64,7 @@
                             android:id="@+id/create_group_card_members"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/members"
+                            android:text="@string/users"
                             android:textSize="18sp"
                             android:fontFamily="sans-serif-light"
                             />

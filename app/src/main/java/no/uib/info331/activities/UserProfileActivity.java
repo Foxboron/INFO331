@@ -89,7 +89,7 @@ public class UserProfileActivity extends AppCompatActivity {
             // and get whatever type user account id is
             return user;
         } else {
-            user = new User("Not a valid user", "nan");
+            user = new User("Not a valid user", "nan", "nan", 0);
             return user;
         }
     }

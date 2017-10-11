@@ -48,7 +48,8 @@ public class ActiveGroupsList extends AppCompatActivity {
         groupNameList = new String[100];
         for(int i=0; i < 100; i++){
             String goodName = getString(R.string.group_name_filler) + Integer.toString(i);
-            Group g = new Group(goodName, user1, 10);
+            Group g = new Group(goodName, user1);
+            g.setPoints(i+10);
             groups.add(g);
         }
 

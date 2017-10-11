@@ -1,5 +1,7 @@
 package no.uib.info331.models;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 
 /**
@@ -10,54 +12,66 @@ import java.util.ArrayList;
  */
 
 public class    Group {
-    private String name;
-    private User owner;
-    private int points;
-    private ArrayList<User> members;
+    private int ID;
+    private String Name;
+    private User Owner;
+    private int Points;
+    private ArrayList<User> Users;
 
-    public Group(String name, User owner, int points) {
-        this.name = name;
-        this.owner = owner;
-        this.points = points;
-        members = new ArrayList<>();
+    public Group(int ID, String name, User owner, int points, ArrayList<User> Users) {
+        this.ID = ID;
+        this.Name = name;
+        this.Owner = owner;
+        this.Points = points;
+        this.Users = Users;
+    }
+
+    public Group(String name, User owner) {
+        this.Name = name;
+        this.Owner = owner;
+        this.Users = new ArrayList<>();
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     public User getOwner() {
-        return owner;
+        return Owner;
     }
 
     public void setOwner(User owner) {
-        this.owner = owner;
+        this.Owner = owner;
     }
 
     public int getPoints() {
-        return points;
+        return Points;
     }
 
     public void setPoints(int points) {
-        this.points = points;
+        this.Points = points;
     }
 
-    public ArrayList<User> getMembers() {
-        return members;
+    public ArrayList<User> getUsers() {
+        return Users;
     }
 
-    public void setMembers(ArrayList<User> members) {
-        this.members = members;
+    public void setUsers(ArrayList<User> users) {
+        this.Users = users;
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public boolean addMember(User member) {
         if(member!=null) {
-            if (!members.contains(member)) {
-                members.add(member);
+            if (!Users.contains(member)) {
+                Users.add(member);
                 return true;
             }
             return false;
@@ -65,10 +79,25 @@ public class    Group {
     }
 
     public boolean deleteMember(User member) {
-        if(members.contains(member)) {
-            members.remove(member);
+        if(Users.contains(member)) {
+            Users.remove(member);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        ArrayList<String> membersOfGroup = new ArrayList<>();
+        for (User member : Users) {
+            membersOfGroup.add(member.getUsername());
+        }
+        return "Group{" +
+                "ID=" + ID +
+                ", Name='" + Name + '\'' +
+                ", Owner=" + Owner +
+                ", Points=" + Points +
+                ", Users=" + TextUtils.join(",", membersOfGroup) +
+                '}';
     }
 }
