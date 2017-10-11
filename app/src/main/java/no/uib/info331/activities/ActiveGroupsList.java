@@ -11,14 +11,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import no.uib.info331.R;
+import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
-import no.uib.info331.models.GroupAdapter;
 import no.uib.info331.models.User;
 
 /**
  * Created by Per-Niklas Longberg on 02.10.2017.
  *
- * Activity that displays the list of groups using the custom adapter GroupAdapter.class
+ * Activity that displays the list of groups using the custom adapter GroupListViewAdapter.class
  *
  */
 
@@ -72,7 +72,7 @@ public class ActiveGroupsList extends AppCompatActivity {
 
         // End of test code.
 
-        GroupAdapter adapter = new GroupAdapter(groups, getApplicationContext());
+        GroupListViewAdapter adapter = new GroupListViewAdapter(groups, getApplicationContext());
         groupList.setAdapter(adapter);
 
         // This method will be altered to start the activities of each groups own group page.
