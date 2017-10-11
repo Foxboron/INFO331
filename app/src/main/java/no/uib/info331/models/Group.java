@@ -18,7 +18,7 @@ public class    Group {
     private int Points;
     private ArrayList<User> Users;
 
-    public Group(int ID, String name, User owner, int points, ArrayList<User> Users) {
+    public Group(String name, User owner, int points, ArrayList<User> Users) {
         this.ID = ID;
         this.Name = name;
         this.Owner = owner;

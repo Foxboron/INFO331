@@ -16,10 +16,12 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import no.uib.info331.R;
 import no.uib.info331.models.Group;
+import no.uib.info331.models.User;
 
 /**
  * Created by Per-Niklas Longberg on 02.10.2017.
@@ -30,38 +32,44 @@ import no.uib.info331.models.Group;
 
 public class GroupListViewAdapter extends ArrayAdapter<Group> {
 
+    private final int textViewResourceId;
     private Context context;
-    private ArrayList<Group> groupList;
+    private List<Group> groupList;
     private int lastPosition = -1;
+    LayoutInflater inflater;
 
-    public GroupListViewAdapter(ArrayList<Group> groups, Context context){
+    public GroupListViewAdapter(Context context, int textViewResourceId, List<Group> groups){
         super(context, R.layout.list_element_join_group, groups);
         this.context = context;
         this.groupList = groups;
+        inflater = LayoutInflater.from(context);
+        this.textViewResourceId = textViewResourceId;
+
     }
 
 
     @NonNull
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        Group data = groupList.get(position);
         View row = convertView;
+        Group data = groupList.get(position);
 
         GroupHolder groupHolder = null;
         final View result;
 
-        if (convertView == null) {
+        if (row == null) {
+
             groupHolder = new GroupHolder();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.list_element_join_group, parent, false);
+            inflater = LayoutInflater.from(getContext());
+            row = inflater.inflate(textViewResourceId, parent, false);
 
             groupHolder.circleImageViewGroupIcon = (CircleImageView) row.findViewById(R.id.circleimageview_group_image);
             groupHolder.textViewGroupName = (TextView) row.findViewById(R.id.textview_group_name);
 
-            result = convertView;
-            convertView.setTag(groupHolder);
+            result = row;
+            row.setTag(groupHolder);
         } else {
-            groupHolder = (GroupHolder) convertView.getTag();
-            result = convertView;
+            groupHolder = (GroupHolder) row.getTag();
+            result = row;
         }
 
         Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
@@ -80,7 +88,7 @@ public class GroupListViewAdapter extends ArrayAdapter<Group> {
                 .into(groupHolder.circleImageViewGroupIcon);
 
 
-        return convertView;
+        return row;
     }
 
     private static class GroupHolder {

@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import no.uib.info331.R;
 import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.TextView;
 import no.uib.info331.models.User;
 
 
@@ -48,6 +52,14 @@ public class ActiveGroupsList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_groups);
+/*
+        //groups = database.get(list_of_groups); haha
+        ListView groupList = (ListView) findViewById(R.id.active_groups_list);
+
+
+        //ArrayAdapter<Group> adapter = new ArrayAdapter<>(this.getApplicationContext(), R.layout.activity_active_groups, R.id.active_groups_list, groups);
+        //groupList.setAdapter(adapter);
+
 
         //groups = database.get(list_of_groups); Placeholder code - need DB endpoint
 
@@ -98,6 +110,6 @@ public class ActiveGroupsList extends AppCompatActivity {
                 Snackbar.make(view, g.getName(), Snackbar.LENGTH_LONG)
                         .setAction("Feature to be implemented", null).show();
             }
-        });
+        });*/
     }
 }

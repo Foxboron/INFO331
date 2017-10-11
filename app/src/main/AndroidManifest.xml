@@ -17,12 +17,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.RegisterUserActivity"/>
+        <activity android:name=".activities.CreateJoinGroupActivity"/>
+        <activity android:name=".activities.GroupProfilePage"/>
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name">
         </activity>
-        <activity android:name=".activities.RegisterUserActivity" />
-        <activity android:name=".activities.CreateJoinGroupActivity" />
         <activity android:name=".activities.ActiveGroupsList" />
         <activity
             android:name=".activities.UserProfileActivity"
