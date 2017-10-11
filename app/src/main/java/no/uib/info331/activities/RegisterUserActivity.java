@@ -17,6 +17,7 @@ import no.uib.info331.R;
 import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
+import no.uib.info331.util.DataManager;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,10 +64,9 @@ public class RegisterUserActivity extends AppCompatActivity {
      * Registers a new user.
      */
     public void registerUser() {
-        //TODO: Add the magic here.
         String username = editTextUsername.getText().toString();
-        String password = editTextPassword.getText().toString();
-        String repeatPassword = editTextRepeatPassword.getText().toString();
+        final String password = editTextPassword.getText().toString();
+        final String repeatPassword = editTextRepeatPassword.getText().toString();
 
         // Reset errors.
         editTextUsername.setError(null);
@@ -99,15 +99,16 @@ public class RegisterUserActivity extends AppCompatActivity {
         } else {
             showProgress(true);
 
-            User user = new User(username, password);
-
-
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            Call<ResponseBody> call = apiService.register(username, password);
-            call.enqueue(new Callback<ResponseBody>() {
+            Call<User> call = apiService.register(username, password);
+            call.enqueue(new Callback<User>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<User> call, Response<User> response) {
                     if(response.code()==200){
+                        User currentUser = response.body();
+                        currentUser.setPassword(password);
+                        DataManager dataManager = new DataManager();
+                        dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", currentUser);
                         Intent intent = new Intent(getApplicationContext(), CreateJoinGroupActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -120,7 +121,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<User> call, Throwable t) {
                     showProgress(false);
                     btnRegisterUser.setError(getString(R.string.error_register));
                     btnRegisterUser.requestFocus();

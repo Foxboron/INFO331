@@ -7,11 +7,14 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +37,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
 import no.uib.info331.adapters.UserListViewAdapter;
+import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
+import no.uib.info331.util.ApiClient;
+import no.uib.info331.util.ApiInterface;
+import no.uib.info331.util.DataManager;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Micromanaging af here
@@ -92,7 +104,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     UserQueries userQueries = new UserQueries();
     UserListViewAdapter searchedMembersUserListViewAdapter;
 
-    List<User> addedUsersToGroup = new ArrayList<>();
+    ArrayList<User> addedUsersToGroup = new ArrayList<>();
     UserListViewAdapter addedMembersUserListAdapter;
 
 
@@ -124,7 +136,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         //Sets the members search card to gone and under the screen
         anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , 0, 2000, false);
 
-        addedUsersToGroup.add(new User("Testie", "", "", 345));
+        //addedUsersToGroup.add(new User("Testie", "", "", 345));
 
         addedMembersUserListAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, addedUsersToGroup);
         listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
@@ -238,21 +250,58 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @OnClick(R.id.button_register_group_button)
     public void registerGroup(){
         String groupName = editTextCreateGroupName.getText().toString();
+        DataManager dataManager = new DataManager();
+        final User currentUser = dataManager.getSavedObjectFromSharedPref(getApplicationContext(), "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        final String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+        final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
+        Group group = new Group(groupName, currentUser);
+        final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Call<Group> call = apiService.createGroup(basic, group.getName());
 
-        StringBuilder storage = new StringBuilder();
-        //Redundant but only to show what data is to be stored in db
-        List<User> usersToAdd = addedUsersToGroup;
-        String users="";
-        if(usersToAdd.size() > 0) {
-            for (User user : usersToAdd) {
-                storage.append(user.getUsername()).append(", ");
+        final boolean[] error = {false};
+        call.enqueue(new Callback<Group>() {
+            @Override
+            public void onResponse(Call<Group> call, Response<Group> response) {
+                if(response.code()==200) {
+                    final Group registeredGroup = response.body();
+                    for (User member : addedUsersToGroup) {
+                        Call<ResponseBody> addUserCall = apiService.addUserToGroup(basic, registeredGroup.getID(), member.getID());
+                        addUserCall.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                System.out.println(response);
+                                if(response.code()!=200) {
+                                    error[0] = true;
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                error[0] = true;
+                                t.printStackTrace();
+
+                            }
+                        });
+
+                    }
+                }
+
             }
 
-            Toast.makeText(context, "Group name: " + groupName + " Members: " + storage.toString(), Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(context, "Can't make group without members.", Toast.LENGTH_LONG).show();
+            @Override
+            public void onFailure(Call<Group> call, Throwable t) {
+                error[0] = true;
+                t.printStackTrace();
 
+            }
+        });
+        if(!error[0]){
+            Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
         }
 
     }

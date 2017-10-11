@@ -1,5 +1,7 @@
 package no.uib.info331.models;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -19,12 +21,15 @@ public class User implements Serializable{
     private int Points;
     private ArrayList<Group> Groups;
 
-    public User(String username, String password) {
+    public User(String username, String password, String photo, int points) {
         this.Username = username;
         this.Password = password;
+        this.Photo = photo;
+        this.Points = points;
     }
 
-    public User(String username, String password, String photo, int points) {
+    public User(int ID, String username, String password, String photo, int points) {
+        this.ID = ID;
         this.Username = username;
         this.Password = password;
         this.Photo = photo;
@@ -76,7 +81,7 @@ public class User implements Serializable{
     }
 
     /**
-     * Adds a group to this allUsers list of Groups
+     * Adds a group to this getAllUsers list of Groups
      * @param group The group to add
      * @return true if the group was added successfully, false otherwise
      */
@@ -86,5 +91,28 @@ public class User implements Serializable{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        String groupNamesString = "";
+        if(Groups ==null){
+            groupNamesString = "No Groups";
+        }else {
+            ArrayList<String> groupNames = new ArrayList<>();
+            for (Group group : Groups) {
+                groupNames.add(group.getName());
+            }
+            groupNamesString = TextUtils.join(",", groupNames);
+        }
+
+        return "User{" +
+                "ID=" + ID +
+                ", Username='" + Username + '\'' +
+                ", Password='" + Password + '\'' +
+                ", Photo='" + Photo + '\'' +
+                ", Points=" + Points +
+                ", Groups=" + groupNamesString +
+                '}';
     }
 }
