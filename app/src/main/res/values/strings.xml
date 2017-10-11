@@ -40,6 +40,7 @@
     <string name="something_wrong">Something went wrong, try again…</string>
 
     <!-- Group related -->
+    <string name="groups">Groups</string>
     <string name="groups_active_list_title">Active groups</string>
     <string name="my_groups">My groups</string>
     <string name="image_description">This image needs a description</string>
@@ -49,5 +50,18 @@
 
 
     <string name="points">Points</string>
+
+<!-- Drawer -->
+    <string name="drawer_join_create_group">Join or create a group</string>
+    <string name="drawer_your_groups">Your groups</string>
+    <string name="drawer_temporary_log_out">Log out</string>
+    <string name="drawer_settings">Settings</string>
+
+    <!--Dashboard-->
+    <string name="dashboard">Dashboard</string>
+    <string name="latest_activity">Latest activity</string>
+    <string name="see_more">See more</string>
+
+
 
 </resources>

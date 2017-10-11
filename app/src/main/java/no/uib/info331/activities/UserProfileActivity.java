@@ -13,10 +13,10 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.intrusoft.squint.DiagonalView;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +30,7 @@ public class UserProfileActivity extends AppCompatActivity {
     Context context;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.diagonalview_profile) DiagonalView diagonalViewProfile;
     @BindView(R.id.toolbar_buildselect_title) TextView toolbarTitle;
     @BindView(R.id.circleimageview_user_profile_image) CircleImageView circleImageViewProfileImage;
     @BindView(R.id.textview_user_profile_points) TextView textViewUserPoints;
@@ -46,20 +47,33 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void initGui() {
         initToolbar();
-        loadImage();
-
+        loadCoverPicture();
+        loadProfilePicture();
         textViewUserPoints.setText(Integer.toString(user.getPoints()) + " " + getResources().getString(R.string.points).toLowerCase());
 
     }
 
-    private void loadImage() {
+    private void loadCoverPicture() {
+
+        int imgCode = 1 + (int)(Math.random() * ((6 - 1) + 1));
+        String url = "http://pires.top/img/info331/cover-" + imgCode + ".jpg";
+        Picasso.with(context)
+                .load(url)
+                .centerCrop()
+                .fit()
+                .into(diagonalViewProfile);
+    }
+
+    private void loadProfilePicture() {
         Drawable imageResource = ContextCompat.getDrawable(context, R.drawable.avatar2);
 
+        int imgCode = 1;
         String url = "url";
         Picasso.with(context)
                 .load(url)
                 .centerCrop()
                 .fit()
+                .noFade()
                 .placeholder(imageResource)
                 .into(circleImageViewProfileImage);
     }
