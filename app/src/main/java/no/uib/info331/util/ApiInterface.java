@@ -33,8 +33,11 @@ public interface ApiInterface {
     @GET ("/v1/users")
     Call<List<User>> getAllUsers(@Header("Authorization") String credentials);
 
-    @GET ("/v1/search/{username}")
+    @GET ("/v1/search/user/{username}")
     Call<List<User>> searchUserByUsername(@Header("Authorization") String credentials, @Path("username") String query);
+
+    @GET ("/v1/search/group/{groupname}")
+    Call<List<User>> searchGroupByName(@Header("Authorization") String credentials, @Path("groupname") String query);
 
     @GET ("/v1/user/{id}")
     Call<User> getUserById(@Header("Authorization") String credentials, @Path("id") int id);
