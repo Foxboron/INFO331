@@ -5,8 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +29,13 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
+import java.util.List;
+
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import no.uib.info331.R;
+import no.uib.info331.adapters.GroupListViewAdapter;
+import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.DataManager;
@@ -35,9 +44,12 @@ import no.uib.info331.util.DataManager;
 public class DashboardActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.listview_dashboard_user_groups) ListView listViewGroupList;
+    @BindView(R.id.scrollview_dashboard) ScrollView scrollViewDashboard;
+
     TextView toolbarTitle;
 
-     ImageButton btnHamburgerMenu;
+    ImageButton btnHamburgerMenu;
     TextView textViewUserPoints;
 
     DataManager dataManager = new DataManager();
@@ -47,11 +59,13 @@ public class DashboardActivity extends AppCompatActivity {
     private AccountHeader headerResult = null;
     private Drawer result;
     private User user;
+    private GroupListViewAdapter userGroupsListViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        ButterKnife.bind(this);
         context = getApplicationContext();
         user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
 
@@ -67,6 +81,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         initToolbar();
         initDrawer();
+        initListViewGroupList(user.getGroups());
         initListeners();
 
         textViewUserPoints.setText(Integer.toString(user.getPoints()) + " " + getResources().getString(R.string.points).toLowerCase());
@@ -81,6 +96,31 @@ public class DashboardActivity extends AppCompatActivity {
                 result.openDrawer();
             }
         });
+
+        listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Group group = userGroupsListViewAdapter.getItem(i);
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(group);
+                Intent intent = new Intent(context, GroupProfileActivity.class);
+                intent.putExtra("group", userStringObject);
+                startActivity(intent);
+
+
+            }
+        });
+
+        listViewGroupList.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                scrollViewDashboard.requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
     }
 
     private void initDrawer() {
@@ -118,7 +158,7 @@ public class DashboardActivity extends AppCompatActivity {
                         new SecondaryDrawerItem().withName(R.string.drawer_join_create_group).withIcon(R.drawable.ic_group).withSelectable(false).withIdentifier(1),
                         new DividerDrawerItem()
 
-                        )
+                )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -126,7 +166,7 @@ public class DashboardActivity extends AppCompatActivity {
                         switch((int) drawerItem.getIdentifier()){
                             case 0:
                                 Toast.makeText(context, "My groups activity, TBD", Toast.LENGTH_SHORT).show();
-                            break;
+                                break;
 
                             case 1:
 
@@ -157,11 +197,18 @@ public class DashboardActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
-            toolbarTitle.setText("");
+            toolbarTitle.setText(getResources().getString(R.string.dashboard));
         }
     }
+    private void initListViewGroupList(List<Group> userGroups) {
+        userGroupsListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, userGroups);
+        listViewGroupList.setAdapter(userGroupsListViewAdapter);
+
+    }
+
+
 
 
 
