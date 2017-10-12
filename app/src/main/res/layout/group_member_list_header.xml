@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:text="@string/group_memberlist_header"
+        android:text="@string/groups"
         android:textSize="17sp"
         android:textColor="@color/cardview_light_background" />
 

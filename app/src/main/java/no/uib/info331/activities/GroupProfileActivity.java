@@ -61,7 +61,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         }
         users.add(u);
 
-        currentGroup = new Group("Groupname haha", u, 100, new ArrayList<User>());
+        currentGroup = new Group(99999, "Groupname haha", u, 100, new ArrayList<User>());
         points = (TextView) findViewById(R.id.group_points);
         points.setText(Integer.toString(currentGroup.getPoints()));
         gname = (TextView) findViewById(R.id.group_display_name);
