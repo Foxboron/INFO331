@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="no.uib.info331.activities.UserProfileActivity"
+    android:clipToPadding="false"
+
+    >
+    <!-- Has to stay outside  the content relativelayout-->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_group_profile"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/shape_background_toolbar_translucent"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        android:elevation="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Groupname"
+            android:id="@+id/textview_group_profile_toolbar_title"
+            android:fontFamily="sans-serif-light"
+            android:textSize="24sp"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:textColor="@android:color/white"
+            />
+    </android.support.v7.widget.Toolbar>
+
+    <!--Content-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary"
+        android:weightSum="1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/group_profile_pic"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+
+                android:background="@drawable/login_splash"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/cardview_light_background"
+             >
+
+            <TextView
+                android:id="@+id/group_display_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/groups"
+                android:textSize="35sp"
+                android:textColor="@color/colorNavBar"
+                android:textAllCaps="true"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp" />
+
+            <LinearLayout
+                android:id="@+id/group_util"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/group_display_name"
+                android:layout_centerHorizontal="true">
+
+                <RelativeLayout
+                    android:id="@+id/group_point_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="start"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    android:background="@color/colorPrimaryDark"
+                    >
+
+                    <TextView
+                        android:id="@+id/pts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/points"
+                        android:textSize="15sp"
+                        android:textColor="#FFF" />
+
+                    <TextView
+                        android:id="@+id/group_points"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100"
+                        android:layout_toEndOf="@id/pts"
+                        android:layout_marginStart="5dp"
+                        android:textColor="#FFF" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/join_group_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginStart="10dp"
+                    android:gravity="end"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    android:background="@color/colorAccent">
+
+                    <Button
+                        android:id="@+id/join_g_b"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_join_group"
+                        android:background="@color/colorAccent"
+                        android:textColor="@color/cardview_light_background"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/header_member_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/group_util"
+                android:textSize="20sp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/group_members" />
+
+            <ListView
+                android:id="@+id/user_member_list"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_below="@id/header_member_list" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

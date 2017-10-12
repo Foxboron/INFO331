@@ -7,14 +7,12 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -36,9 +34,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
+import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
+import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.ApiClient;
@@ -70,12 +70,14 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @BindView(R.id.show_join_group) Button btnJoinGroupShow;
 
     @BindView(R.id.show_create_group) Button btnCreateGroupShow;
-    @BindView(R.id.join_search_group) EditText editTextSearchJoinGroup;
 
     @BindView(R.id.edittext_create_group_name) EditText editTextCreateGroupName;
     @BindView(R.id.relativelayout_member_search) RelativeLayout layoutBtnAddMember;
     @BindView(R.id.listview_added_members) ListView listViewAddedMembersToGroup;
 
+    @BindView(R.id.edittext_search_for_groups) EditText editTextSearchForGroups;
+    @BindView(R.id.listview_add_group_list) ListView listViewGroupList;
+    @BindView(R.id.imagebutton_search_for_group) ImageButton imageBtnSearchForGroups;
 
     @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
     @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
@@ -103,9 +105,11 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     UserQueries userQueries = new UserQueries();
     UserListViewAdapter searchedMembersUserListViewAdapter;
+    GroupListViewAdapter searchedGroupListViewAdapter;
 
     ArrayList<User> addedUsersToGroup = new ArrayList<>();
     UserListViewAdapter addedMembersUserListAdapter;
+    GroupQueries groupQueries = new GroupQueries();
 
 
     @Override
@@ -148,6 +152,11 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     private void initListViewMemberList(List<User> searchedUsers) {
         searchedMembersUserListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
         listViewMemberList.setAdapter(searchedMembersUserListViewAdapter);
+
+    }
+    private void initListViewGroupList(List<Group> searchedGroups) {
+        searchedGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
+        listViewGroupList.setAdapter(searchedGroupListViewAdapter);
 
     }
 
@@ -202,6 +211,35 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                     Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
 
                 }
+            }
+        });
+
+        imageBtnSearchForGroups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = String.valueOf(editTextSearchForGroups.getText());
+                List<Group> groupSearch = groupQueries.getGroupsByStringFromDb(context, query);
+                try {
+                    initListViewGroupList(groupSearch);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+
+                }
+            }
+        });
+
+        listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Group group = searchedGroupListViewAdapter.getItem(i);
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(group);
+                Intent intent = new Intent(context, GroupProfileActivity.class);
+                intent.putExtra("group", userStringObject);
+                startActivity(intent);
+
+
             }
         });
 
@@ -395,8 +433,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
 
     }
-
-
 
 
 }

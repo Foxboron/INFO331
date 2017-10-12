@@ -2,6 +2,7 @@ package no.uib.info331.models;
 
 import android.text.TextUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * TODO: Speak with backend and actually do changes there.
  */
 
-public class    Group {
+public class Group implements Serializable{
     private int ID;
     private String Name;
     private User Owner;
