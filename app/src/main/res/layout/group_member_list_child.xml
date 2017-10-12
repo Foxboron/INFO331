@@ -23,7 +23,7 @@
         android:id="@+id/group_member_list_username"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:text="@string/group_name"
+        android:text="@string/groups"
         android:textSize="17sp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
