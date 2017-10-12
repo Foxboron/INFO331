@@ -8,7 +8,6 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +17,6 @@ import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,9 +24,9 @@ import retrofit2.Response;
 public class RegisterUserActivity extends AppCompatActivity {
 
     //UI references
-    private EditText editTextUsername;
-    private EditText editTextPassword;
-    private EditText editTextRepeatPassword;
+    private EditText editTextRegisterUsername;
+    private EditText editTextRegisterPassword;
+    private EditText editTextRegisterRepeatPassword;
     private Button btnRegisterUser;
     private View registerProgressView;
     private View viewRegisterForm;
@@ -42,9 +40,9 @@ public class RegisterUserActivity extends AppCompatActivity {
     }
 
     private void initGUI() {
-        editTextUsername = (EditText) findViewById(R.id.register_username);
-        editTextPassword = (EditText) findViewById(R.id.password_register);
-        editTextRepeatPassword = (EditText) findViewById(R.id.repeat_password_register);
+        editTextRegisterUsername = (EditText) findViewById(R.id.register_username);
+        editTextRegisterPassword = (EditText) findViewById(R.id.password_register);
+        editTextRegisterRepeatPassword = (EditText) findViewById(R.id.repeat_password_register);
         btnRegisterUser = (Button) findViewById(R.id.register_button);
         registerProgressView = findViewById(R.id.register_progress);
         viewRegisterForm = findViewById(R.id.register_form);
@@ -64,33 +62,33 @@ public class RegisterUserActivity extends AppCompatActivity {
      * Registers a new user.
      */
     public void registerUser() {
-        String username = editTextUsername.getText().toString();
-        final String password = editTextPassword.getText().toString();
-        final String repeatPassword = editTextRepeatPassword.getText().toString();
+        String username = editTextRegisterUsername.getText().toString();
+        final String password = editTextRegisterPassword.getText().toString();
+        final String repeatPassword = editTextRegisterRepeatPassword.getText().toString();
 
         // Reset errors.
-        editTextUsername.setError(null);
-        editTextPassword.setError(null);
-        editTextRepeatPassword.setError(null);
+        editTextRegisterUsername.setError(null);
+        editTextRegisterPassword.setError(null);
+        editTextRegisterRepeatPassword.setError(null);
 
         boolean cancel = false;
         View focusView = null;
 
         if(TextUtils.isEmpty(username)) {
-            editTextUsername.setError(getString(R.string.error_field_required));
-            focusView = editTextUsername;
+            editTextRegisterUsername.setError(getString(R.string.error_field_required));
+            focusView = editTextRegisterUsername;
             cancel = true;
         } else if(TextUtils.isEmpty(password)) {
-            editTextPassword.setError(getString(R.string.error_field_required));
-            focusView = editTextPassword;
+            editTextRegisterPassword.setError(getString(R.string.error_field_required));
+            focusView = editTextRegisterPassword;
             cancel = true;
         } else if (TextUtils.isEmpty(repeatPassword)) {
-            editTextRepeatPassword.setError(getString(R.string.error_field_required));
-            focusView = editTextRepeatPassword;
+            editTextRegisterRepeatPassword.setError(getString(R.string.error_field_required));
+            focusView = editTextRegisterRepeatPassword;
             cancel = true;
         } else if (!password.equals(repeatPassword)) {
-            editTextRepeatPassword.setError(getString(R.string.error_password_match));
-            focusView = editTextRepeatPassword;
+            editTextRegisterRepeatPassword.setError(getString(R.string.error_password_match));
+            focusView = editTextRegisterRepeatPassword;
             cancel = true;
         }
 
@@ -115,8 +113,8 @@ public class RegisterUserActivity extends AppCompatActivity {
 
                     } else {
                         showProgress(false);
-                        editTextUsername.setError(getString(R.string.error_username_exists));
-                        editTextUsername.requestFocus();
+                        editTextRegisterUsername.setError(getString(R.string.error_username_exists));
+                        editTextRegisterUsername.requestFocus();
                     }
                 }
 

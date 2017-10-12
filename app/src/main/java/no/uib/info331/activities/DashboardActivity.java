@@ -137,6 +137,7 @@ public class DashboardActivity extends AppCompatActivity {
                             case 98:
                                 dataManager.deleteSavedObjectFromSharedPref(context, "currentlySignedInUser");
                                 intent = new Intent(context, LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 break;
                             case 99:
