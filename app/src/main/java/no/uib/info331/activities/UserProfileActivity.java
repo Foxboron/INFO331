@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import no.uib.info331.R;
 import no.uib.info331.models.User;
+import no.uib.info331.util.LayoutAdjustments;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -34,6 +35,8 @@ public class UserProfileActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_buildselect_title) TextView toolbarTitle;
     @BindView(R.id.circleimageview_user_profile_image) CircleImageView circleImageViewProfileImage;
     @BindView(R.id.textview_user_profile_points) TextView textViewUserPoints;
+
+    LayoutAdjustments layoutAdj = new LayoutAdjustments();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +88,7 @@ public class UserProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             toolbarTitle.setText(user.getUsername());
-            setMargins(toolbar, 0, getStatusBarHeight(), 0, 0);
+            layoutAdj.setMargins(toolbar, 0, layoutAdj.getStatusBarHeight(getResources()), 0, 0);
         }
     }
 
@@ -108,23 +111,6 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
-
-    public static void setMargins (View v, int left, int top, int right, int bottom) {
-        if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-            p.setMargins(left, top, right, bottom);
-            v.requestLayout();
-        }
-    }
-
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

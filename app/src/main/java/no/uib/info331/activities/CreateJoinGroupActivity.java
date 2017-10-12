@@ -7,14 +7,12 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -228,6 +226,20 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                     Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
 
                 }
+            }
+        });
+
+        listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Group group = searchedGroupListViewAdapter.getItem(i);
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(group);
+                Intent intent = new Intent(context, GroupProfileActivity.class);
+                intent.putExtra("group", userStringObject);
+                startActivity(intent);
+
+
             }
         });
 
