@@ -10,6 +10,7 @@
     <string name="error_invalid_password">This password is invalid</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="back">Back</string>
 
     <string name="action_create_group">Create a group?</string>
     <string name="prompt_name">Name</string>
