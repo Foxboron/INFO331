@@ -9,7 +9,7 @@ import no.uib.info331.R;
 public enum CustomPagerEnum {
 
     CREATE_GROUP(R.string.groups, R.layout.pager_select_create_group),
-    JOIN_GROUP(R.string.action_join_group, R.layout.list_element_join_group);
+    JOIN_GROUP(R.string.action_join_group, R.layout.pager_select_join_group);
 
     private int mTitleResId;
     private int mLayoutResId;

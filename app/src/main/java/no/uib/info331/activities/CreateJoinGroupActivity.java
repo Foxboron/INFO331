@@ -10,9 +10,7 @@ import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -52,7 +50,6 @@ import no.uib.info331.util.Animations;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
-import no.uib.info331.util.MyGestureListener;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -123,7 +120,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     ViewPager pager;
     GestureDetector mGestureDetector;
-    private MyGestureListener myGestureListener;
     private GestureDetectorCompat mDetector;
 
     @Override
@@ -186,7 +182,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                return mDetector.onTouchEvent(motionEvent);}
+            return mDetector.onTouchEvent(motionEvent);}
     };
 
 
@@ -450,6 +446,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             //Animates the card for choosing what to do
             anim.fadeInView(cardChooseAction, 0, shortAnimTime);
             anim.moveViewToTranslationY(cardChooseAction, 50 , shortAnimTime, 0, false);
+            anim.fadeInView(cardCreateGroup, 50, shortAnimTime);
+            anim.moveViewToTranslationY(cardCreateGroup, 50 , shortAnimTime, 0, false);
 
         }
 
@@ -458,8 +456,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             createGroupBtnClicked = false;
 
             //Animates the card for choosing what to do
-            anim.fadeInView(cardJoinGroup, 50, shortAnimTime);
-            anim.moveViewToTranslationY(cardJoinGroup, 50 , shortAnimTime, 0, false);
 
             anim.fadeInView(cardChooseAction, 0, shortAnimTime);
             anim.moveViewToTranslationY(cardChooseAction, 100 , shortAnimTime, 0, false);
@@ -471,6 +467,43 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
 
 
+    }
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2,
+                               float velocityX, float velocityY) {
+            Log.d("TAG", "onFlingY: "+ velocityY);
+            Log.d("TAG", "onFlingX: "+ velocityX);
+            if(velocityY > 500 && velocityX < 2000 && velocityX > -2000){
+                switch (pager.getCurrentItem()){
+                    case 0:
+
+                        createGroupBtnClicked = true;
+
+                        anim.fadeOutView(cardChooseAction, 0, longAnimTime);
+                        anim.moveViewToTranslationY(cardChooseAction, 0 , shortAnimTime, cardChooseAction.getHeight(), true);
+
+
+
+
+                        break;
+
+                    case 1:
+                        joinGroupBtnClicked = true;
+                        anim.fadeOutView(cardChooseAction, 0, shortAnimTime);
+                        anim.moveViewToTranslationY(cardChooseAction,0 , shortAnimTime, cardChooseAction.getHeight(), true);
+
+                        anim.fadeOutView(cardCreateGroup, 0, longAnimTime);
+                        anim.moveViewToTranslationY(cardCreateGroup, 100, shortAnimTime, cardCreateGroup.getHeight(), true);
+                        break;
+                }
+                return true;
+            }else{
+                return false;
+            }
+        }
     }
 
 
