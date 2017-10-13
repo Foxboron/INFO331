@@ -5,7 +5,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by fredrik on 10/2/17.
+ * A client for communication with the backend
+ * @author Fredrik V. Heimsæter
  */
 
 public class ApiClient {
@@ -13,6 +14,10 @@ public class ApiClient {
 
     private static Retrofit retrofit = null;
 
+    /**
+     * Get a client so you can work with the backend
+     * @return The client
+     */
     public static Retrofit getClient() {
         if(retrofit == null) {
             retrofit = new Retrofit.Builder()
