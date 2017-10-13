@@ -7,8 +7,11 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -34,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
+import no.uib.info331.adapters.CustomPagerAdapter;
 import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Group;
@@ -88,6 +92,9 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.button_register_group_button) Button buttonRegisterGroup;
 
+    @Nullable
+    @BindView(R.id.layout_pager_create_group) SwipeRefreshLayout layoutPagerCreateGroup;
+
 
 
 
@@ -121,8 +128,15 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
         //getAllUsers();
         initGui();
-        listeners();
+        initListeners();
+        initPager();
 
+    }
+
+    private void initPager() {
+        CustomPagerAdapter adapter = new CustomPagerAdapter(this);
+        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
+        pager.setAdapter(adapter);
     }
 
 
@@ -160,7 +174,18 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     }
 
-    private void listeners() {
+    private void initListeners() {
+
+        layoutPagerCreateGroup.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (layoutPagerCreateGroup.isRefreshing()) {
+                    layoutPagerCreateGroup.setRefreshing(false);
+                }
+
+                Toast.makeText(context, "SWIPE DOWN", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         btnJoinGroupShow.setOnClickListener(new View.OnClickListener() {
