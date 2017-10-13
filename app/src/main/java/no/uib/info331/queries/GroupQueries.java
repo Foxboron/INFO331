@@ -19,7 +19,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by moled on 11.10.2017.
+ * Group related queries against the backend
+ * @author Edvard P. Bjørgen
  */
 
 public class GroupQueries {
@@ -28,6 +29,12 @@ public class GroupQueries {
     DataManager dataManager = new DataManager();
 
 
+    /**
+     * Search for a group in the database and save it to sharedPreferences
+     * @param context The activity context
+     * @param query The query to search for
+     * @return The list of groups where the name matches the query
+     */
     public List<Group> getGroupsByStringFromDb(final Context context, String query) {
         //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
