@@ -7,15 +7,19 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Base64;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -48,6 +52,7 @@ import no.uib.info331.util.Animations;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
+import no.uib.info331.util.MyGestureListener;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,8 +97,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.button_register_group_button) Button buttonRegisterGroup;
 
-    @Nullable
-    @BindView(R.id.layout_pager_create_group) SwipeRefreshLayout layoutPagerCreateGroup;
 
 
 
@@ -118,6 +121,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     UserListViewAdapter addedMembersUserListAdapter;
     GroupQueries groupQueries = new GroupQueries();
 
+    ViewPager pager;
+    GestureDetector mGestureDetector;
+    private MyGestureListener myGestureListener;
+    private GestureDetectorCompat mDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,15 +135,17 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
         //getAllUsers();
         initGui();
-        initListeners();
         initPager();
+        initListeners();
+
 
     }
 
     private void initPager() {
         CustomPagerAdapter adapter = new CustomPagerAdapter(this);
-        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
+        pager = (ViewPager) findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
+
     }
 
 
@@ -144,7 +153,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         shortAnimTime = anim.getShortAnimTime(context);
         mediumAnimTime = anim.getMediumAnimTime(context);
         longAnimTime = anim.getLongAnimTime(context);
-
         joinGroupBtnClicked = false;
         createGroupBtnClicked = false;
         addMemberLayoutBtnClicked = false;
@@ -174,18 +182,24 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     }
 
+    View.OnTouchListener touchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                return mDetector.onTouchEvent(motionEvent);}
+    };
+
+
     private void initListeners() {
+        mDetector = new GestureDetectorCompat(this,  new MyGestureListener());
 
-        layoutPagerCreateGroup.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (layoutPagerCreateGroup.isRefreshing()) {
-                    layoutPagerCreateGroup.setRefreshing(false);
-                }
+        pager.setOnTouchListener(touchListener);
 
-                Toast.makeText(context, "SWIPE DOWN", Toast.LENGTH_SHORT).show();
-            }
-        });
+
+
+
+
+        /***********************/
 
 
         btnJoinGroupShow.setOnClickListener(new View.OnClickListener() {
@@ -223,7 +237,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
             }
         });
-        
+
         imageBtnSearchForUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -402,7 +416,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                             .setAction("Action", null);
                     View sbView = snack.getView();
 
-                    //Set custom typeface
+                    //Set  typeface
                     TextView tv = (TextView) (sbView).findViewById(android.support.design.R.id.snackbar_text);
                     Typeface font = Typeface.createFromAsset(getBaseContext().getAssets(), "fonts/roboto_thin.ttf");
                     tv.setTypeface(font);
