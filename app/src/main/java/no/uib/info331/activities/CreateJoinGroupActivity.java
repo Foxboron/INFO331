@@ -9,10 +9,15 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Base64;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -34,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
+import no.uib.info331.adapters.CustomPagerAdapter;
 import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Group;
@@ -92,6 +98,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
 
 
+
     boolean joinGroupBtnClicked;
     boolean createGroupBtnClicked;
     boolean addMemberLayoutBtnClicked;
@@ -111,6 +118,9 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     UserListViewAdapter addedMembersUserListAdapter;
     GroupQueries groupQueries = new GroupQueries();
 
+    ViewPager pager;
+    GestureDetector mGestureDetector;
+    private GestureDetectorCompat mDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +131,16 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
         //getAllUsers();
         initGui();
-        listeners();
+        initPager();
+        initListeners();
+
+
+    }
+
+    private void initPager() {
+        CustomPagerAdapter adapter = new CustomPagerAdapter(this);
+        pager = (ViewPager) findViewById(R.id.view_pager);
+        pager.setAdapter(adapter);
 
     }
 
@@ -130,7 +149,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         shortAnimTime = anim.getShortAnimTime(context);
         mediumAnimTime = anim.getMediumAnimTime(context);
         longAnimTime = anim.getLongAnimTime(context);
-
         joinGroupBtnClicked = false;
         createGroupBtnClicked = false;
         addMemberLayoutBtnClicked = false;
@@ -160,7 +178,24 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     }
 
-    private void listeners() {
+    View.OnTouchListener touchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+
+            return mDetector.onTouchEvent(motionEvent);}
+    };
+
+
+    private void initListeners() {
+        mDetector = new GestureDetectorCompat(this,  new MyGestureListener());
+
+        pager.setOnTouchListener(touchListener);
+
+
+
+
+
+        /***********************/
 
 
         btnJoinGroupShow.setOnClickListener(new View.OnClickListener() {
@@ -198,7 +233,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
             }
         });
-        
+
         imageBtnSearchForUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -377,7 +412,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                             .setAction("Action", null);
                     View sbView = snack.getView();
 
-                    //Set custom typeface
+                    //Set  typeface
                     TextView tv = (TextView) (sbView).findViewById(android.support.design.R.id.snackbar_text);
                     Typeface font = Typeface.createFromAsset(getBaseContext().getAssets(), "fonts/roboto_thin.ttf");
                     tv.setTypeface(font);
@@ -411,6 +446,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             //Animates the card for choosing what to do
             anim.fadeInView(cardChooseAction, 0, shortAnimTime);
             anim.moveViewToTranslationY(cardChooseAction, 50 , shortAnimTime, 0, false);
+            anim.fadeInView(cardCreateGroup, 50, shortAnimTime);
+            anim.moveViewToTranslationY(cardCreateGroup, 50 , shortAnimTime, 0, false);
 
         }
 
@@ -419,8 +456,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             createGroupBtnClicked = false;
 
             //Animates the card for choosing what to do
-            anim.fadeInView(cardJoinGroup, 50, shortAnimTime);
-            anim.moveViewToTranslationY(cardJoinGroup, 50 , shortAnimTime, 0, false);
 
             anim.fadeInView(cardChooseAction, 0, shortAnimTime);
             anim.moveViewToTranslationY(cardChooseAction, 100 , shortAnimTime, 0, false);
@@ -432,6 +467,43 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
 
 
+    }
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2,
+                               float velocityX, float velocityY) {
+            Log.d("TAG", "onFlingY: "+ velocityY);
+            Log.d("TAG", "onFlingX: "+ velocityX);
+            if(velocityY > 500 && velocityX < 2000 && velocityX > -2000){
+                switch (pager.getCurrentItem()){
+                    case 0:
+
+                        createGroupBtnClicked = true;
+
+                        anim.fadeOutView(cardChooseAction, 0, longAnimTime);
+                        anim.moveViewToTranslationY(cardChooseAction, 0 , shortAnimTime, cardChooseAction.getHeight(), true);
+
+
+
+
+                        break;
+
+                    case 1:
+                        joinGroupBtnClicked = true;
+                        anim.fadeOutView(cardChooseAction, 0, shortAnimTime);
+                        anim.moveViewToTranslationY(cardChooseAction,0 , shortAnimTime, cardChooseAction.getHeight(), true);
+
+                        anim.fadeOutView(cardCreateGroup, 0, longAnimTime);
+                        anim.moveViewToTranslationY(cardCreateGroup, 100, shortAnimTime, cardCreateGroup.getHeight(), true);
+                        break;
+                }
+                return true;
+            }else{
+                return false;
+            }
+        }
     }
 
 
