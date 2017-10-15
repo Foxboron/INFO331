@@ -1,5 +1,7 @@
 package no.uib.info331.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,16 +13,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import no.uib.info331.R;
+import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.models.UserAdapter;
@@ -39,13 +44,18 @@ public class GroupProfileActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar_group_profile) Toolbar toolbar;
     @BindView(R.id.textview_group_profile_toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.listview_show_members_in_group) ListView listViewMemberList;
+
     private LayoutAdjustments layoutAdj = new LayoutAdjustments();
+    UserListViewAdapter userListViewAdapter;
+    Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_profile);
+        context = getApplicationContext();
 
         //Group from the last activity
         currentGroup = getGroupFromLastActivity();
@@ -53,38 +63,35 @@ public class GroupProfileActivity extends AppCompatActivity {
         initGui();
 
 
-        /*************/
-        users = new ArrayList<>();
-        User u = new User("haha", "yeye", "haha", 5);
-        for(int i = 0; i < 10; i++){
-            users.add(u);
-        }
-        users.add(u);
-
-        currentGroup = new Group(99999, "Groupname haha", u, 100, new ArrayList<User>());
-        points = (TextView) findViewById(R.id.group_points);
-        points.setText(Integer.toString(currentGroup.getPoints()));
-        gname = (TextView) findViewById(R.id.group_display_name);
-        gname.setText(currentGroup.getName());
-
-        userList = (ListView) findViewById(R.id.user_member_list);
-
-        UserAdapter adapt = new UserAdapter(users, this.getApplicationContext());
-        userList.setAdapter(adapt);
-
-        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User g = users.get(position);
-                Snackbar.make(view, g.getUsername(), Snackbar.LENGTH_LONG)
-                        .setAction("Redirect this action to open user profile page instead", null).show();
-            }
-        });
     }
 
     private void initGui() {
         ButterKnife.bind(this);
         initToolbar();
+        initListViewMemberList(currentGroup.getUsers());
+        initListeners();
+
+    }
+
+    private void initListeners() {
+        listViewMemberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User user = userListViewAdapter.getItem(i);
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(user);
+                Intent intent = new Intent(context, UserProfileActivity.class);
+                intent.putExtra("user", userStringObject);
+                startActivity(intent);
+
+
+            }
+        });
+    }
+
+    private void initListViewMemberList(List<User> usersInGroup) {
+        userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, usersInGroup);
+        listViewMemberList.setAdapter(userListViewAdapter);
 
     }
 

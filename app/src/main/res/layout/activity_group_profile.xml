@@ -149,7 +149,7 @@
                 android:text="@string/group_members" />
 
             <ListView
-                android:id="@+id/user_member_list"
+                android:id="@+id/listview_show_members_in_group"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:layout_below="@id/header_member_list" />
