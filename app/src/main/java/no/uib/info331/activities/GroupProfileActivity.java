@@ -45,6 +45,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_group_profile) Toolbar toolbar;
     @BindView(R.id.textview_group_profile_toolbar_title) TextView toolbarTitle;
     @BindView(R.id.listview_show_members_in_group) ListView listViewMemberList;
+    @BindView(R.id.textview_group_display_name) TextView textViewGroupDisplayName;
 
     private LayoutAdjustments layoutAdj = new LayoutAdjustments();
     UserListViewAdapter userListViewAdapter;
@@ -67,6 +68,8 @@ public class GroupProfileActivity extends AppCompatActivity {
 
     private void initGui() {
         ButterKnife.bind(this);
+        toolbarTitle.setText(currentGroup.getName());
+        textViewGroupDisplayName.setText(currentGroup.getName());
         initToolbar();
         initListViewMemberList(currentGroup.getUsers());
         initListeners();
