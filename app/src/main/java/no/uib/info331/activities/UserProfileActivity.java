@@ -1,14 +1,18 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -17,11 +21,14 @@ import com.intrusoft.squint.DiagonalView;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import no.uib.info331.R;
+import no.uib.info331.adapters.GroupListViewAdapter;
+import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.util.LayoutAdjustments;
 
@@ -35,8 +42,11 @@ public class UserProfileActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_buildselect_title) TextView toolbarTitle;
     @BindView(R.id.circleimageview_user_profile_image) CircleImageView circleImageViewProfileImage;
     @BindView(R.id.textview_user_profile_points) TextView textViewUserPoints;
-
+    @BindView(R.id.listview_profile_group_list) ListView listViewGroupList;
+    @BindView(R.id.scrollview_user_profile) ScrollView scrollViewUserProfile;
     LayoutAdjustments layoutAdj = new LayoutAdjustments();
+
+    GroupListViewAdapter memberGroupListViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +63,35 @@ public class UserProfileActivity extends AppCompatActivity {
         loadCoverPicture();
         loadProfilePicture();
         textViewUserPoints.setText(Integer.toString(user.getPoints()) + " " + getResources().getString(R.string.points).toLowerCase());
+        initListViewGroupList(user.getGroups());
+        initListeners();
+
+    }
+
+    private void initListeners() {
+        listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Group group = memberGroupListViewAdapter.getItem(i);
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(group);
+                Intent intent = new Intent(context, GroupProfileActivity.class);
+                intent.putExtra("group", userStringObject);
+                startActivity(intent);
+
+
+            }
+        });
+
+        listViewGroupList.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                scrollViewUserProfile.requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
 
     }
 
@@ -110,6 +149,12 @@ public class UserProfileActivity extends AppCompatActivity {
             return user;
         }
     }
+    private void initListViewGroupList(List<Group> searchedGroups) {
+        memberGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
+        listViewGroupList.setAdapter(memberGroupListViewAdapter);
+
+    }
+
 
 
     @Override
