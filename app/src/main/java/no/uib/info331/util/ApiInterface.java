@@ -7,6 +7,7 @@ import no.uib.info331.models.User;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -120,9 +121,8 @@ public interface ApiInterface {
      * @param group The update group object
      * @return The updated group-object from the database
      */
-    @FormUrlEncoded
     @PUT ("/v1/group/{id}")
-    Call<Group> updateGroupById(@Header("Authorization") String credentials, @Field("group") Group group); //Don't know how put works yet. This may be wrong
+    Call<Group> updateGroupById(@Header("Authorization") String credentials, @Body Group group, @Path("id") int groupId); //Don't know how put works yet. This may be wrong
 
     /**
      * Delete a group

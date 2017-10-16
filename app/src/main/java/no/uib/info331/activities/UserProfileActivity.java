@@ -138,14 +138,14 @@ public class UserProfileActivity extends AppCompatActivity {
         Gson gson = new Gson();
 
         if (extras != null) {
-            userStringObject = extras.getString("user");
+            userStringObject = extras.getString("currentUser");
             Type type = new TypeToken<User>(){}.getType();
 
             user = gson.fromJson(userStringObject, type);
-            // and get whatever type user account id is
+            // and get whatever type currentUser account id is
             return user;
         } else {
-            user = new User("Not a valid user", "nan", "nan", 0);
+            user = new User("Not a valid currentUser", "nan", "nan", 0);
             return user;
         }
     }

@@ -146,7 +146,7 @@ public class DashboardActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         String userStringObject = gson.toJson(user);
                         Intent intent = new Intent(context, UserProfileActivity.class);
-                        intent.putExtra("user", userStringObject);
+                        intent.putExtra("currentUser", userStringObject);
                         startActivity(intent);
                         return false;
                     }

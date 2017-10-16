@@ -68,7 +68,7 @@ public class ActiveGroupsList extends AppCompatActivity {
         // The code below is used for testing - while it is not supposed to be included in the final
         // build it will successfully display the list of groups. Might use some of this code later.
 
-        User user1 = new User("user", "pass", "pic", 5);
+        User user1 = new User("currentUser", "pass", "pic", 5);
         setContentView(R.layout.list_element_join_group);
         groupNameList = new String[100];
         for(int i=0; i < 100; i++){

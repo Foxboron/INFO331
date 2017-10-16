@@ -3,17 +3,14 @@ package no.uib.info331.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -28,7 +25,8 @@ import no.uib.info331.R;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
-import no.uib.info331.models.UserAdapter;
+import no.uib.info331.queries.GroupQueries;
+import no.uib.info331.util.DataManager;
 import no.uib.info331.util.LayoutAdjustments;
 
 /**
@@ -46,10 +44,15 @@ public class GroupProfileActivity extends AppCompatActivity {
     @BindView(R.id.textview_group_profile_toolbar_title) TextView toolbarTitle;
     @BindView(R.id.listview_show_members_in_group) ListView listViewMemberList;
     @BindView(R.id.textview_group_display_name) TextView textViewGroupDisplayName;
+    @BindView(R.id.textview_group_pts) TextView textViewGroupPoints;
+    @BindView(R.id.btn_join_group) Button btnJoinGroup;
 
     private LayoutAdjustments layoutAdj = new LayoutAdjustments();
     UserListViewAdapter userListViewAdapter;
+    GroupQueries groupQueries = new GroupQueries();
     Context context;
+    User currentUser;
+    private DataManager dataManager = new DataManager();
 
 
     @Override
@@ -60,6 +63,7 @@ public class GroupProfileActivity extends AppCompatActivity {
 
         //Group from the last activity
         currentGroup = getGroupFromLastActivity();
+        currentUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
 
         initGui();
 
@@ -68,12 +72,26 @@ public class GroupProfileActivity extends AppCompatActivity {
 
     private void initGui() {
         ButterKnife.bind(this);
-        toolbarTitle.setText(currentGroup.getName());
         textViewGroupDisplayName.setText(currentGroup.getName());
+        textViewGroupPoints.setText( getResources().getString(R.string.points)+ ": "+String.valueOf(currentGroup.getPoints()));
         initToolbar();
+        checkIfUserIsAlreadyInGroup();
         initListViewMemberList(currentGroup.getUsers());
         initListeners();
 
+    }
+
+
+    /**
+     * Quick fix for checking ig currentUser is in group already, if so, disable the "join group" button
+     */
+    private void checkIfUserIsAlreadyInGroup() {
+        for(User member : currentGroup.getUsers()){
+            if(member.getUsername().equals(currentUser.getUsername())){
+                btnJoinGroup.setEnabled(false);
+                btnJoinGroup.setText(R.string.already_in_group);
+            }
+        }
     }
 
     private void initListeners() {
@@ -84,10 +102,38 @@ public class GroupProfileActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 String userStringObject = gson.toJson(user);
                 Intent intent = new Intent(context, UserProfileActivity.class);
-                intent.putExtra("user", userStringObject);
+                intent.putExtra("currentUser", userStringObject);
                 startActivity(intent);
+            }
+        });
+
+        btnJoinGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //adds currently logged in currentUser to  on the screengroup
+                User tempUser = currentUser;
+                ArrayList userCurrentGroups;
+                if (tempUser.getGroups() == null) {
+                    userCurrentGroups = new ArrayList<Group>();
+                } else {
+                    userCurrentGroups = tempUser.getGroups();
+                }
+                userCurrentGroups.add(tempUser);
+                tempUser.setGroups(userCurrentGroups);
+
+                currentGroup.addMember(tempUser);
 
 
+                groupQueries.updateGroup(context, currentGroup, tempUser);
+
+
+                //Uopdate the user object with new group
+                dataManager.updateSavedObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", tempUser);;
+
+                //TODO: Find a way to get response from AddUserGroup, this adds to UI-listView even if something wet wrong.
+                userListViewAdapter.add(currentUser);
+                userListViewAdapter.notifyDataSetChanged();
+                checkIfUserIsAlreadyInGroup();
             }
         });
     }
@@ -103,7 +149,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
-            toolbarTitle.setText("Group name");
+            toolbarTitle.setText(currentGroup.getName());
 
             layoutAdj.setMargins(toolbar, 0, layoutAdj.getStatusBarHeight(getResources()), 0, 0);
         }
@@ -120,10 +166,10 @@ public class GroupProfileActivity extends AppCompatActivity {
             Type type = new TypeToken<Group>(){}.getType();
 
             group = gson.fromJson(groupStringObject, type);
-            // and get whatever type user account id is
+            // and get whatever type currentUser account id is
             return group;
         } else {
-            group = new Group("Error", new User("Not a valid user", "nan", "nan", 0));
+            group = new Group("Error", new User("Not a valid currentUser", "nan", "nan", 0));
             return group;
         }
     }
