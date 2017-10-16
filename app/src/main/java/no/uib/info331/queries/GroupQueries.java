@@ -3,6 +3,7 @@ package no.uib.info331.queries;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
@@ -44,6 +45,8 @@ public class GroupQueries {
         //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
+
+        Log.d("TAG", credentials);
         final String prefKey = "searchGroupByUsername";
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
