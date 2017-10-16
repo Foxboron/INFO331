@@ -110,7 +110,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         btnJoinGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //adds currently logged in currentUser to  on the screengroup
+               /* //adds currently logged in currentUser to  on the screengroup
                 User updatedUser = currentUser;
                 ArrayList userCurrentGroups;
                 if (updatedUser.getGroups() == null) {
@@ -134,7 +134,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                 //TODO: Find a way to get response from AddUserGroup, this adds to UI-listView even if something wet wrong.
                // userListViewAdapter.add(currentUser);
                 userListViewAdapter.notifyDataSetChanged();
-                checkIfUserIsAlreadyInGroup();
+                checkIfUserIsAlreadyInGroup();*/
             }
         });
     }
