@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GestureDetectorCompat;
@@ -121,6 +122,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     ViewPager pager;
     GestureDetector mGestureDetector;
     private GestureDetectorCompat mDetector;
+    DataManager dataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,7 +257,12 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 String query = String.valueOf(editTextSearchForGroups.getText());
                 List<Group> groupSearch = groupQueries.getGroupsByStringFromDb(context, query);
                 try {
-                    initListViewGroupList(groupSearch);
+                    if(groupSearch != null){
+                        initListViewGroupList(groupSearch);
+                        searchedGroupListViewAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(context, "Can't return results", Toast.LENGTH_LONG).show();
+                    }
                 } catch (Exception e){
                     e.printStackTrace();
                     Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
@@ -300,7 +307,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         });
 
 
-        /*Only for testing user profile*/
+        /*Only for testing currentUser profile*/
 
         listViewAddedMembersToGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -309,7 +316,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 String userStringObject = gson.toJson(user);
                 Intent intent = new Intent(context, UserProfileActivity.class);
-                intent.putExtra("user", userStringObject);
+                intent.putExtra("currentUser", userStringObject);
                 startActivity(intent);
 
 
@@ -419,7 +426,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                     tv.setTextSize(16);
                     snack.show();
 
-                    //Countdown to when to start the calendar intent, this for showing user the snackbar of whats happening next
+                    //Countdown to when to start the calendar intent, this for showing currentUser the snackbar of whats happening next
                     new CountDownTimer(800, 1000) {
                         @Override
                         public void onTick(long millisUntilFinished) {}

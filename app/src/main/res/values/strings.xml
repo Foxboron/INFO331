@@ -49,6 +49,7 @@
     <string name="group_members">Members</string>
     <string name="group_join">Join group</string>
     <string name="group_name_filler">GROUP NAME</string>
+    <string name="already_in_group">Already joined</string>
 
 
     <string name="points">Points</string>

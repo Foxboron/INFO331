@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
+        // Check for a valid password, if the currentUser entered one.
         if (TextUtils.isEmpty(password)) {
             editTextLoginPassword.setError(getString(R.string.error_field_required));
             focusView = editTextLoginPassword;
@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            // perform the currentUser login attempt.
             showProgress(true, viewLoginForm, progressViewLogin);
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<User> call = apiService.login(username, password);
@@ -193,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     /**
-     * Registers a new user.
+     * Registers a new currentUser.
      */
     public void registerUser() {
         String username = editTextRegisterUsername.getText().toString();

@@ -65,13 +65,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/groups"
                 android:textSize="35sp"
-                android:textColor="@color/colorNavBar"
-                android:textAllCaps="true"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                 android:layout_marginTop="30dp"
                 android:fontFamily="sans-serif-light"
-                android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/btn_join_group" />
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                />
 
             <TextView
                 android:id="@+id/textview_group_pts"
@@ -81,6 +79,7 @@
                 android:textSize="15sp"
                 android:layout_below="@id/textview_group_display_name"
                 android:layout_centerHorizontal="true"
+                android:gravity="center"
                 />
 
 

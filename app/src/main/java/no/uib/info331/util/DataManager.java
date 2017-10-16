@@ -67,4 +67,9 @@ public class DataManager {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferences.edit().remove(sharedPrefKey).apply();
     }
+
+    public void updateSavedObjectInSharedPref(Context context, String sharedPrefKey, Object objectToStore){
+        deleteSavedObjectFromSharedPref(context, sharedPrefKey);
+        storeObjectInSharedPref(context, sharedPrefKey, objectToStore);
+    }
 }
