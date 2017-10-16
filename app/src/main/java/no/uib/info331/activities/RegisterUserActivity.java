@@ -59,7 +59,7 @@ public class RegisterUserActivity extends AppCompatActivity {
     }
 
     /**
-     * Registers a new user.
+     * Registers a new currentUser.
      */
     public void registerUser() {
         String username = editTextRegisterUsername.getText().toString();
