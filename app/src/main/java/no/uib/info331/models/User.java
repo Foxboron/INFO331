@@ -26,6 +26,7 @@ public class User implements Serializable{
         this.Password = password;
         this.Photo = photo;
         this.Points = points;
+        this.Groups = new ArrayList<>();
     }
 
     public User(int ID, String username, String password, String photo, int points) {
@@ -34,6 +35,7 @@ public class User implements Serializable{
         this.Password = password;
         this.Photo = photo;
         this.Points = points;
+        this.Groups = new ArrayList<>();
     }
 
     public int getID() {
@@ -86,6 +88,9 @@ public class User implements Serializable{
      * @return true if the group was added successfully, false otherwise
      */
     public boolean addGroup(Group group) {
+        if(Groups==null) {
+            Groups = new ArrayList<>();
+        }
         if(!Groups.contains(group)) {
             Groups.add(group);
             return true;
