@@ -91,7 +91,6 @@ public class GroupQueries {
 
 
     public void updateGroup(final Context context, final Group GROUP, final User USER ){
-        DataManager dataManager = new DataManager();
         final String credentials = USER.getUsername() + ":" + USER.getPassword();
         final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 

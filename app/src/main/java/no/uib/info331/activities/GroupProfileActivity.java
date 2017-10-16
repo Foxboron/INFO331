@@ -111,27 +111,28 @@ public class GroupProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //adds currently logged in currentUser to  on the screengroup
-                User tempUser = currentUser;
+                User updatedUser = currentUser;
                 ArrayList userCurrentGroups;
-                if (tempUser.getGroups() == null) {
+                if (updatedUser.getGroups() == null) {
                     userCurrentGroups = new ArrayList<Group>();
                 } else {
-                    userCurrentGroups = tempUser.getGroups();
+                    userCurrentGroups = updatedUser.getGroups();
                 }
-                userCurrentGroups.add(tempUser);
-                tempUser.setGroups(userCurrentGroups);
+                userCurrentGroups.add(updatedUser);
+                updatedUser.setGroups(userCurrentGroups);
 
-                currentGroup.addMember(tempUser);
+                currentGroup.addMember(updatedUser);
 
-
-                groupQueries.updateGroup(context, currentGroup, tempUser);
+                //TODO: Add so taht we can add individual users to existing groups, not creating a new group from the same one and adding to it
+                //groupQueries.updateGroup(context, currentGroup, updatedUser);
 
 
                 //Uopdate the user object with new group
-                dataManager.updateSavedObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", tempUser);;
+                // TODO: Gets an OutOfMemory exception, user object too large becuase it has 15-20 groups. The nesting is too much
+                //dataManager.updateSavedObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", tempUser);;
 
                 //TODO: Find a way to get response from AddUserGroup, this adds to UI-listView even if something wet wrong.
-                userListViewAdapter.add(currentUser);
+               // userListViewAdapter.add(currentUser);
                 userListViewAdapter.notifyDataSetChanged();
                 checkIfUserIsAlreadyInGroup();
             }
