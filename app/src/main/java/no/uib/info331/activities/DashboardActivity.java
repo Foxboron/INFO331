@@ -29,6 +29,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -81,7 +82,14 @@ public class DashboardActivity extends AppCompatActivity {
 
         initToolbar();
         initDrawer();
-        initListViewGroupList(user.getGroups());
+        if(user.getGroups()==null) {
+            Group noGroups = new Group("No groups", user);
+            ArrayList<Group> listOfNoGroups = new ArrayList<>();
+            listOfNoGroups.add(noGroups);
+            initListViewGroupList(listOfNoGroups);
+        } else {
+            initListViewGroupList(user.getGroups());
+        }
         initListeners();
 
         textViewUserPoints.setText(Integer.toString(user.getPoints()) + " " + getResources().getString(R.string.points).toLowerCase());
