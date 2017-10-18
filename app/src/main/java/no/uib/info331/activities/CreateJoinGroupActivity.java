@@ -330,7 +330,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @OnClick(R.id.button_register_group_button)
     public void registerGroup(){
         String groupName = editTextCreateGroupName.getText().toString();
-        DataManager dataManager = new DataManager();
+        final DataManager dataManager = new DataManager();
         final User currentUser = dataManager.getSavedObjectFromSharedPref(getApplicationContext(), "currentlySignedInUser", new TypeToken<User>(){}.getType());
         final String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
         final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -376,10 +376,30 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
             }
         });
+        Log.d("Error: ", Boolean.toString(error[0]));
         if(!error[0]){
-            Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            Call<User> refreshUserCall = apiService.getUserById(basic, currentUser.getID());
+            refreshUserCall.enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    Log.d("RefreshUser", response.toString());
+                    if (response.code() == 200) {
+                        User refreshedUser = response.body();
+                        refreshedUser.setPassword(currentUser.getPassword());
+                        dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
+                        Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    t.printStackTrace();
+                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+
+                }
+            });
         } else {
             Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
         }
