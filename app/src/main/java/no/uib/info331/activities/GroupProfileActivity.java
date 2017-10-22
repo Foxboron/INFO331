@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -26,8 +28,14 @@ import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.queries.GroupQueries;
+import no.uib.info331.util.ApiClient;
+import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
 import no.uib.info331.util.LayoutAdjustments;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by perni on 04.10.2017.
@@ -110,31 +118,43 @@ public class GroupProfileActivity extends AppCompatActivity {
         btnJoinGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* //adds currently logged in currentUser to  on the screengroup
-                User updatedUser = currentUser;
-                ArrayList userCurrentGroups;
-                if (updatedUser.getGroups() == null) {
-                    userCurrentGroups = new ArrayList<Group>();
-                } else {
-                    userCurrentGroups = updatedUser.getGroups();
+                if(!currentUser.getGroups().contains(currentGroup)) {
+                    String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+                    final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                    final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                    Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getID(), currentUser.getID());
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.code() == 200) {
+                                currentGroup.addMember(currentUser);
+                                initListViewMemberList(currentGroup.getUsers());
+                                checkIfUserIsAlreadyInGroup();
+                                Call<User> refreshUserCall = apiService.getUserById(basic, currentUser.getID());
+                                refreshUserCall.enqueue(new Callback<User>() {
+                                    @Override
+                                    public void onResponse(Call<User> call, Response<User> response) {
+                                        if (response.code() == 200) {
+                                            User refreshedUser = response.body();
+                                            refreshedUser.setPassword(currentUser.getPassword());
+                                            dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<User> call, Throwable t) {
+                                        Toast.makeText(context, getResources().getString(R.string.could_not_refres_user), Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
-                userCurrentGroups.add(updatedUser);
-                updatedUser.setGroups(userCurrentGroups);
-
-                currentGroup.addMember(updatedUser);
-
-                //TODO: Add so taht we can add individual users to existing groups, not creating a new group from the same one and adding to it
-                //groupQueries.updateGroup(context, currentGroup, updatedUser);
-
-
-                //Uopdate the user object with new group
-                // TODO: Gets an OutOfMemory exception, user object too large becuase it has 15-20 groups. The nesting is too much
-                //dataManager.updateSavedObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", tempUser);;
-
-                //TODO: Find a way to get response from AddUserGroup, this adds to UI-listView even if something wet wrong.
-               // userListViewAdapter.add(currentUser);
-                userListViewAdapter.notifyDataSetChanged();
-                checkIfUserIsAlreadyInGroup();*/
             }
         });
     }
