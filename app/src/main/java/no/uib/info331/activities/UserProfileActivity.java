@@ -3,10 +3,12 @@ package no.uib.info331.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,7 +32,13 @@ import no.uib.info331.R;
 import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
+import no.uib.info331.util.ApiClient;
+import no.uib.info331.util.ApiInterface;
+import no.uib.info331.util.DataManager;
 import no.uib.info331.util.LayoutAdjustments;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -73,11 +81,37 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Group group = memberGroupListViewAdapter.getItem(i);
-                Gson gson = new Gson();
-                String userStringObject = gson.toJson(group);
-                Intent intent = new Intent(context, GroupProfileActivity.class);
-                intent.putExtra("group", userStringObject);
-                startActivity(intent);
+                if (group.getUsers() == null) {
+                    DataManager dataManager = new DataManager();
+                    User currentUser = dataManager.getSavedObjectFromSharedPref(getApplicationContext(), "currentlySignedInUser", new TypeToken<User>(){}.getType());
+                    String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+                    final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                    final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                    Call<Group> call = apiService.getGroupById(basic, group.getID());
+                    call.enqueue(new Callback<Group>() {
+                        @Override
+                        public void onResponse(Call<Group> call, Response<Group> response) {
+                            if (response.code() == 200) {
+                                Gson gson = new Gson();
+                                String userStringObject = gson.toJson(response.body());
+                                Intent intent = new Intent(context, GroupProfileActivity.class);
+                                intent.putExtra("group", userStringObject);
+                                startActivity(intent);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Group> call, Throwable t) {
+
+                        }
+                    });
+                } else {
+                    Gson gson = new Gson();
+                    String userStringObject = gson.toJson(group);
+                    Intent intent = new Intent(context, GroupProfileActivity.class);
+                    intent.putExtra("group", userStringObject);
+                    startActivity(intent);
+                }
 
 
             }
