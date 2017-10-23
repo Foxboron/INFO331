@@ -216,8 +216,10 @@ public class DashboardActivity extends AppCompatActivity {
 
     }
 
-
-
-
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        initListViewGroupList(user.getGroups());
+    }
 }
