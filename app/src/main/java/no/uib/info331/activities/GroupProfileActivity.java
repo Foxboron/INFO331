@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -107,11 +108,37 @@ public class GroupProfileActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 User user = userListViewAdapter.getItem(i);
-                Gson gson = new Gson();
-                String userStringObject = gson.toJson(user);
-                Intent intent = new Intent(context, UserProfileActivity.class);
-                intent.putExtra("currentUser", userStringObject);
-                startActivity(intent);
+                if (user.getGroups() == null) {
+                    Log.d("User.groups", "null");
+                    String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+                    final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                    final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                    Call<User> call = apiService.getUserById(basic, user.getID());
+                    call.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            if (response.code() == 200) {
+                                Gson gson = new Gson();
+                                String userStringObject = gson.toJson(response.body());
+                                Intent intent = new Intent(context, UserProfileActivity.class);
+                                intent.putExtra("currentUser", userStringObject);
+                                startActivity(intent);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+                            Log.d("Whoops", "Fuck");
+
+                        }
+                    });
+                } else {
+                    Gson gson = new Gson();
+                    String userStringObject = gson.toJson(user);
+                    Intent intent = new Intent(context, UserProfileActivity.class);
+                    intent.putExtra("currentUser", userStringObject);
+                    startActivity(intent);
+                }
             }
         });
 
