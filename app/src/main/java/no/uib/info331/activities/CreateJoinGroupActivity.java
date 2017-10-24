@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GestureDetectorCompat;
@@ -86,7 +85,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     @BindView(R.id.listview_add_group_list) ListView listViewGroupList;
     @BindView(R.id.imagebutton_search_for_group) ImageButton imageBtnSearchForGroups;
 
-    @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
+    @BindView(R.id.edittext_create_search_for_users) EditText editTextSearchForUsers;
     @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
     @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
 
@@ -512,6 +511,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                         anim.fadeOutView(cardChooseAction, 0, longAnimTime);
                         anim.moveViewToTranslationY(cardChooseAction, 0 , shortAnimTime, cardChooseAction.getHeight(), true);
 
+                        Intent intent = new Intent(context, CreateGroupActivity.class);
+                        startActivity(intent);
 
 
 

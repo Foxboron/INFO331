@@ -1,7 +1,11 @@
 package no.uib.info331.queries;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Base64;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -9,6 +13,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.uib.info331.R;
+import no.uib.info331.activities.DashboardActivity;
 import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
@@ -117,6 +123,45 @@ public class UserQueries {
             }
         });
 
+    }
+
+    public void refreshUserQuery(final Context CONTEXT, final Resources RESOURCES){
+        final DataManager dataManager = new DataManager();
+        final User currentUser = dataManager.getSavedObjectFromSharedPref(CONTEXT, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        final String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+        final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        final boolean[] error = {false};
+        final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+
+
+        Log.d("Error: ", Boolean.toString(error[0]));
+        if(!error[0]){
+            Call<User> refreshUserCall = apiService.getUserById(basic, currentUser.getID());
+            refreshUserCall.enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    Log.d("RefreshUser", response.toString());
+                    if (response.code() == 200) {
+                        User refreshedUser = response.body();
+                        refreshedUser.setPassword(currentUser.getPassword());
+                        dataManager.storeObjectInSharedPref(CONTEXT, "currentlySignedInUser", refreshedUser);
+                        Intent intent = new Intent(CONTEXT, DashboardActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        CONTEXT.startActivity(intent);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    t.printStackTrace();
+                    Toast.makeText(CONTEXT, RESOURCES.getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+
+                }
+            });
+        } else {
+            Toast.makeText(CONTEXT, RESOURCES.getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+        }
     }
 
 

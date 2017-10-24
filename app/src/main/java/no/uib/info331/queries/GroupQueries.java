@@ -2,6 +2,8 @@ package no.uib.info331.queries;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -89,6 +91,58 @@ public class GroupQueries {
 
         return result;
     }
+
+
+        public void registerGroupQuery(String groupName, final ArrayList<User> ADDED_USERS_TO_GROUP, Context context){
+            final DataManager dataManager = new DataManager();
+            final User currentUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+            final String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+            final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+            Group group = new Group(groupName, currentUser);
+            final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+            Call<Group> call = apiService.createGroup(basic, group.getName());
+
+            final boolean[] error = {false};
+            call.enqueue(new Callback<Group>() {
+                @Override
+                public void onResponse(Call<Group> call, Response<Group> response) {
+                    if(response.code()==200) {
+                        final Group registeredGroup = response.body();
+                        for (User member : ADDED_USERS_TO_GROUP) {
+                            Call<ResponseBody> addUserCall = apiService.addUserToGroup(basic, registeredGroup.getID(), member.getID());
+                            addUserCall.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    System.out.println(response);
+                                    if(response.code()!=200) {
+                                        error[0] = true;
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    error[0] = true;
+                                    t.printStackTrace();
+
+                                }
+                            });
+
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<Group> call, Throwable t) {
+                    error[0] = true;
+                    t.printStackTrace();
+
+                }
+            });
+
+        }
+
 
 
 
