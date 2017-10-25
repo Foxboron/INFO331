@@ -39,7 +39,8 @@
             android:name=".activities.UserProfileActivity"
             android:theme="@style/AppThemeTranspStatusBar" />
         <activity android:name=".activities.DashboardActivity" />
-        <activity android:name=".activities.CreateGroupActivity"></activity>
+        <activity android:name=".activities.CreateGroupActivity" />
+        <activity android:name=".activities.JoinGroupActivity"></activity>
     </application>
 
 </manifest>
