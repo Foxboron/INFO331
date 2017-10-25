@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import no.uib.info331.R;
+import no.uib.info331.activities.CreateGroupActivity;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.User;
 
@@ -23,13 +24,13 @@ import no.uib.info331.models.User;
 public class DialogManager {
 
     public void createUserProfileDialogForCreateGroup(final User USER, final Context CONTEXT, final Resources RESOURCES, final UserListViewAdapter ADDED_USER_MEMBERS_LIST_ADAPTER){
-
         final AlertDialog dialog = new AlertDialog.Builder(CONTEXT)
                 .setView(R.layout.dialog_add_member_profile)
                 .create();
         dialog.setCancelable(true);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
+
         TextView textViewDialogUserName = (TextView) dialog.findViewById(R.id.dialog_textview_add_member_username);
         textViewDialogUserName.setText(USER.getUsername());
 

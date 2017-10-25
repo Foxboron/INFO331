@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.CardView;
 import android.util.Base64;
 import android.util.Log;
@@ -153,7 +154,9 @@ public class CreateGroupActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 User user = searchedMembersUserListViewAdapter.getItem(position);
-                dialogManager.createUserProfileDialogForCreateGroup(user, context, getResources(), addedMembersUserListAdapter);
+
+
+                dialogManager.createUserProfileDialogForCreateGroup(user, CreateGroupActivity.this, getResources(), addedMembersUserListAdapter);
 
             }
 
