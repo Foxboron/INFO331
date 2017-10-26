@@ -26,17 +26,20 @@ import no.uib.info331.R;
 import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.queries.GroupQueries;
+import no.uib.info331.util.Animations;
 
 public class JoinGroupActivity extends AppCompatActivity {
 
+    @BindView(R.id.join_group_card) CardView cardViewJoinGroup;
     @BindView(R.id.edittext_search_for_groups) EditText editTextSearchForGroups;
     @BindView(R.id.listview_add_group_list) ListView listViewGroupList;
     @BindView(R.id.imagebutton_search_for_group_join) ImageButton imageBtnSearchForGroups;
 
-
     private GroupListViewAdapter searchedGroupListViewAdapter;
     private GroupQueries groupQueries = new GroupQueries();
+    private Animations anim = new Animations();
     Context context;
+    private int shortAnimTime;
 
 
     @Override
@@ -50,6 +53,10 @@ public class JoinGroupActivity extends AppCompatActivity {
 
     private void initGui() {
         context = getApplicationContext();
+        shortAnimTime = anim.getShortAnimTime(context);
+        anim.moveViewToTranslationY(cardViewJoinGroup, 0 , shortAnimTime, 5000, false);
+        anim.fadeInView(cardViewJoinGroup, 0, shortAnimTime);
+        anim.moveViewToTranslationY(cardViewJoinGroup, 100 , shortAnimTime, 0, false);
     }
 
     private void initListeners() {
@@ -94,4 +101,11 @@ public class JoinGroupActivity extends AppCompatActivity {
         listViewGroupList.setAdapter(searchedGroupListViewAdapter);
 
     }
+
+    public void onBackPressed() {
+
+            super.onBackPressed();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
 }

@@ -68,8 +68,6 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.button_register_group_button) Button buttonRegisterGroup;
 
-    boolean joinGroupBtnClicked;
-    boolean createGroupBtnClicked;
     boolean addMemberLayoutBtnClicked;
 
     int shortAnimTime;
@@ -104,14 +102,15 @@ public class CreateGroupActivity extends AppCompatActivity {
         shortAnimTime = anim.getShortAnimTime(context);
         mediumAnimTime = anim.getMediumAnimTime(context);
         longAnimTime = anim.getLongAnimTime(context);
-        joinGroupBtnClicked = false;
-        createGroupBtnClicked = false;
         addMemberLayoutBtnClicked = false;
 
         anim.fadeInView(textViewTitle, 200, shortAnimTime);
-
         //Sets the members search card to gone and under the screen
         anim.moveViewToTranslationY(cardAddMemberToNewGroup, 0 , 0, 5000, false);
+
+        anim.moveViewToTranslationY(cardCreateGroup, 0 , shortAnimTime, 5000, false);
+        anim.fadeInView(cardCreateGroup, 0, shortAnimTime);
+        anim.moveViewToTranslationY(cardCreateGroup, 100 , shortAnimTime, 0, false);
 
         addedMembersUserListAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, addedUsersToGroup);
         listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
@@ -200,6 +199,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             addMemberCardDisappear();
         } else if(!addMemberLayoutBtnClicked) {
             super.onBackPressed();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 

@@ -43,11 +43,7 @@ import retrofit2.Response;
  */
 
 public class GroupProfileActivity extends AppCompatActivity {
-    private ArrayList<User> users;
     private Group currentGroup;
-    private ListView userList;
-    private TextView points;
-    private TextView gname;
 
     @BindView(R.id.toolbar_group_profile) Toolbar toolbar;
     @BindView(R.id.textview_group_profile_toolbar_title) TextView toolbarTitle;
@@ -58,7 +54,6 @@ public class GroupProfileActivity extends AppCompatActivity {
 
     private LayoutAdjustments layoutAdj = new LayoutAdjustments();
     UserListViewAdapter userListViewAdapter;
-    GroupQueries groupQueries = new GroupQueries();
     Context context;
     User currentUser;
     private DataManager dataManager = new DataManager();
