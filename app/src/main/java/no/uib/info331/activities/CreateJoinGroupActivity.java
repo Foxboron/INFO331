@@ -525,6 +525,8 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
                         anim.fadeOutView(cardCreateGroup, 0, longAnimTime);
                         anim.moveViewToTranslationY(cardCreateGroup, 100, shortAnimTime, cardCreateGroup.getHeight(), true);
+                        Intent intent2 = new Intent(context, JoinGroupActivity.class);
+                        startActivity(intent2);
                         break;
                 }
                 return true;

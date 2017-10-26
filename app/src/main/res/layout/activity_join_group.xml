@@ -82,7 +82,7 @@
                             android:layout_alignParentBottom="true"
                             />
                         <ImageButton
-                            android:id="@+id/imagebutton_search_for_group"
+                            android:id="@+id/imagebutton_search_for_group_join"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             style="?android:borderlessButtonStyle"
@@ -96,8 +96,7 @@
                             android:layout_height="wrap_content"
                             android:layout_toEndOf="@id/imageview_add_group"
                             android:layout_alignParentBottom="true"
-                            android:layout_toStartOf="@id/imagebutton_search_for_group"
-
+                            android:layout_toStartOf="@id/imagebutton_search_for_group_join"
                             >
 
                             <EditText
