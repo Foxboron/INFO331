@@ -32,7 +32,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A login screen that offers login via username/password.
+ * Activity that lets the user log in and register a user in the db. Also stores the user's login info
+ * so that there is only need ofr logging in once.
+ *
+ * To see how the app determines which activity to send user, see SplashActivity.java
+ *
+ *
+ * @author Edvard P. Bjørgen, Fredrik V. Heimsæter
+ *
  */
 public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.easyflipview_login_card) EasyFlipView flipViewLoginCard;

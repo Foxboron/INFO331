@@ -21,6 +21,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * [DEPRECATED]
+ *
+ * @author Edvard P. Bjørgen, Fredrik V. Heimsæter
+ *
+ */
+
 public class RegisterUserActivity extends AppCompatActivity {
 
     //UI references

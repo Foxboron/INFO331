@@ -1,32 +1,19 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.os.CountDownTimer;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.CardView;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,20 +23,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
 import no.uib.info331.adapters.UserListViewAdapter;
-import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
-import no.uib.info331.util.ApiClient;
-import no.uib.info331.util.ApiInterface;
-import no.uib.info331.util.DataManager;
 import no.uib.info331.util.DialogManager;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
+/**
+ * Activity that lets the user select members from db, give a name to a group and the creating it.
+ *
+ * @author Edvard P. Bjørgen, Fredrik V. Heimsæter
+ *
+ */
 public class CreateGroupActivity extends AppCompatActivity {
 
     //ButterKnife gui
@@ -116,12 +100,17 @@ public class CreateGroupActivity extends AppCompatActivity {
         listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
     }
 
+    /**
+     * Inits the list view for showing searched members
+     * @param searchedUsers
+     */
     private void initListViewMemberList(List<User> searchedUsers) {
         searchedMembersUserListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
         listViewMemberList.setAdapter(searchedMembersUserListViewAdapter);
 
     }
-    private void initListeners() {
+    private
+    void initListeners() {
 
         layoutBtnAddMember.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,8 +142,6 @@ public class CreateGroupActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 User user = searchedMembersUserListViewAdapter.getItem(position);
-
-
                 dialogManager.createUserProfileDialogForCreateGroup(user, CreateGroupActivity.this, getResources(), addedMembersUserListAdapter);
 
             }
@@ -175,6 +162,10 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * ButterKnife annotation listener. Registers the group with name and the members that have been
+     * inputted
+     */
     @OnClick(R.id.button_register_group_button)
     public void registerGroup(){
         String groupName = editTextCreateGroupName.getText().toString();
@@ -182,6 +173,10 @@ public class CreateGroupActivity extends AppCompatActivity {
         userQueries.refreshUserQuery(context, getResources());
     }
 
+    /**
+     * ButterKnife annotation listener. Closes the search member view, plays animation and sets the
+     * search input text field's focus to false
+     */
     @OnClick(R.id.accept_searched_members_button)
     public void addMemberCardDisappear(){
         if(addMemberLayoutBtnClicked){
@@ -192,7 +187,10 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Detects if the serach member view is open, then close it, if not; the super-method is executed.
+     * also overrides Android's standard activity transition animation with a fadein/fadout anim.
+     */
     public void onBackPressed() {
 
         if(addMemberLayoutBtnClicked){

@@ -40,6 +40,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Activity that displays user information, points and groups.
+ *
+ * @author  Edvard P. Bjørgen, Per-Niklas Longberg
+ *
+ */
+
+
 public class UserProfileActivity extends AppCompatActivity {
 
     User user;
@@ -165,6 +173,11 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets the user from the Extra that was put in the intent.
+     * Retrieves the GSON string.
+     * @return a User object
+     */
     public User getUserFromLastActivity() {
         Bundle extras = getIntent().getExtras();
         String userStringObject;
