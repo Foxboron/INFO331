@@ -92,7 +92,12 @@ public class GroupQueries {
         return result;
     }
 
-
+    /**
+     * Creates and writes a new group with a list of members to db.
+     * @param groupName the name of the new group
+     * @param ADDED_USERS_TO_GROUP an ArrayList of users to be included in the group
+     * @param context the context of the activity where this method is called from
+     */
         public void registerGroupQuery(String groupName, final ArrayList<User> ADDED_USERS_TO_GROUP, Context context){
             final DataManager dataManager = new DataManager();
             final User currentUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
@@ -144,9 +149,12 @@ public class GroupQueries {
         }
 
 
-
-
-
+    /**
+     * Updates the group, [NOT BEEN TESTED YET, MAY NOT WORK]
+     * @param context the context of the activity where this method is called from
+     * @param GROUP gorup object to update
+     * @param USER the user that performs this action, ususally currently logged in user
+     */
     public void updateGroup(final Context context, final Group GROUP, final User USER ){
         final String credentials = USER.getUsername() + ":" + USER.getPassword();
         final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);

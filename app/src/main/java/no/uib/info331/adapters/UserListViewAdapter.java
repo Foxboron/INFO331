@@ -3,7 +3,6 @@ package no.uib.info331.adapters;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,15 +14,16 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import no.uib.info331.R;
 import no.uib.info331.models.User;
 
 /**
- * Created by EddiStat on 05.10.2017.
- */
+ * Custom adapter for populating ListViews with users.
+ *
+ * @author Edvard Pires Bjørgen
+ *
+ **/
 
 public class UserListViewAdapter extends ArrayAdapter<User> {
 
@@ -63,7 +63,7 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
             row = inflater.inflate(textViewResourceId, parent, false);
 
             holder.circleImageViewUserImage = (CircleImageView) row.findViewById(R.id.circleimageview_user_image);
-            holder.userName = (TextView) row.findViewById(R.id.textview_username_list);
+            holder.textViewUserName = (TextView) row.findViewById(R.id.textview_username_list);
 
 
             row.setTag(holder);
@@ -73,7 +73,7 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
 
             holder = (UserHolder) row.getTag();
         }
-        holder.userName.setText(users.get(position).getUsername());
+        holder.textViewUserName.setText(users.get(position).getUsername());
 
         Drawable imageResource = ContextCompat.getDrawable(context, R.drawable.avatar2);
 
@@ -103,7 +103,7 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
 
     static class UserHolder {
         CircleImageView circleImageViewUserImage;
-        TextView userName;
+        TextView textViewUserName;
     }
 
 }

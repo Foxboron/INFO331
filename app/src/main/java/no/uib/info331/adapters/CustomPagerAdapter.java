@@ -1,25 +1,23 @@
 package no.uib.info331.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
-import no.uib.info331.R;
 import no.uib.info331.models.CustomPagerEnum;
 
 /**
- * Created by EddiStat on 12.10.2017.
+ * Class for inflating the views in the ViewPager
+ *
+ * @author Edvard P. Bjørgen
  */
 
 public class CustomPagerAdapter extends PagerAdapter {
 
     private Context mContext;
-    SwipeRefreshLayout relLayout;
 
     public CustomPagerAdapter(Context context) {
         mContext = context;
