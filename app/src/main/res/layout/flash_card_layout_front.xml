@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/login_username"
+                    android:id="@+id/edittext_login_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_username"
@@ -45,7 +45,7 @@
                 android:focusableInTouchMode="true">
 
                 <EditText
-                    android:id="@+id/login_password"
+                    android:id="@+id/edittext_login_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
@@ -61,7 +61,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/user_sign_in_button"
+                android:id="@+id/edittext_user_sign_in"
                 style="?android:textAppearanceSmall"
                 android:layout_width="192dp"
                 android:layout_height="36dp"
@@ -73,7 +73,7 @@
                 android:textColor="#fff" />
 
             <Button
-                android:id="@+id/button_register_group_button"
+                android:id="@+id/btn_register_group_button"
                 style="?android:borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

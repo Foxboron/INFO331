@@ -18,11 +18,18 @@ import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.User;
 
 /**
- * Created by moled on 24.10.2017.
+ * Class for managing dialog windows.
+ * @author Edvard P. Bjørgen
  */
 
 public class DialogManager {
-
+    /**
+     * Is used when users want to add a user in new group in CreateGroupActivity.
+      * @param USER The user to display the information about
+     * @param CONTEXT the context of the activity
+     * @param RESOURCES the resources from the applicaiton
+     * @param ADDED_USER_MEMBERS_LIST_ADAPTER the ListViewAdapter, for adding the user in to it, and notifying that data set has changed.
+     */
     public void createUserProfileDialogForCreateGroup(final User USER, final Context CONTEXT, final Resources RESOURCES, final UserListViewAdapter ADDED_USER_MEMBERS_LIST_ADAPTER){
         final AlertDialog dialog = new AlertDialog.Builder(CONTEXT)
                 .setView(R.layout.dialog_add_member_profile)

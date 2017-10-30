@@ -2,8 +2,11 @@ package no.uib.info331.models;
 
 import no.uib.info331.R;
 
+
 /**
- * Created by EddiStat on 12.10.2017.
+ * Model for views that are to be included in CustomPagerAdapter.java
+ *
+ * @author Edvard P. Bjørgen
  */
 
 public enum CustomPagerEnum {

@@ -1,32 +1,19 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.os.CountDownTimer;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.CardView;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,27 +23,24 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
 import no.uib.info331.adapters.UserListViewAdapter;
-import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
-import no.uib.info331.util.ApiClient;
-import no.uib.info331.util.ApiInterface;
-import no.uib.info331.util.DataManager;
 import no.uib.info331.util.DialogManager;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
+/**
+ * Activity that lets the user select members from db, give a name to a group and the creating it.
+ *
+ * @author Edvard P. Bjørgen, Fredrik V. Heimsæter
+ *
+ */
 public class CreateGroupActivity extends AppCompatActivity {
 
     //ButterKnife gui
-    @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
+    @BindView(R.id.textview_create_join_group_title) TextView textViewTitle;
 
-    @BindView(R.id.create_group_card) CardView cardCreateGroup;
-    @BindView(R.id.add_member_card) CardView cardAddMemberToNewGroup;
+    @BindView(R.id.cardview_create_group) CardView cardViewCreateGroup;
+    @BindView(R.id.cardview_add_member) CardView cardViewAddMemberToNewGroup;
 
     @BindView(R.id.edittext_create_group_name) EditText editTextCreateGroupName;
     @BindView(R.id.relativelayout_member_search) RelativeLayout layoutBtnAddMember;
@@ -66,7 +50,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
     @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
 
-    @BindView(R.id.button_register_group_button) Button buttonRegisterGroup;
+    @BindView(R.id.btn_register_group_button) Button btnRegisterGroup;
 
     boolean addMemberLayoutBtnClicked;
 
@@ -106,29 +90,34 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         anim.fadeInView(textViewTitle, 200, shortAnimTime);
         //Sets the members search card to gone and under the screen
-        anim.moveViewToTranslationY(cardAddMemberToNewGroup, 0 , 0, 5000, false);
+        anim.moveViewToTranslationY(cardViewAddMemberToNewGroup, 0 , 0, 5000, false);
 
-        anim.moveViewToTranslationY(cardCreateGroup, 0 , shortAnimTime, 5000, false);
-        anim.fadeInView(cardCreateGroup, 0, shortAnimTime);
-        anim.moveViewToTranslationY(cardCreateGroup, 100 , shortAnimTime, 0, false);
+        anim.moveViewToTranslationY(cardViewCreateGroup, 0 , shortAnimTime, 5000, false);
+        anim.fadeInView(cardViewCreateGroup, 0, shortAnimTime);
+        anim.moveViewToTranslationY(cardViewCreateGroup, 100 , shortAnimTime, 0, false);
 
         addedMembersUserListAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, addedUsersToGroup);
         listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
     }
 
+    /**
+     * Inits the list view for showing searched members
+     * @param searchedUsers
+     */
     private void initListViewMemberList(List<User> searchedUsers) {
         searchedMembersUserListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
         listViewMemberList.setAdapter(searchedMembersUserListViewAdapter);
 
     }
-    private void initListeners() {
+    private
+    void initListeners() {
 
         layoutBtnAddMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addMemberLayoutBtnClicked = true;
-                anim.fadeInView(cardAddMemberToNewGroup, 0, shortAnimTime);
-                anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
+                anim.fadeInView(cardViewAddMemberToNewGroup, 0, shortAnimTime);
+                anim.moveViewToTranslationY(cardViewAddMemberToNewGroup,0 , shortAnimTime, 0, false);
             }
         });
 
@@ -153,8 +142,6 @@ public class CreateGroupActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 User user = searchedMembersUserListViewAdapter.getItem(position);
-
-
                 dialogManager.createUserProfileDialogForCreateGroup(user, CreateGroupActivity.this, getResources(), addedMembersUserListAdapter);
 
             }
@@ -175,24 +162,35 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     }
 
-    @OnClick(R.id.button_register_group_button)
+    /**
+     * ButterKnife annotation listener. Registers the group with name and the members that have been
+     * inputted
+     */
+    @OnClick(R.id.btn_register_group_button)
     public void registerGroup(){
         String groupName = editTextCreateGroupName.getText().toString();
         groupQueries.registerGroupQuery(groupName, addedUsersToGroup, context);
         userQueries.refreshUserQuery(context, getResources());
     }
 
+    /**
+     * ButterKnife annotation listener. Closes the search member view, plays animation and sets the
+     * search input text field's focus to false
+     */
     @OnClick(R.id.accept_searched_members_button)
     public void addMemberCardDisappear(){
         if(addMemberLayoutBtnClicked){
             addMemberLayoutBtnClicked = false;
-            anim.fadeOutView(cardAddMemberToNewGroup, 0, longAnimTime);
-            anim.moveViewToTranslationY(cardAddMemberToNewGroup, 100, shortAnimTime, cardAddMemberToNewGroup.getHeight()+2000, false);
+            anim.fadeOutView(cardViewAddMemberToNewGroup, 0, longAnimTime);
+            anim.moveViewToTranslationY(cardViewAddMemberToNewGroup, 100, shortAnimTime, cardViewAddMemberToNewGroup.getHeight()+2000, false);
             editTextSearchForUsers.clearFocus();
         }
     }
 
-
+    /**
+     * Detects if the serach member view is open, then close it, if not; the super-method is executed.
+     * also overrides Android's standard activity transition animation with a fadein/fadout anim.
+     */
     public void onBackPressed() {
 
         if(addMemberLayoutBtnClicked){

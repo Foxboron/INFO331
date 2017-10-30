@@ -28,18 +28,16 @@ import no.uib.info331.util.Animations;
 import no.uib.info331.util.DataManager;
 
 /**
- * Micromanaging af here
+ * Activity that displays the user a viewpager with options to either create or join an existing group
  *
  * @author Edvard P. Bjørgen
  *
  */
 public class CreateJoinGroupActivity extends AppCompatActivity {
 
-    @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
-
+    @BindView(R.id.textview_create_join_group_title) TextView textViewTitle;
     //ButterKnife gui
-
-    @BindView(R.id.choose_action_card) CardView cardChooseAction;
+    @BindView(R.id.cardview_choose_action) CardView cardChooseAction;
     @BindView(R.id.btn_skip_group_selection) Button btnSkipGroupSelection;
 
     int shortAnimTime;
@@ -52,6 +50,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     private GestureDetectorCompat mDetector;
     private User user;
     private DataManager dataManager = new DataManager();
+    private View.OnTouchListener touchListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +60,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         context = getApplicationContext();
         user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
 
-
-        //getAllUsers();
         initGui();
         initPager();
         initListeners();
@@ -78,13 +75,15 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Inits the pager for selecting the next action
+     */
     private void initPager() {
         CustomPagerAdapter adapter = new CustomPagerAdapter(this);
         pager = (ViewPager) findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
 
     }
-
 
     private void initGui() {
         shortAnimTime = anim.getShortAnimTime(context);
@@ -107,18 +106,14 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     }
 
-    View.OnTouchListener touchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-
-            return mDetector.onTouchEvent(motionEvent);}
-    };
 
 
+    /**
+     * Inits the
+     */
     private void initListeners() {
         mDetector = new GestureDetectorCompat(this,  new MyGestureListener());
 
-        pager.setOnTouchListener(touchListener);
 
 
         btnSkipGroupSelection.setOnClickListener(new View.OnClickListener() {
@@ -129,10 +124,24 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        /**
+         * Init for OnTouchListners for detecting downward flings, is used by the ViewPager
+         */
+
+        touchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                return mDetector.onTouchEvent(motionEvent);}
+        };
+
+        pager.setOnTouchListener(touchListener);
+
     }
 
     /**
-     * Creates ad writes an empty list to the user
+     * Creates and writes an empty list to the user
      */
     private void createEmptyGroupListForUser() {
         ArrayList<Group> emptyGroupArray = new ArrayList<>();
@@ -141,6 +150,9 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
     }
 
+    /**
+     * For showing an animation of the card goin " in to place" when the user uses the back button
+     */
     protected void onResume() {
         super.onResume();
 
@@ -148,7 +160,10 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         anim.moveViewToTranslationY(cardChooseAction, 50 , shortAnimTime, 0, false);
     }
 
-
+    /**
+     * Inner class for determining the onFling event. This is utilizd by the touchlistener, and when deteiced
+     * a downward fling it performs actions, depending on which page of the ViewPager
+     */
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
 

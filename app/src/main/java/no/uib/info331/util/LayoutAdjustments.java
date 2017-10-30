@@ -5,8 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by EddiStat on 12.10.2017.'
  * Class for general methods for adjusting layouts programmatically
+ * @author Edvard P. Bjørgen
  */
 
 public class LayoutAdjustments {

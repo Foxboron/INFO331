@@ -125,6 +125,15 @@ public class UserQueries {
 
     }
 
+    /**
+     * Refreshes the locally stored user.
+     * Gets the currently logged in user from SharedPref, and uses that user object to retrieve the
+     * user from the db. With the "new" user-object from db, it then stores the retrieved user-object
+     * in SharedPref, thus refreshing it.
+     *
+     * @param CONTEXT the context of the activity where this method is called from
+     * @param RESOURCES resoruces from the application
+     */
     public void refreshUserQuery(final Context CONTEXT, final Resources RESOURCES){
         final DataManager dataManager = new DataManager();
         final User currentUser = dataManager.getSavedObjectFromSharedPref(CONTEXT, "currentlySignedInUser", new TypeToken<User>(){}.getType());

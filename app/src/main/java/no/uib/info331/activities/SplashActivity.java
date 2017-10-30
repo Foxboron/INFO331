@@ -13,6 +13,16 @@ import no.uib.info331.R;
 import no.uib.info331.models.User;
 import no.uib.info331.util.DataManager;
 
+/**
+ * Activity that determines what action to do when started, based on the device and/or user.
+ * If first time use, the slpash screen will send the user to LoginActivity. If user has logged in
+ * before and do not have a group, it will send the user to CreateJoinGroupActivity, if user has
+ * logged in before and has registered in a group, it will be sent to DashboardActivity
+ *
+ * @author  Fredrik V. Heimsæter
+ *
+ */
+
 public class SplashActivity extends AppCompatActivity {
 
     @Override

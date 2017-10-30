@@ -41,15 +41,19 @@ import no.uib.info331.models.User;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.DataManager;
 
+/**
+ * Activity that displays the user relevant info, and is the "main" activity of the app.
+ *
+ * @author Edvard P. Bjørgen, Fredrik V. Heimsæter
+ *
+ */
 
 public class DashboardActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.listview_dashboard_user_groups) ListView listViewGroupList;
     @BindView(R.id.scrollview_dashboard) ScrollView scrollViewDashboard;
-
     TextView toolbarTitle;
-
     ImageButton btnHamburgerMenu;
     TextView textViewUserPoints;
 
@@ -57,7 +61,6 @@ public class DashboardActivity extends AppCompatActivity {
     Animations anim = new Animations();
     Context context;
 
-    private AccountHeader headerResult = null;
     private Drawer result;
     private User user;
     private GroupListViewAdapter userGroupsListViewAdapter;

@@ -7,13 +7,9 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -27,6 +23,14 @@ import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.util.Animations;
+
+/**
+ * Activity that lets the user search for groups in db and click on it in the searched groups list,
+ * they  are then taken to the group profile page, GroupProfileActivity
+ *
+ * @author Edvard P. Bjørgen
+ *
+ */
 
 public class JoinGroupActivity extends AppCompatActivity {
 

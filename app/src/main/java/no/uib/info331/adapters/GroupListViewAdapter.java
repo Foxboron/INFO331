@@ -24,9 +24,9 @@ import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 
 /**
- * Created by Per-Niklas Longberg on 02.10.2017.
- *
  * Custom adapter for populating ListView with our group objects.
+ *
+ * @author Per-Niklas Longberg
  *
  **/
 

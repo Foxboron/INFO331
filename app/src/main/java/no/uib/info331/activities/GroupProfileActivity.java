@@ -39,7 +39,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by perni on 04.10.2017.
+ * Activity that displays the group information, members. Lets users join the group, if not already
+ * in it
+ *
+ * @author Per-Niklas Longberg, Edvard P. Bjørgen, Fredrik V. Heimsæter
+ *
  */
 
 public class GroupProfileActivity extends AppCompatActivity {
@@ -87,7 +91,7 @@ public class GroupProfileActivity extends AppCompatActivity {
 
 
     /**
-     * Quick fix for checking ig currentUser is in group already, if so, disable the "join group" button
+     * Quick fix for checking currentUser is in group already, if so, disable the "join group" button
      */
     private void checkIfUserIsAlreadyInGroup() {
         for(User member : currentGroup.getUsers()){
@@ -136,7 +140,13 @@ public class GroupProfileActivity extends AppCompatActivity {
                 }
             }
         });
-
+/**
+ * When user tries to join group, if user is not already in group, it will then add the user to the group
+ * The button will be set to "Already joined". First it makes an API call, updating the group with a new user
+ * , it then updates the local in-memory user, refreshes the list view of groups members. then it makes
+ * a new API-call to get the user again for updating SharedPref.
+ *
+ */
         btnJoinGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,6 +156,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                     final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                     Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getID(), currentUser.getID());
                     call.enqueue(new Callback<ResponseBody>() {
+                        // This adds the user to group in DB
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.code() == 200) {
@@ -154,6 +165,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                                 checkIfUserIsAlreadyInGroup();
                                 Call<User> refreshUserCall = apiService.getUserById(basic, currentUser.getID());
                                 refreshUserCall.enqueue(new Callback<User>() {
+                                    //This is for fetching the user from db to update local storage
                                     @Override
                                     public void onResponse(Call<User> call, Response<User> response) {
                                         if (response.code() == 200) {
@@ -198,6 +210,11 @@ public class GroupProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets a group element as a gson string.
+     *
+     * @return a group object, built from a gson string
+     */
     public Group getGroupFromLastActivity() {
         Bundle extras = getIntent().getExtras();
         String groupStringObject;
@@ -218,7 +235,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Method from activity to dispaly the "Back arrow"
+     * Method from activity to display the "Back arrow"
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
