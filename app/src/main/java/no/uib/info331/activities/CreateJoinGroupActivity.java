@@ -2,59 +2,30 @@ package no.uib.info331.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.provider.ContactsContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import no.uib.info331.R;
 import no.uib.info331.adapters.CustomPagerAdapter;
-import no.uib.info331.adapters.GroupListViewAdapter;
-import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
-import no.uib.info331.queries.GroupQueries;
-import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
-import no.uib.info331.util.ApiClient;
-import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Micromanaging af here
@@ -66,63 +37,21 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
 
-
     //ButterKnife gui
 
     @BindView(R.id.choose_action_card) CardView cardChooseAction;
-    @BindView(R.id.join_group_card) CardView cardJoinGroup;
-
-    @BindView(R.id.create_group_card) CardView cardCreateGroup;
-    @BindView(R.id.add_member_card) CardView cardAddMemberToNewGroup;
-    @BindView(R.id.show_join_group) Button btnJoinGroupShow;
-
-    @BindView(R.id.show_create_group) Button btnCreateGroupShow;
-
-    @BindView(R.id.edittext_create_group_name) EditText editTextCreateGroupName;
-    @BindView(R.id.relativelayout_member_search) RelativeLayout layoutBtnAddMember;
-    @BindView(R.id.listview_added_members) ListView listViewAddedMembersToGroup;
-
-    @BindView(R.id.edittext_search_for_groups) EditText editTextSearchForGroups;
-    @BindView(R.id.listview_add_group_list) ListView listViewGroupList;
-    @BindView(R.id.imagebutton_search_for_group) ImageButton imageBtnSearchForGroups;
-
-    @BindView(R.id.search_for_users) EditText editTextSearchForUsers;
-    @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
-    @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
-
-    @BindView(R.id.imageview_add_member_logo) ImageView imageViewAddMemberIcon;
-    @BindView(R.id.textview_add_member_underlogo) TextView textViewAddMemberUnderLogo;
-
-    @BindView(R.id.button_register_group_button) Button buttonRegisterGroup;
-
-
-
-
-
-
-    boolean joinGroupBtnClicked;
-    boolean createGroupBtnClicked;
-    boolean addMemberLayoutBtnClicked;
+    @BindView(R.id.btn_skip_group_selection) Button btnSkipGroupSelection;
 
     int shortAnimTime;
-    int mediumAnimTime;
     int longAnimTime;
 
     Animations anim = new Animations();
     Context context;
 
-    UserQueries userQueries = new UserQueries();
-    UserListViewAdapter searchedMembersUserListViewAdapter;
-    GroupListViewAdapter searchedGroupListViewAdapter;
-
-    ArrayList<User> addedUsersToGroup = new ArrayList<>();
-    UserListViewAdapter addedMembersUserListAdapter;
-    GroupQueries groupQueries = new GroupQueries();
-
     ViewPager pager;
-    GestureDetector mGestureDetector;
     private GestureDetectorCompat mDetector;
-    DataManager dataManager;
+    private User user;
+    private DataManager dataManager = new DataManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,11 +59,21 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_join_group);
         ButterKnife.bind(this);
         context = getApplicationContext();
+        user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+
 
         //getAllUsers();
         initGui();
         initPager();
         initListeners();
+
+        /**
+         * If user does not have user group arraylist set, create a new empty list
+         * This is for avoiding NPE's later on
+         */
+        if(user.getGroups() == null ){
+            createEmptyGroupListForUser();
+        }
 
 
     }
@@ -149,34 +88,22 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
 
     private void initGui() {
         shortAnimTime = anim.getShortAnimTime(context);
-        mediumAnimTime = anim.getMediumAnimTime(context);
         longAnimTime = anim.getLongAnimTime(context);
-        joinGroupBtnClicked = false;
-        createGroupBtnClicked = false;
-        addMemberLayoutBtnClicked = false;
-
         anim.fadeInView(textViewTitle, 200, shortAnimTime);
-
-        //Sets the members search card to gone and under the screen
-        anim.moveViewToTranslationY(cardAddMemberToNewGroup, 0 , 0, 5000, false);
-
-        //addedUsersToGroup.add(new User("Testie", "", "", 345));
-
-        addedMembersUserListAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, addedUsersToGroup);
-        listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
-
-
+        hideButtonIfUserHasGroup();
 
     }
 
-    private void initListViewMemberList(List<User> searchedUsers) {
-        searchedMembersUserListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
-        listViewMemberList.setAdapter(searchedMembersUserListViewAdapter);
-
-    }
-    private void initListViewGroupList(List<Group> searchedGroups) {
-        searchedGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
-        listViewGroupList.setAdapter(searchedGroupListViewAdapter);
+    /**
+     * If user has groups, do not show the skip button
+     */
+    private void hideButtonIfUserHasGroup() {
+        if(user.getGroups() != null){
+            //TODO: Find a better solution for this
+            if (user.getGroups().size() > 0 ) {
+                btnSkipGroupSelection.setVisibility(View.GONE);
+            }
+        }
 
     }
 
@@ -194,307 +121,34 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         pager.setOnTouchListener(touchListener);
 
 
-
-
-
-        /***********************/
-
-
-        btnJoinGroupShow.setOnClickListener(new View.OnClickListener() {
+        btnSkipGroupSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                joinGroupBtnClicked = true;
-
-                anim.fadeOutView(cardChooseAction, 0, shortAnimTime);
-                anim.moveViewToTranslationY(cardChooseAction,0 , shortAnimTime, cardChooseAction.getHeight(), true);
-
-            }
-        });
-
-
-        btnCreateGroupShow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                createGroupBtnClicked = true;
-
-                anim.fadeOutView(cardChooseAction, 0, longAnimTime);
-                anim.moveViewToTranslationY(cardChooseAction, 0 , shortAnimTime, cardChooseAction.getHeight(), true);
-
-                anim.fadeOutView(cardJoinGroup, 0, longAnimTime);
-                anim.moveViewToTranslationY(cardJoinGroup, 100, shortAnimTime, cardJoinGroup.getHeight(), true);
-
-            }
-        });
-
-        layoutBtnAddMember.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addMemberLayoutBtnClicked = true;
-                anim.fadeInView(cardAddMemberToNewGroup, 0, shortAnimTime);
-                anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
-            }
-        });
-
-        imageBtnSearchForUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String query = String.valueOf(editTextSearchForUsers.getText());
-                List<User> userSearch = userQueries.getUsersByStringFromDb(context, query);
-                try {
-                    initListViewMemberList(userSearch);
-                } catch (Exception e){
-                    e.printStackTrace();
-                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-
-                }
-            }
-        });
-
-        imageBtnSearchForGroups.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String query = String.valueOf(editTextSearchForGroups.getText());
-                List<Group> groupSearch = groupQueries.getGroupsByStringFromDb(context, query);
-                try {
-                    if(groupSearch != null){
-                        initListViewGroupList(groupSearch);
-                        searchedGroupListViewAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(context, "Can't return results", Toast.LENGTH_LONG).show();
-                    }
-                } catch (Exception e){
-                    e.printStackTrace();
-                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-
-                }
-            }
-        });
-
-        listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Group group = searchedGroupListViewAdapter.getItem(i);
-                Gson gson = new Gson();
-                String userStringObject = gson.toJson(group);
-                Intent intent = new Intent(context, GroupProfileActivity.class);
-                intent.putExtra("group", userStringObject);
+                createEmptyGroupListForUser();
+                Intent intent = new Intent(context, DashboardActivity.class);
                 startActivity(intent);
-
-
             }
         });
-
-        listViewMemberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                User user = searchedMembersUserListViewAdapter.getItem(position);
-                createUserProfileDialog(user);
-            }
-
-        });
-
-        listViewAddedMembersToGroup.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                User user = addedMembersUserListAdapter.getItem(i);
-                addedMembersUserListAdapter.remove(user);
-                addedMembersUserListAdapter.notifyDataSetChanged();
-                Toast.makeText(context, "TEMPORARY WAY OF REMOVING USERS! User " + user.getUsername() + " removed", Toast.LENGTH_LONG).show();
-                return false;
-            }
-        });
-
-
-        /*Only for testing currentUser profile*/
-
-        listViewAddedMembersToGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                User user = addedMembersUserListAdapter.getItem(i);
-                Gson gson = new Gson();
-                String userStringObject = gson.toJson(user);
-                Intent intent = new Intent(context, UserProfileActivity.class);
-                intent.putExtra("currentUser", userStringObject);
-                startActivity(intent);
-
-
-            }
-        });
-
-
-
     }
 
-    @OnClick(R.id.button_register_group_button)
-    public void registerGroup(){
-        String groupName = editTextCreateGroupName.getText().toString();
-        final DataManager dataManager = new DataManager();
-        final User currentUser = dataManager.getSavedObjectFromSharedPref(getApplicationContext(), "currentlySignedInUser", new TypeToken<User>(){}.getType());
-        final String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
-        final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
-        Group group = new Group(groupName, currentUser);
-        final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<Group> call = apiService.createGroup(basic, group.getName());
-
-        final boolean[] error = {false};
-        call.enqueue(new Callback<Group>() {
-            @Override
-            public void onResponse(Call<Group> call, Response<Group> response) {
-                if(response.code()==200) {
-                    final Group registeredGroup = response.body();
-                    for (User member : addedUsersToGroup) {
-                        Call<ResponseBody> addUserCall = apiService.addUserToGroup(basic, registeredGroup.getID(), member.getID());
-                        addUserCall.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                System.out.println(response);
-                                if(response.code()!=200) {
-                                    error[0] = true;
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                error[0] = true;
-                                t.printStackTrace();
-
-                            }
-                        });
-
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<Group> call, Throwable t) {
-                error[0] = true;
-                t.printStackTrace();
-
-            }
-        });
-        Log.d("Error: ", Boolean.toString(error[0]));
-        if(!error[0]){
-            Call<User> refreshUserCall = apiService.getUserById(basic, currentUser.getID());
-            refreshUserCall.enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    Log.d("RefreshUser", response.toString());
-                    if (response.code() == 200) {
-                        User refreshedUser = response.body();
-                        refreshedUser.setPassword(currentUser.getPassword());
-                        dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
-                        Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    t.printStackTrace();
-                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-
-                }
-            });
-        } else {
-            Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-        }
-
+    /**
+     * Creates ad writes an empty list to the user
+     */
+    private void createEmptyGroupListForUser() {
+        ArrayList<Group> emptyGroupArray = new ArrayList<>();
+        user.setGroups(emptyGroupArray);
+        User refreshedUser = user;
+        dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
     }
 
-    @OnClick(R.id.accept_searched_members_button)
-    public void addMemberCardDisappear(){
-        if(addMemberLayoutBtnClicked){
-            addMemberLayoutBtnClicked = false;
-            anim.fadeOutView(cardAddMemberToNewGroup, 0, longAnimTime);
-            anim.moveViewToTranslationY(cardAddMemberToNewGroup, 100, shortAnimTime, cardAddMemberToNewGroup.getHeight(), false);
-        }
+    protected void onResume() {
+        super.onResume();
+
+        anim.fadeInView(cardChooseAction, 0, shortAnimTime);
+        anim.moveViewToTranslationY(cardChooseAction, 50 , shortAnimTime, 0, false);
     }
 
-    public void createUserProfileDialog(User user){
-        final AlertDialog dialog = new AlertDialog.Builder(this)
-                .setView(R.layout.dialog_add_member_profile)
-                .create();
-        dialog.setCancelable(true);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.show();
 
-
-        TextView textViewDialogUserName = (TextView) dialog.findViewById(R.id.dialog_textview_add_member_username);
-        textViewDialogUserName.setText(user.getUsername());
-        fabAddUserToGroup(context, user, dialog);
-
-    }
-    private void fabAddUserToGroup(final Context CONTEXT, final User USER, final AlertDialog DIALOG) {
-        FloatingActionButton fab = (FloatingActionButton) DIALOG.findViewById(R.id.fabCal);
-        if(fab != null)
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Snackbar snack = Snackbar.make(view, getResources().getString(R.string.member_added), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null);
-                    View sbView = snack.getView();
-
-                    //Set  typeface
-                    TextView tv = (TextView) (sbView).findViewById(android.support.design.R.id.snackbar_text);
-                    Typeface font = Typeface.createFromAsset(getBaseContext().getAssets(), "fonts/roboto_thin.ttf");
-                    tv.setTypeface(font);
-                    tv.setTextSize(16);
-                    snack.show();
-
-                    //Countdown to when to start the calendar intent, this for showing currentUser the snackbar of whats happening next
-                    new CountDownTimer(800, 1000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {}
-                        public void onFinish() {
-                            addedMembersUserListAdapter.add(USER);
-                            addedMembersUserListAdapter.notifyDataSetChanged();
-                            DIALOG.cancel();
-                        }
-                    }.start();
-                }
-            });
-    }
-
-    public void onBackPressed() {
-
-        if(addMemberLayoutBtnClicked){
-            addMemberCardDisappear();
-            return;
-        }
-
-        if(joinGroupBtnClicked) {
-            joinGroupBtnClicked = false;
-
-            //Animates the card for choosing what to do
-            anim.fadeInView(cardChooseAction, 0, shortAnimTime);
-            anim.moveViewToTranslationY(cardChooseAction, 50 , shortAnimTime, 0, false);
-            anim.fadeInView(cardCreateGroup, 50, shortAnimTime);
-            anim.moveViewToTranslationY(cardCreateGroup, 50 , shortAnimTime, 0, false);
-
-        }
-
-        else if(createGroupBtnClicked) {
-            joinGroupBtnClicked = false;
-            createGroupBtnClicked = false;
-
-            //Animates the card for choosing what to do
-
-            anim.fadeInView(cardChooseAction, 0, shortAnimTime);
-            anim.moveViewToTranslationY(cardChooseAction, 100 , shortAnimTime, 0, false);
-        } else if( !createGroupBtnClicked && !joinGroupBtnClicked && !addMemberLayoutBtnClicked){
-
-            super.onBackPressed();
-        }
-
-
-
-
-    }
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
 
@@ -506,24 +160,21 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             if(velocityY > 500 && velocityX < 2000 && velocityX > -2000){
                 switch (pager.getCurrentItem()){
                     case 0:
-
-                        createGroupBtnClicked = true;
-
                         anim.fadeOutView(cardChooseAction, 0, longAnimTime);
                         anim.moveViewToTranslationY(cardChooseAction, 0 , shortAnimTime, cardChooseAction.getHeight(), true);
 
-
-
-
+                        Intent intent = new Intent(context, CreateGroupActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         break;
 
                     case 1:
-                        joinGroupBtnClicked = true;
                         anim.fadeOutView(cardChooseAction, 0, shortAnimTime);
                         anim.moveViewToTranslationY(cardChooseAction,0 , shortAnimTime, cardChooseAction.getHeight(), true);
 
-                        anim.fadeOutView(cardCreateGroup, 0, longAnimTime);
-                        anim.moveViewToTranslationY(cardCreateGroup, 100, shortAnimTime, cardCreateGroup.getHeight(), true);
+                        Intent intent2 = new Intent(context, JoinGroupActivity.class);
+                        startActivity(intent2);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         break;
                 }
                 return true;
