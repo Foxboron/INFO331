@@ -35,11 +35,9 @@ import no.uib.info331.util.DataManager;
  */
 public class CreateJoinGroupActivity extends AppCompatActivity {
 
-    @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
-
+    @BindView(R.id.textview_create_join_group_title) TextView textViewTitle;
     //ButterKnife gui
-
-    @BindView(R.id.choose_action_card) CardView cardChooseAction;
+    @BindView(R.id.cardview_choose_action) CardView cardChooseAction;
     @BindView(R.id.btn_skip_group_selection) Button btnSkipGroupSelection;
 
     int shortAnimTime;
@@ -78,7 +76,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     }
 
     /**
-     * Inits the pager for selecting the next acion
+     * Inits the pager for selecting the next action
      */
     private void initPager() {
         CustomPagerAdapter adapter = new CustomPagerAdapter(this);

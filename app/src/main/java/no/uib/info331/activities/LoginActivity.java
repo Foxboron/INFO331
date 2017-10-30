@@ -45,20 +45,20 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.easyflipview_login_card) EasyFlipView flipViewLoginCard;
 
     // UI references.
-    @BindView(R.id.login_username) EditText editTextLoginUsername;
-    @BindView(R.id.login_password) EditText editTextLoginPassword;
-    @BindView(R.id.user_sign_in_button) Button btnLoginUsernameSignIn;
-    @BindView(R.id.button_register_group_button) Button btnLoginRegisterAccount;
-    @BindView(R.id.login_form) View viewLoginForm;
-    @BindView(R.id.login_progress) View progressViewLogin;
+    @BindView(R.id.edittext_login_username) EditText editTextLoginUsername;
+    @BindView(R.id.edittext_login_password) EditText editTextLoginPassword;
+    @BindView(R.id.edittext_user_sign_in) Button btnLoginUsernameSignIn;
+    @BindView(R.id.btn_register_group_button) Button btnLoginRegisterAccount;
+    @BindView(R.id.view_login_form) View viewLoginForm;
+    @BindView(R.id.view_login_progress) View progressViewLogin;
 
     //Register flip card
-    @BindView(R.id.register_username) EditText editTextRegisterUsername;
-    @BindView(R.id.password_register) EditText editTextRegisterPassword;
-    @BindView(R.id.repeat_password_register) EditText editTextRegisterRepeatPassword;
-    @BindView(R.id.register_button) Button btnRegisterUser;
-    @BindView(R.id.register_form) View viewRegisterForm;
-    @BindView(R.id.register_progress) View registerProgressView;
+    @BindView(R.id.edittext_register_username) EditText editTextRegisterUsername;
+    @BindView(R.id.edittext_password_register) EditText editTextRegisterPassword;
+    @BindView(R.id.edittext_repeat_password_register) EditText editTextRegisterRepeatPassword;
+    @BindView(R.id.button_register_button) Button btnRegisterUser;
+    @BindView(R.id.view_register_form) View viewRegisterForm;
+    @BindView(R.id.view_register_progress) View viewRegisterProgressView;
     @BindView(R.id.button_back_to_login) Button btnBackToLogin;
 
     boolean isFlipStateFront = true;
@@ -237,7 +237,7 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
 
-            showProgress(true, viewRegisterForm, registerProgressView);
+            showProgress(true, viewRegisterForm, viewRegisterProgressView);
 
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<User> call = apiService.register(username, password);
@@ -254,7 +254,7 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
 
                     } else {
-                        showProgress(false, viewRegisterForm, registerProgressView);
+                        showProgress(false, viewRegisterForm, viewRegisterProgressView);
                         editTextRegisterUsername.setError(getString(R.string.error_username_exists));
                         editTextRegisterUsername.requestFocus();
                     }
@@ -262,7 +262,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    showProgress(false, viewRegisterForm, registerProgressView);
+                    showProgress(false, viewRegisterForm, viewRegisterProgressView);
                     btnRegisterUser.setError(getString(R.string.error_register));
                     btnRegisterUser.requestFocus();
                 }

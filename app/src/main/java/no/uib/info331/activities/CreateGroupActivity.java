@@ -37,10 +37,10 @@ import no.uib.info331.util.DialogManager;
 public class CreateGroupActivity extends AppCompatActivity {
 
     //ButterKnife gui
-    @BindView(R.id.text_create_join_group_title) TextView textViewTitle;
+    @BindView(R.id.textview_create_join_group_title) TextView textViewTitle;
 
-    @BindView(R.id.create_group_card) CardView cardCreateGroup;
-    @BindView(R.id.add_member_card) CardView cardAddMemberToNewGroup;
+    @BindView(R.id.cardview_create_group) CardView cardViewCreateGroup;
+    @BindView(R.id.cardview_add_member) CardView cardViewAddMemberToNewGroup;
 
     @BindView(R.id.edittext_create_group_name) EditText editTextCreateGroupName;
     @BindView(R.id.relativelayout_member_search) RelativeLayout layoutBtnAddMember;
@@ -50,7 +50,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
     @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
 
-    @BindView(R.id.button_register_group_button) Button buttonRegisterGroup;
+    @BindView(R.id.btn_register_group_button) Button btnRegisterGroup;
 
     boolean addMemberLayoutBtnClicked;
 
@@ -90,11 +90,11 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         anim.fadeInView(textViewTitle, 200, shortAnimTime);
         //Sets the members search card to gone and under the screen
-        anim.moveViewToTranslationY(cardAddMemberToNewGroup, 0 , 0, 5000, false);
+        anim.moveViewToTranslationY(cardViewAddMemberToNewGroup, 0 , 0, 5000, false);
 
-        anim.moveViewToTranslationY(cardCreateGroup, 0 , shortAnimTime, 5000, false);
-        anim.fadeInView(cardCreateGroup, 0, shortAnimTime);
-        anim.moveViewToTranslationY(cardCreateGroup, 100 , shortAnimTime, 0, false);
+        anim.moveViewToTranslationY(cardViewCreateGroup, 0 , shortAnimTime, 5000, false);
+        anim.fadeInView(cardViewCreateGroup, 0, shortAnimTime);
+        anim.moveViewToTranslationY(cardViewCreateGroup, 100 , shortAnimTime, 0, false);
 
         addedMembersUserListAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, addedUsersToGroup);
         listViewAddedMembersToGroup.setAdapter(addedMembersUserListAdapter);
@@ -116,8 +116,8 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addMemberLayoutBtnClicked = true;
-                anim.fadeInView(cardAddMemberToNewGroup, 0, shortAnimTime);
-                anim.moveViewToTranslationY(cardAddMemberToNewGroup,0 , shortAnimTime, 0, false);
+                anim.fadeInView(cardViewAddMemberToNewGroup, 0, shortAnimTime);
+                anim.moveViewToTranslationY(cardViewAddMemberToNewGroup,0 , shortAnimTime, 0, false);
             }
         });
 
@@ -166,7 +166,7 @@ public class CreateGroupActivity extends AppCompatActivity {
      * ButterKnife annotation listener. Registers the group with name and the members that have been
      * inputted
      */
-    @OnClick(R.id.button_register_group_button)
+    @OnClick(R.id.btn_register_group_button)
     public void registerGroup(){
         String groupName = editTextCreateGroupName.getText().toString();
         groupQueries.registerGroupQuery(groupName, addedUsersToGroup, context);
@@ -181,8 +181,8 @@ public class CreateGroupActivity extends AppCompatActivity {
     public void addMemberCardDisappear(){
         if(addMemberLayoutBtnClicked){
             addMemberLayoutBtnClicked = false;
-            anim.fadeOutView(cardAddMemberToNewGroup, 0, longAnimTime);
-            anim.moveViewToTranslationY(cardAddMemberToNewGroup, 100, shortAnimTime, cardAddMemberToNewGroup.getHeight()+2000, false);
+            anim.fadeOutView(cardViewAddMemberToNewGroup, 0, longAnimTime);
+            anim.moveViewToTranslationY(cardViewAddMemberToNewGroup, 100, shortAnimTime, cardViewAddMemberToNewGroup.getHeight()+2000, false);
             editTextSearchForUsers.clearFocus();
         }
     }

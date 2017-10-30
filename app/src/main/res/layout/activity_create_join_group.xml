@@ -17,7 +17,7 @@
         >
 
         <TextView
-            android:id="@+id/text_create_join_group_title"
+            android:id="@+id/textview_create_join_group_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/wants_to"
@@ -35,7 +35,7 @@
 
 
             <android.support.v7.widget.CardView
-                android:id="@+id/choose_action_card"
+                android:id="@+id/cardview_choose_action"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="16dp"

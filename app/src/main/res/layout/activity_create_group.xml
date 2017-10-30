@@ -17,7 +17,7 @@
         >
 
         <TextView
-            android:id="@+id/text_create_join_group_title"
+            android:id="@+id/textview_create_join_group_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/create_the_group"
@@ -34,7 +34,7 @@
 
 
             <android.support.v7.widget.CardView
-                android:id="@+id/create_group_card"
+                android:id="@+id/cardview_create_group"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="16dp"
@@ -173,7 +173,7 @@
 
 
                         <Button
-                            android:id="@+id/button_register_group_button"
+                            android:id="@+id/btn_register_group_button"
                             style="?android:borderlessButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -196,7 +196,7 @@
 
     <android.support.v7.widget.CardView
 
-        android:id="@+id/add_member_card"
+        android:id="@+id/cardview_add_member"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="16dp"

@@ -53,9 +53,7 @@ public class DashboardActivity extends AppCompatActivity {
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.listview_dashboard_user_groups) ListView listViewGroupList;
     @BindView(R.id.scrollview_dashboard) ScrollView scrollViewDashboard;
-
     TextView toolbarTitle;
-
     ImageButton btnHamburgerMenu;
     TextView textViewUserPoints;
 
