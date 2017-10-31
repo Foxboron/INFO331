@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
+    android:id="@+id/listContent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+
+        >
+        <ImageView
+            android:id="@+id/imageview_beacon_list"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/ic_bt_beacon"
+            />
+        <TextView
+            android:id="@+id/textview_beacon_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:text="Beacon NAME"
+            android:fontFamily="sans-serif-light"
+            android:textSize="20sp"
+            android:layout_toEndOf="@id/imageview_beacon_list"
+            />
+        <TextView
+            android:id="@+id/textview_beacon_uuid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:text="UUID: 12345678-abcd-88cc-1111aaaa2222"
+            android:fontFamily="sans-serif-light"
+            android:textSize="12sp"
+            android:layout_below="@id/textview_beacon_name"
+            android:layout_toEndOf="@id/imageview_beacon_list"
+            />
+        <TextView
+            android:id="@+id/textview_major_minor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:text="Major: 65535 Minor: 00001"
+            android:fontFamily="sans-serif-light"
+            android:textSize="12sp"
+            android:layout_below="@id/textview_beacon_uuid"
+            android:layout_toEndOf="@id/imageview_beacon_list"
+            />
+    </RelativeLayout>
+</FrameLayout>

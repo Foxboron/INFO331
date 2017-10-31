@@ -40,7 +40,8 @@
             android:theme="@style/AppThemeTranspStatusBar" />
         <activity android:name=".activities.DashboardActivity" />
         <activity android:name=".activities.CreateGroupActivity" />
-        <activity android:name=".activities.JoinGroupActivity"></activity>
+        <activity android:name=".activities.JoinGroupActivity" />
+        <activity android:name=".activities.AddBeaconToGroupActivity"></activity>
     </application>
 
 </manifest>

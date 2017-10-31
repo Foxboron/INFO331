@@ -32,7 +32,10 @@
     <string name="search_for_beacon">Search for beacons</string>
     <string name="search_for_users">Search for users</string>
     <string name="create_the_group">Create the group</string>
+    <string name="added_beacons">Added beacons</string>
+
     <string name="users">Members</string>
+    <string name="beacons">Beacons</string>
 
     <string name="start_member_search">Start searching for users!</string>
     <string name="member_added">Member added to group!</string>
