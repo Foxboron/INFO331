@@ -1,6 +1,7 @@
 package no.uib.info331.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -36,21 +37,23 @@ import no.uib.info331.util.DialogManager;
  */
 public class CreateGroupActivity extends AppCompatActivity {
 
-    //ButterKnife gui
-    @BindView(R.id.textview_create_join_group_title) TextView textViewTitle;
-
     @BindView(R.id.cardview_create_group) CardView cardViewCreateGroup;
+    @BindView(R.id.textview_create_join_group_title) TextView textViewTitle;
     @BindView(R.id.cardview_add_member) CardView cardViewAddMemberToNewGroup;
-
     @BindView(R.id.edittext_create_group_name) EditText editTextCreateGroupName;
+
     @BindView(R.id.relativelayout_member_search) RelativeLayout layoutBtnAddMember;
+    @BindView(R.id.relativelayout_beacon_search) RelativeLayout layoutBtnAddBeacon;
     @BindView(R.id.listview_added_members) ListView listViewAddedMembersToGroup;
 
+    @BindView(R.id.btn_register_group_button) Button btnRegisterGroup;
+
+    /*******************************Add Members to group Card***************************************/
     @BindView(R.id.edittext_create_search_for_users) EditText editTextSearchForUsers;
     @BindView(R.id.listview_add_member_list) ListView listViewMemberList;
-    @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
 
-    @BindView(R.id.btn_register_group_button) Button btnRegisterGroup;
+    @BindView(R.id.imagebutton_search_for_user) ImageButton imageBtnSearchForUser;
+    /***********************************************************************************************/
 
     boolean addMemberLayoutBtnClicked;
 
@@ -80,7 +83,13 @@ public class CreateGroupActivity extends AppCompatActivity {
         //getAllUsers();
         initGui();
         initListeners();
+        initListenerAddMemberView();
     }
+
+    /**
+     * Inits the listeners in the view for searchin and adding members
+     */
+
 
     private void initGui() {
         shortAnimTime = anim.getShortAnimTime(context);
@@ -111,7 +120,9 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
     private
     void initListeners() {
-
+            /*
+            *For showing the view for searching and adding members
+            */
         layoutBtnAddMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,32 +131,16 @@ public class CreateGroupActivity extends AppCompatActivity {
                 anim.moveViewToTranslationY(cardViewAddMemberToNewGroup,0 , shortAnimTime, 0, false);
             }
         });
-
-        imageBtnSearchForUser.setOnClickListener(new View.OnClickListener() {
+            /*
+             *Start the activity for searching for beacons
+             */
+        layoutBtnAddBeacon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String query = String.valueOf(editTextSearchForUsers.getText());
-                List<User> userSearch = userQueries.getUsersByStringFromDb(context, query);
-                try {
-                    initListViewMemberList(userSearch);
-                } catch (Exception e){
-                    e.printStackTrace();
-                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-
-                }
-            }
-        });
-
-
-        listViewMemberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                User user = searchedMembersUserListViewAdapter.getItem(position);
-                dialogManager.createUserProfileDialogForCreateGroup(user, CreateGroupActivity.this, getResources(), addedMembersUserListAdapter);
+                Intent i = new Intent(CreateGroupActivity.this, AddBeaconToGroupActivity.class);
+                startActivityForResult(i, 1);
 
             }
-
         });
 
         listViewAddedMembersToGroup.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -161,6 +156,36 @@ public class CreateGroupActivity extends AppCompatActivity {
 
 
     }
+
+    private void initListenerAddMemberView() {
+        imageBtnSearchForUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = String.valueOf(editTextSearchForUsers.getText());
+                List<User> userSearch = userQueries.getUsersByStringFromDb(context, query);
+                try {
+                    initListViewMemberList(userSearch);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+
+                }
+            }
+        });
+
+        listViewMemberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                User user = searchedMembersUserListViewAdapter.getItem(position);
+                dialogManager.createUserProfileDialogForCreateGroup(user, CreateGroupActivity.this, getResources(), addedMembersUserListAdapter);
+
+            }
+
+        });
+    }
+
+
 
     /**
      * ButterKnife annotation listener. Registers the group with name and the members that have been
@@ -186,6 +211,19 @@ public class CreateGroupActivity extends AppCompatActivity {
             editTextSearchForUsers.clearFocus();
         }
     }
+
+    /**
+     * Receives the beacons to add from AddBeaconToGroupActivity
+     */
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                //String strEditText = data.getStringExtra("editTextValue");
+            }
+        }
+    }
+
 
     /**
      * Detects if the serach member view is open, then close it, if not; the super-method is executed.
