@@ -167,6 +167,7 @@ public class DashboardActivity extends AppCompatActivity {
                         new SectionDrawerItem().withName(R.string.groups),
                         new SecondaryDrawerItem().withName(R.string.my_groups).withIcon(R.drawable.ic_person_add).withSelectable(false).withIdentifier(0),
                         new SecondaryDrawerItem().withName(R.string.drawer_join_create_group).withIcon(R.drawable.ic_group).withSelectable(false).withIdentifier(1),
+                        new SecondaryDrawerItem().withName("MonitorTest").withIcon(R.drawable.ic_bt_beacon).withSelectable(false).withIdentifier(2),
                         new DividerDrawerItem()
 
                 )
@@ -180,8 +181,11 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
 
                             case 1:
-
                                 intent = new Intent(context, CreateJoinGroupActivity.class);
+                                startActivity(intent);
+                                break;
+                            case 2:
+                                intent = new Intent(context, MonitoringActivity.class);
                                 startActivity(intent);
                                 break;
 
