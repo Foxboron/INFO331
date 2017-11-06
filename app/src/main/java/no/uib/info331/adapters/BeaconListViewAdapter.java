@@ -69,7 +69,7 @@ public class BeaconListViewAdapter extends ArrayAdapter<Beacon> {
         }
         holder.textViewBeaconName.setText(beacons.get(position).getName());
         holder.textViewBeaconUuid.setText("UUID: " + beacons.get(position).getUUID());
-        holder.textViewBeaconUuid.setText("Major: " + beacons.get(position).getMajor() + " Minor: " + beacons.get(position).getMinor());
+        holder.textViewBeaconMajorMinor.setText("Major: " + beacons.get(position).getMajor() + " Minor: " + beacons.get(position).getMinor());
         return row;
     }
 

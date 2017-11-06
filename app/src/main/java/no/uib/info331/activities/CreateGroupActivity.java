@@ -16,6 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +27,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.uib.info331.R;
+import no.uib.info331.adapters.BeaconListViewAdapter;
 import no.uib.info331.adapters.UserListViewAdapter;
+import no.uib.info331.models.Beacon;
 import no.uib.info331.models.User;
 import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.queries.UserQueries;
@@ -45,6 +51,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     @BindView(R.id.relativelayout_member_search) RelativeLayout layoutBtnAddMember;
     @BindView(R.id.relativelayout_beacon_search) RelativeLayout layoutBtnAddBeacon;
     @BindView(R.id.listview_added_members) ListView listViewAddedMembersToGroup;
+    @BindView(R.id.listview_added_beacons) ListView listViewAddedBeaconsToGroup;
 
     @BindView(R.id.btn_register_group_button) Button btnRegisterGroup;
 
@@ -61,11 +68,14 @@ public class CreateGroupActivity extends AppCompatActivity {
     int mediumAnimTime;
     int longAnimTime;
 
+    List<Beacon> listBeaconsToAddToGroup = new ArrayList<>();
+    BeaconListViewAdapter listViewAdapterBeaconsAdded;
+
     Animations anim = new Animations();
     Context context;
 
     UserQueries userQueries = new UserQueries();
-    UserListViewAdapter searchedMembersUserListViewAdapter;
+    UserListViewAdapter listViewAdapterSearcedMembersAdded;
 
     ArrayList<User> addedUsersToGroup = new ArrayList<>();
     UserListViewAdapter addedMembersUserListAdapter;
@@ -114,8 +124,17 @@ public class CreateGroupActivity extends AppCompatActivity {
      * @param searchedUsers
      */
     private void initListViewMemberList(List<User> searchedUsers) {
-        searchedMembersUserListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
-        listViewMemberList.setAdapter(searchedMembersUserListViewAdapter);
+        listViewAdapterSearcedMembersAdded = new UserListViewAdapter(context, R.layout.list_element_search_members, searchedUsers);
+        listViewMemberList.setAdapter(listViewAdapterSearcedMembersAdded);
+
+    }
+    /**
+     * Inits the list view for showing searched beacons
+     * @param addedBeacons
+     */
+    private void initListViewAddedBeaconList(List<Beacon> addedBeacons) {
+        listViewAdapterBeaconsAdded = new BeaconListViewAdapter(context, R.layout.list_element_beacon, addedBeacons);
+        listViewAddedBeaconsToGroup.setAdapter(listViewAdapterBeaconsAdded);
 
     }
     private
@@ -177,7 +196,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                User user = searchedMembersUserListViewAdapter.getItem(position);
+                User user = listViewAdapterSearcedMembersAdded.getItem(position);
                 dialogManager.createUserProfileDialogForCreateGroup(user, CreateGroupActivity.this, getResources(), addedMembersUserListAdapter);
 
             }
@@ -194,7 +213,10 @@ public class CreateGroupActivity extends AppCompatActivity {
     @OnClick(R.id.btn_register_group_button)
     public void registerGroup(){
         String groupName = editTextCreateGroupName.getText().toString();
+        //TODO: Add  list: 'listBeaconsToAddToGroup' to group for determining beacons
+        //TODO: Queru should look like this: groupQueries.registerGroupQuery(groupName, addedUsersToGroup, listBeaconsToAddToGroup, context);
         groupQueries.registerGroupQuery(groupName, addedUsersToGroup, context);
+
         userQueries.refreshUserQuery(context, getResources());
     }
 
@@ -219,10 +241,20 @@ public class CreateGroupActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if(resultCode == RESULT_OK) {
-                //String strEditText = data.getStringExtra("editTextValue");
+                if (data.getStringExtra("addedBeacons") != null) {
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<Beacon>>(){}.getType();
+                    String strEditText = data.getStringExtra("addedBeacons");
+                    listBeaconsToAddToGroup = gson.fromJson(strEditText, type);
+                    initListViewAddedBeaconList(listBeaconsToAddToGroup);
+                } else {
+                    Toast.makeText(context, "No beacons was added!", Toast.LENGTH_LONG).show();
+
+                }
             }
         }
     }
+
 
 
     /**
