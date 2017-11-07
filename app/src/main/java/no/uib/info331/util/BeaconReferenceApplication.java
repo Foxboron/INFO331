@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Identifier;
@@ -31,7 +32,7 @@ import no.uib.info331.models.User;
 /**
  * Created by dyoung on 12/13/13.
  */
-public class BeaconReferenceApplication extends Application implements BootstrapNotifier {
+public class BeaconReferenceApplication extends Application implements BootstrapNotifier, BeaconConsumer {
     private static final String TAG = "BeaconReferenceApp";
     private RegionBootstrap regionBootstrap;
     private BackgroundPowerSaver backgroundPowerSaver;
@@ -55,6 +56,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         // layout expression for other beacon types, do a web search for "setBeaconLayout"
         // including the quotes.
         //
+        beaconManager.bind(this);
         beaconManager.setForegroundScanPeriod(1100l);
         beaconManager.setBackgroundScanPeriod(1100l);
         beaconManager.setBackgroundBetweenScanPeriod(5000l);
@@ -74,21 +76,14 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         //TODO: These has to be dynamically added to region list, based on the beacons in all of the users groups, hello for-loop in for-loop of a for-loop
         Region region1 = new Region("ebeoo-raud", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10006"), Identifier.parse("48406"));
         Region region2 = new Region("ebeoo-blaa", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10010"), Identifier.parse("48406"));
+        Region region3 = new Region("ebeoo-gul", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10005"), Identifier.parse("48406"));
 
         regionList.add(region1);
         regionList.add(region2);
+        regionList.add(region3);
 
 
-        try {
 
-            for(Region region : regionList){
-                new RegionBootstrap(this, region);
-                startMonitor(region);
-            }
-
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
 
 
@@ -106,6 +101,22 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     public void startMonitor(Region region) throws RemoteException {
         beaconManager.startMonitoringBeaconsInRegion(region);
     }
+
+    @Override
+    public void onBeaconServiceConnect() {
+        try {
+
+            for(Region region : regionList){
+                new RegionBootstrap(this, region);
+                startMonitor(region);
+            }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     @Override
     public void didEnterRegion(Region region) {
@@ -187,5 +198,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     public void setMonitoringActivity(MonitoringActivity activity) {
         this.monitoringActivity = activity;
     }
+
 
 }
