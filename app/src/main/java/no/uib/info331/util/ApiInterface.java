@@ -2,6 +2,7 @@ package no.uib.info331.util;
 
 import java.util.List;
 
+import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import okhttp3.ResponseBody;
@@ -161,6 +162,62 @@ public interface ApiInterface {
      */
     @DELETE ("/v1/group/{groupid}/user/{userid}")
     Call<ResponseBody> removeUserFromGroup(@Header("Authorization") String credentials, @Path("groupid") int groupId, @Path("userid") int userId);
+
+    /**
+     * Search for beacons by name
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @param query What to search for.
+     * @return A list of beacons where the name matches your query
+     */
+    @GET ("/v1/search/beacons/{beaconname}")
+    Call<List<Beacon>> searchBeaconByName(@Header("Authorization") String credentials, @Path("beaconname") String query);
+
+    /**
+     * Get all the beacons
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @return The list of all beacons
+     */
+    @GET ("/v1/beacons")
+    Call<List<Beacon>> getAllBeacons(@Header("Authorization") String credentials);
+
+    /**
+     * Get a beacon by it's id
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @param beaconId The id of the beacon to get
+     * @return The beacon
+     */
+    @GET ("/v1/beacon/{beaconid}")
+    Call<Beacon> getBeaconById(@Header("Authorization") String credentials, @Path("beaconid") int beaconId);
+
+    /**
+     * Create a beacon
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @param beacon The beacon to create
+     * @return The new beacon from the server
+     */
+    @POST ("v1/beacons")
+    Call<Beacon> createBeacon(@Header("Authorization") String credentials, @Field("beacon") Beacon beacon);
+
+    /**
+     * Update a beacon
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @param beaconId The id of the beacon to update
+     * @param beacon The updated beacon
+     * @return The updated beacon from the server
+     */
+    @PUT ("v1/beacon/{beaconid}")
+    Call<Beacon> updateBeacon(@Header("Authorization") String credentials, @Field("beaconid") int beaconId, @Body Beacon beacon);
+
+    /**
+     * Delete a beacon
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @param beaconId The id of the beacon to delete
+     * @return The response from the server
+     */
+    @DELETE ("/v1/beacon/{beaconid}")
+    Call<ResponseBody> deleteBeaconById(@Header("Authorization") String credentials, @Field("beaconid") int beaconId);
+
+
 
 
 
