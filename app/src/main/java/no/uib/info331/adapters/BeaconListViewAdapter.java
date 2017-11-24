@@ -58,6 +58,7 @@ public class BeaconListViewAdapter extends ArrayAdapter<Beacon> {
             holder = new UserHolder();
             row = inflater.inflate(textViewResourceId, parent, false);
 
+
             holder.textViewBeaconName = (TextView) row.findViewById(R.id.textview_beacon_name);
             holder.textViewBeaconUuid = (TextView) row.findViewById(R.id.textview_beacon_uuid);
             holder.textViewBeaconMajorMinor = (TextView) row.findViewById(R.id.textview_major_minor);
