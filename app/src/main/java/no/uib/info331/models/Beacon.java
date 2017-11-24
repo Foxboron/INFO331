@@ -1,5 +1,7 @@
 package no.uib.info331.models;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Class for modelling a Bluetooth Low Energy Beacon
  * @author Fredrik V. Heimsæter
@@ -9,9 +11,13 @@ package no.uib.info331.models;
 
 public class Beacon {
     private String ID;
+    @SerializedName("UUID")
     private String UUID;
+    @SerializedName("Major")
     private String major;
+    @SerializedName("Minor")
     private String minor;
+    @SerializedName("Name")
     private String name;
     private int latitude;
     private int longitude;
