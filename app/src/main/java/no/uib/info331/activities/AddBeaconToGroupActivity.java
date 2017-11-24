@@ -23,8 +23,13 @@ import butterknife.ButterKnife;
 import no.uib.info331.R;
 import no.uib.info331.adapters.BeaconListViewAdapter;
 import no.uib.info331.models.Beacon;
+import no.uib.info331.queries.BeaconQueries;
+import no.uib.info331.util.DataManager;
 
 public class AddBeaconToGroupActivity extends AppCompatActivity {
+
+    BeaconQueries beaconQueries = new BeaconQueries();
+    DataManager dataManager = new DataManager();
 
     @BindView(R.id.edittext_create_search_for_beacons) EditText editTextSearchForBeacons;
     @BindView(R.id.imagebutton_search_for_beacons) ImageButton imageBtnSearchForBeacons;
@@ -55,19 +60,7 @@ public class AddBeaconToGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForBeacons.getText());
-                //TODO: Add query from db
-                //List<Beacon> beaconSearch = beaconQueries.getBeaconsByStringFromDb(context, query);
-                List<Beacon> beaconSearch = new ArrayList<>();
-
-                /**Testdata**/
-                //Testdata
-                for (int i=0; i < 6; i++){
-                    String uuid = Integer.toString(i * 10000) + "-abcd-88cc-1111aaaa" + Integer.toString(i*1000);
-                    String id = Integer.toString(i);
-                    Beacon beacon = new Beacon(id ,uuid, Integer.toString(i *423534), Integer.toString(i *896654), "ROOM FOR ROOM " + id, 0, 0);
-                    beaconSearch.add(beacon);
-                }
-                /****/
+                List<Beacon> beaconSearch = beaconQueries.getBeaconsByStringFromDb(context, query);
 
                 try {
                     initListViewBeaconSearchList(beaconSearch);
