@@ -1,9 +1,6 @@
 package no.uib.info331.queries;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.uib.info331.R;
-import no.uib.info331.activities.DashboardActivity;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
@@ -115,7 +111,7 @@ public class GroupQueries {
                     if(response.code()==200) {
                         final Group registeredGroup = response.body();
                         for (User member : ADDED_USERS_TO_GROUP) {
-                            Call<ResponseBody> addUserCall = apiService.addUserToGroup(basic, registeredGroup.getID(), member.getID());
+                            Call<ResponseBody> addUserCall = apiService.addUserToGroup(basic, registeredGroup.getId(), member.getID());
                             addUserCall.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -161,7 +157,7 @@ public class GroupQueries {
 
         final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         //Mulig at dette er unødvendig, men retrofit-skills er ikke helt 100%
-        Call<Group> call = apiService.updateGroupById(basic, GROUP, GROUP.getID());
+        Call<Group> call = apiService.updateGroupById(basic, GROUP, GROUP.getId());
 
         final boolean[] error = {false};
         call.enqueue(new Callback<Group>() {

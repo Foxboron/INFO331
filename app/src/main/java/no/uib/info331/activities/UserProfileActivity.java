@@ -3,7 +3,6 @@ package no.uib.info331.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -95,7 +94,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
                     final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                    Call<Group> call = apiService.getGroupById(basic, group.getID());
+                    Call<Group> call = apiService.getGroupById(basic, group.getId());
                     call.enqueue(new Callback<Group>() {
                         @Override
                         public void onResponse(Call<Group> call, Response<Group> response) {

@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -28,7 +27,6 @@ import no.uib.info331.R;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
-import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -154,7 +152,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                     String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
                     final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                    Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getID(), currentUser.getID());
+                    Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getId(), currentUser.getID());
                     call.enqueue(new Callback<ResponseBody>() {
                         // This adds the user to group in DB
                         @Override
