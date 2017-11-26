@@ -2,8 +2,11 @@ package no.uib.info331.models;
 
 import android.text.TextUtils;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+
 
 /**
  * Class for modelling a group
@@ -13,66 +16,74 @@ import java.util.ArrayList;
  */
 
 public class Group implements Serializable{
-    private int ID;
-    private String Name;
-    private User Owner;
-    private int Points;
-    private ArrayList<User> Users;
+    @SerializedName("ID")
+    private int id;
+    @SerializedName("Name")
+    private String name;
+    @SerializedName("Owner")
+    private User owner;
+    @SerializedName("Points")
+    private int points;
+    @SerializedName("Users")
+    private ArrayList<User> users;
+    @SerializedName("Beacon")
+    private Beacon beacon;
 
-    public Group(int ID, String name, User owner, int points, ArrayList<User> Users) {
-        this.ID = ID;
-        this.Name = name;
-        this.Owner = owner;
-        this.Points = points;
-        this.Users = Users;
+    public Group(int id, String name, User owner, int points, ArrayList<User> Users, Beacon beacon) {
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+        this.points = points;
+        this.users = Users;
+        this.beacon = beacon;
     }
 
     public Group(String name, User owner) {
-        this.Name = name;
-        this.Owner = owner;
-        this.Users = new ArrayList<>();
+        this.name = name;
+        this.owner = owner;
+        this.users = new ArrayList<>();
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        this.Name = name;
+        this.name = name;
     }
 
     public User getOwner() {
-        return Owner;
+        return owner;
     }
 
     public void setOwner(User owner) {
-        this.Owner = owner;
+        this.owner = owner;
     }
 
     public int getPoints() {
-        return Points;
+        return points;
     }
 
     public void setPoints(int points) {
-        this.Points = points;
+        this.points = points;
     }
 
     public ArrayList<User> getUsers() {
-        return Users;
+        return users;
     }
 
     public void setUsers(ArrayList<User> users) {
-        this.Users = users;
+        this.users = users;
     }
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
     public boolean addMember(User member) {
         if(member!=null) {
-            if (!Users.contains(member)) {
-                Users.add(member);
+            if (!users.contains(member)) {
+                users.add(member);
                 return true;
             }
             return false;
@@ -80,8 +91,8 @@ public class Group implements Serializable{
     }
 
     public boolean deleteMember(User member) {
-        if(Users.contains(member)) {
-            Users.remove(member);
+        if(users.contains(member)) {
+            users.remove(member);
             return true;
         }
         return false;
@@ -90,15 +101,16 @@ public class Group implements Serializable{
     @Override
     public String toString() {
         ArrayList<String> membersOfGroup = new ArrayList<>();
-        for (User member : Users) {
+        for (User member : users) {
             membersOfGroup.add(member.getUsername());
         }
         return "Group{" +
-                "ID=" + ID +
-                ", Name='" + Name + '\'' +
-                ", Owner=" + Owner +
-                ", Points=" + Points +
-                ", Users=" + TextUtils.join(",", membersOfGroup) +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", owner=" + owner +
+                ", points=" + points +
+                ", users=" + TextUtils.join(",", membersOfGroup) +
+                ", beacon=" + beacon.toString() +
                 '}';
     }
 }
