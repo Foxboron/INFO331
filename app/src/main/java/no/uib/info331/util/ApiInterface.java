@@ -3,6 +3,7 @@ package no.uib.info331.util;
 import java.util.List;
 
 import no.uib.info331.models.Beacon;
+import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import okhttp3.ResponseBody;
@@ -218,7 +219,25 @@ public interface ApiInterface {
     Call<ResponseBody> deleteBeaconById(@Header("Authorization") String credentials, @Field("beaconid") int beaconId);
 
 
+    /**
+     * Create an event for a user in a specific group
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @param userID The id of the user to create event for
+     * @param groupID The id of the group the event is connected to
+     * @param event The event message
+     * @return The new event from the server
+     */
+    @POST ("/v1/event/{userid}/group/{groupid}")
+    Call<Event> createEvent(@Header("Authorization") String credentials, @Path("userid") int userID, @Path("groupid") int groupID, @Field("Event") String event);
 
+    /**
+     * Get all events for a user
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @param userId The id of the user to get events for
+     * @return A list of events
+     */
+    @GET ("/v1/events/{userid}")
+    Call<List<Event>> getEventsForUser(@Header("Authorization") String credentials, @Path("userid") int userId);
 
 
 
