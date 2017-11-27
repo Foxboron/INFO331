@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Beacon {
-    private String ID;
+    private int ID;
     @SerializedName("UUID")
     private String UUID;
     @SerializedName("Major")
@@ -22,7 +22,7 @@ public class Beacon {
     private int latitude;
     private int longitude;
 
-    public Beacon(String ID, String UUID, String major, String minor, String name, int latitude, int longitude) {
+    public Beacon(int ID, String UUID, String major, String minor, String name, int latitude, int longitude) {
         this.ID = ID;
         this.UUID = UUID;
         this.major = major;
@@ -33,11 +33,11 @@ public class Beacon {
 
     }
 
-    public String getID() {
+    public int getID() {
         return ID;
     }
 
-    public void setID(String ID) {
+    public void setID(int ID) {
         this.ID = ID;
     }
 
@@ -109,19 +109,25 @@ public class Beacon {
 
         Beacon beacon = (Beacon) o;
 
-        if (!ID.equals(beacon.ID)) return false;
+        if (ID != beacon.ID) return false;
+        if (latitude != beacon.latitude) return false;
+        if (longitude != beacon.longitude) return false;
         if (!UUID.equals(beacon.UUID)) return false;
         if (!major.equals(beacon.major)) return false;
-        return minor.equals(beacon.minor);
+        if (!minor.equals(beacon.minor)) return false;
+        return name.equals(beacon.name);
 
     }
 
     @Override
     public int hashCode() {
-        int result = ID.hashCode();
+        int result = ID;
         result = 31 * result + UUID.hashCode();
         result = 31 * result + major.hashCode();
         result = 31 * result + minor.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + latitude;
+        result = 31 * result + longitude;
         return result;
     }
 }

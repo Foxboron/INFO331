@@ -80,6 +80,18 @@ public class Group implements Serializable{
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Beacon getBeacon() {
+        return beacon;
+    }
+
+    public void setBeacon(Beacon beacon) {
+        this.beacon = beacon;
+    }
+
     public boolean addMember(User member) {
         if(member!=null) {
             if (!users.contains(member)) {
