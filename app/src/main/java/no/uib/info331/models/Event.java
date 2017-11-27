@@ -99,7 +99,7 @@ public class Event {
     public String toString() {
         return "Event{" +
                 "user=" + user +
-                ", group=" + group +
+                ", group=" + group.getName() +
                 ", event='" + event + '\'' +
                 ", value=" + value +
                 ", date=" + date +
