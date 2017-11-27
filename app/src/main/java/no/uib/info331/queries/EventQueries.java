@@ -18,7 +18,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by fredrik on 11/27/17.
+ * @author Fredrik V. Heimsæter
  */
 
 public class EventQueries {
