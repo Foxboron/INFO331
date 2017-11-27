@@ -162,12 +162,9 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                 sendNotification(region.getUniqueId() + " has been seen before, activity not active." );
             }
         }
-        Log.d("Region", "Id1: " + region.getId1() + " , Id2: " + region.getId2() + " , Id3: " + region.getId3());
 
         user = dataManager.getSavedObjectFromSharedPref(getApplicationContext(), "currentlySignedInUser", new TypeToken<User>(){}.getType());
         for (Group group : user.getGroups()) {
-            Log.d("region: ", region.getId1() + " " + region.getId2() + " " + region.getId3());
-            Log.d("Beacon: ", group.getBeacon().getUUID() + " " + group.getBeacon().getMajor() + " " + group.getBeacon().getMinor());
             if (group.getBeacon().getUUID().equals(region.getId1().toString()) && group.getBeacon().getMajor().equals(region.getId2().toString()) && group.getBeacon().getMinor().equals(region.getId3().toString())){
                 eventQueries.createEvent(group.getId(), "Enter", getApplicationContext());
             }
