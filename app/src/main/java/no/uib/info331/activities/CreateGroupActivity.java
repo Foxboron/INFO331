@@ -213,9 +213,8 @@ public class CreateGroupActivity extends AppCompatActivity {
     @OnClick(R.id.btn_register_group_button)
     public void registerGroup(){
         String groupName = editTextCreateGroupName.getText().toString();
-        //TODO: Add  list: 'listBeaconsToAddToGroup' to group for determining beacons
-        //TODO: Queru should look like this: groupQueries.registerGroupQuery(groupName, addedUsersToGroup, listBeaconsToAddToGroup, context);
-        groupQueries.registerGroupQuery(groupName, addedUsersToGroup, context);
+        //TODO fix beacon stuff. Should only be able to select one beacon
+        groupQueries.registerGroupQuery(groupName, addedUsersToGroup, listBeaconsToAddToGroup.get(0), context);
 
         userQueries.refreshUserQuery(context, getResources());
     }

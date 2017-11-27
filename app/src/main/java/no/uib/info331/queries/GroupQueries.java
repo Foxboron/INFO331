@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.uib.info331.R;
+import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
@@ -92,9 +93,10 @@ public class GroupQueries {
      * Creates and writes a new group with a list of members to db.
      * @param groupName the name of the new group
      * @param ADDED_USERS_TO_GROUP an ArrayList of users to be included in the group
+     * @param beacon the beacon for this group
      * @param context the context of the activity where this method is called from
      */
-        public void registerGroupQuery(String groupName, final ArrayList<User> ADDED_USERS_TO_GROUP, Context context){
+        public void registerGroupQuery(String groupName, final ArrayList<User> ADDED_USERS_TO_GROUP, final Beacon beacon, Context context){
             final DataManager dataManager = new DataManager();
             final User currentUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
             final String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
@@ -130,6 +132,23 @@ public class GroupQueries {
                             });
 
                         }
+                        Log.d("AddBeacon: ", beacon.toString());
+                        Call<ResponseBody> addBeaconCall = apiService.addBeaconToGroup(basic, registeredGroup.getId(), beacon.getID());
+                        addBeaconCall.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if (response.code() != 200){
+                                    error[0] = true;
+                                } else Log.d("AddBeacon", "Success");
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                error[0] = true;
+                                t.printStackTrace();
+
+                            }
+                        });
                     }
 
                 }

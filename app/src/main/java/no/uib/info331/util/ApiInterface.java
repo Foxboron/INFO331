@@ -165,6 +165,16 @@ public interface ApiInterface {
     Call<ResponseBody> removeUserFromGroup(@Header("Authorization") String credentials, @Path("groupid") int groupId, @Path("userid") int userId);
 
     /**
+     * Add a beacon to a group
+     * @param credentials Base64 encoded credentials on the form "username:password"
+     * @param groupId The id of the group
+     * @param beaconId The ide of the beacon to add
+     * @return The response from the server
+     */
+    @POST ("/v1/group/{groupid}/beacon/{beaconid}")
+    Call<ResponseBody> addBeaconToGroup(@Header("Authorization") String credentials, @Path("groupid") int groupId, @Path("beaconid") int beaconId);
+
+    /**
      * Search for beacons by name
      * @param credentials Base64 encoded credentials on the form "username:password"
      * @param query What to search for.

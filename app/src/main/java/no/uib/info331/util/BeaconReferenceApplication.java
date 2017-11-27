@@ -27,6 +27,8 @@ import java.util.List;
 
 import no.uib.info331.R;
 import no.uib.info331.activities.MonitoringActivity;
+import no.uib.info331.models.Beacon;
+import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 
 /**
@@ -47,6 +49,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "setting up background monitoring for beacons and power saving");
         beaconManager = org.altbeacon.beacon.BeaconManager.getInstanceForApplication(this);
 
         // By default the AndroidBeaconLibrary will only find AltBeacons.  If you wish to make it
@@ -66,14 +69,26 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                 setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
 
         beaconManager.setBackgroundScanPeriod(5l);
-        Log.d(TAG, "setting up background monitoring for beacons and power saving");
 
         // wake up the app when a beacon is seen
         //Region region = new Region("backgroundRegion", null, null, null);
 
         //Region is defined here as it's own beacon
+       user = dataManager.getSavedObjectFromSharedPref(getApplicationContext(), "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        if(user != null) {
+            if (user.getGroups() != null) {
+                for (Group group : user.getGroups()) {
+                    Beacon beacon = group.getBeacon();
+                    if (beacon.getID() != 0) {
+                        Region region = new Region(beacon.getName(), Identifier.parse(beacon.getUUID()), Identifier.parse(beacon.getMajor()), Identifier.parse(beacon.getMinor()));
+                        Log.d("AddRegion", region.toString());
+                        regionList.add(region);
+                    }
+                }
+            }
+        }
 
-        //TODO: These has to be dynamically added to region list, based on the beacons in all of the users groups, hello for-loop in for-loop of a for-loop
+      /*  //TODO: These has to be dynamically added to region list, based on the beacons in all of the users groups, hello for-loop in for-loop of a for-loop
         Region region1 = new Region("ebeoo-raud", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10006"), Identifier.parse("48406"));
         Region region2 = new Region("ebeoo-blaa", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10010"), Identifier.parse("48406"));
         Region region3 = new Region("ebeoo-gul", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10005"), Identifier.parse("48406"));
@@ -82,8 +97,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         regionList.add(region2);
         regionList.add(region3);
 
-
-
+*/
 
 
 
