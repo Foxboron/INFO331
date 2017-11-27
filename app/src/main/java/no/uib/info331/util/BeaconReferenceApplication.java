@@ -22,14 +22,20 @@ import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import no.uib.info331.R;
 import no.uib.info331.activities.MonitoringActivity;
 import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
+import no.uib.info331.queries.EventQueries;
 
 /**
  * Created by dyoung on 12/13/13.
@@ -44,6 +50,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     private List<Region> regionList = new ArrayList<>();
 
     DataManager dataManager = new DataManager();
+    EventQueries eventQueries = new EventQueries();
     User user;
 
 
@@ -87,18 +94,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                 }
             }
         }
-
-      /*  //TODO: These has to be dynamically added to region list, based on the beacons in all of the users groups, hello for-loop in for-loop of a for-loop
-        Region region1 = new Region("ebeoo-raud", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10006"), Identifier.parse("48406"));
-        Region region2 = new Region("ebeoo-blaa", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10010"), Identifier.parse("48406"));
-        Region region3 = new Region("ebeoo-gul", Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"), Identifier.parse("10005"), Identifier.parse("48406"));
-
-        regionList.add(region1);
-        regionList.add(region2);
-        regionList.add(region3);
-
-*/
-
 
 
         // simply constructing this class and holding a reference to it in your custom Application
@@ -167,6 +162,16 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                 sendNotification(region.getUniqueId() + " has been seen before, activity not active." );
             }
         }
+        Log.d("Region", "Id1: " + region.getId1() + " , Id2: " + region.getId2() + " , Id3: " + region.getId3());
+
+        user = dataManager.getSavedObjectFromSharedPref(getApplicationContext(), "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        for (Group group : user.getGroups()) {
+            Log.d("region: ", region.getId1() + " " + region.getId2() + " " + region.getId3());
+            Log.d("Beacon: ", group.getBeacon().getUUID() + " " + group.getBeacon().getMajor() + " " + group.getBeacon().getMinor());
+            if (group.getBeacon().getUUID().equals(region.getId1().toString()) && group.getBeacon().getMajor().equals(region.getId2().toString()) && group.getBeacon().getMinor().equals(region.getId3().toString())){
+                eventQueries.createEvent(group.getId(), "Enter", getApplicationContext());
+            }
+        }
 
 
     }
@@ -175,6 +180,11 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     public void didExitRegion(Region region) {
         if (monitoringActivity != null) {
             monitoringActivity.logToDisplay("I no longer see a beacon. " + region.getId1());
+        }
+        for (Group group : user.getGroups()) {
+            if (group.getBeacon().getUUID().equals(region.getId1().toString()) && group.getBeacon().getMajor().equals(region.getId2().toString()) && group.getBeacon().getMinor().equals(region.getId3().toString())){
+                eventQueries.createEvent(group.getId(), "Exit", getApplicationContext());
+            }
         }
         sendNotification("You just exited " + region.getUniqueId() + "'s area." );
     }

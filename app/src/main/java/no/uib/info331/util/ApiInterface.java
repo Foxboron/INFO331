@@ -1,5 +1,6 @@
 package no.uib.info331.util;
 
+import java.util.Date;
 import java.util.List;
 
 import no.uib.info331.models.Beacon;
@@ -237,6 +238,7 @@ public interface ApiInterface {
      * @param event The event message
      * @return The new event from the server
      */
+    @FormUrlEncoded
     @POST ("/v1/event/{userid}/group/{groupid}")
     Call<Event> createEvent(@Header("Authorization") String credentials, @Path("userid") int userID, @Path("groupid") int groupID, @Field("Event") String event);
 
