@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 
-import java.util.Date;
 
 import no.uib.info331.models.Event;
 import no.uib.info331.models.User;
@@ -41,7 +40,6 @@ public class EventQueries {
             public void onResponse(Call<Event> call, Response<Event> response) {
                 if (response.code() == 200) {
                     Log.d("Event: ", "All is good");
-                    Log.d("Event: ", response.body().toString());
                 } else {
                     Log.d("Event: ", "Wrong status code");
                 }

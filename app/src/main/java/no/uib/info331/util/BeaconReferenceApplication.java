@@ -22,13 +22,8 @@ import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import no.uib.info331.R;
 import no.uib.info331.activities.MonitoringActivity;
@@ -88,7 +83,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                     Beacon beacon = group.getBeacon();
                     if (beacon.getID() != 0) {
                         Region region = new Region(beacon.getName(), Identifier.parse(beacon.getUUID()), Identifier.parse(beacon.getMajor()), Identifier.parse(beacon.getMinor()));
-                        Log.d("AddRegion", region.toString());
                         regionList.add(region);
                     }
                 }
@@ -191,7 +185,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         if (monitoringActivity != null) {
             monitoringActivity.logToDisplay("I have just switched from seeing/not seeing beacons: " + state);
         }
-        sendNotification("I have just switched from seeing/not seeing beacons: " + state);
+        //sendNotification("I have just switched from seeing/not seeing beacons: " + state);
 
 
     }
