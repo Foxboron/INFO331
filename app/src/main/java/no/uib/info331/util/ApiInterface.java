@@ -261,6 +261,8 @@ public interface ApiInterface {
     Call<Score> getStatsForUserInGroup(@Header("Authorization") String credentials, @Path("userid") int userId, @Path("groupid") int groupId);
 
 
+    @GET ("/v1/stats/group/{groupid}")
+    Call<Score> getStatsForGroup(@Header("Authorization") String credentials, @Path("groupid") int groupId);
 
 
 }
