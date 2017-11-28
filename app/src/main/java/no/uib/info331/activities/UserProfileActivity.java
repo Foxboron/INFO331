@@ -30,6 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import no.uib.info331.R;
 import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
+import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
@@ -56,9 +57,9 @@ public class UserProfileActivity extends AppCompatActivity {
     @BindView(R.id.diagonalview_profile) DiagonalView diagonalViewProfile;
     @BindView(R.id.toolbar_buildselect_title) TextView toolbarTitle;
     @BindView(R.id.circleimageview_user_profile_image) CircleImageView circleImageViewProfileImage;
-    @BindView(R.id.textview_user_profile_points) TextView textViewUserPoints;
     @BindView(R.id.listview_profile_group_list) ListView listViewGroupList;
     @BindView(R.id.scrollview_user_profile) ScrollView scrollViewUserProfile;
+    @BindView(R.id.textview_user_profile_points) TextView textViewPoints;
     LayoutAdjustments layoutAdj = new LayoutAdjustments();
 
     GroupListViewAdapter memberGroupListViewAdapter;
@@ -77,12 +78,31 @@ public class UserProfileActivity extends AppCompatActivity {
         initToolbar();
         loadCoverPicture();
         loadProfilePicture();
-        textViewUserPoints.setText(Integer.toString(user.getPoints()) + " " + getResources().getString(R.string.points).toLowerCase());
         initListViewGroupList(user.getGroups());
         initListeners();
+        initPoints();
 
     }
+    private void initPoints() {
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        String credentials = user.getUsername() + ":" + user.getPassword();
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Call<Score> call = apiService.getStatsForUser(basic, user.getID());
+        call.enqueue(new Callback<Score>() {
+            @Override
+            public void onResponse(Call<Score> call, Response<Score> response) {
+                if (response.code() == 200){
+                    textViewPoints.setText(Integer.toString(response.body().getScore()) + " Points");
+                }
+            }
 
+            @Override
+            public void onFailure(Call<Score> call, Throwable t) {
+
+            }
+        });
+    }
     private void initListeners() {
         listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

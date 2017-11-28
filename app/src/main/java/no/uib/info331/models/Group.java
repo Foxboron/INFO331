@@ -113,6 +113,10 @@ public class Group implements Serializable{
     @Override
     public String toString() {
         ArrayList<String> membersOfGroup = new ArrayList<>();
+        String usersString = "";
+        if(users == null){
+           usersString = "No users";
+        }
         for (User member : users) {
             membersOfGroup.add(member.getUsername());
         }

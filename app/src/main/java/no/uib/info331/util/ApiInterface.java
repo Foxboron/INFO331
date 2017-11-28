@@ -6,6 +6,7 @@ import java.util.List;
 import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
+import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -252,7 +253,12 @@ public interface ApiInterface {
     Call<List<Event>> getEventsForUser(@Header("Authorization") String credentials, @Path("userid") int userId);
 
 
+    @GET ("/v1/stats/{userid}")
+    Call<Score> getStatsForUser(@Header("Authorization") String credentials, @Path("userid") int userId);
 
+
+    @GET ("/v1/stats/{userid}/group/{groupid}")
+    Call<Score> getStatsForUserInGroup(@Header("Authorization") String credentials, @Path("userid") int userId, @Path("groupid") int groupId);
 
 
 
