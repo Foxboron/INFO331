@@ -253,11 +253,11 @@ public interface ApiInterface {
     Call<List<Event>> getEventsForUser(@Header("Authorization") String credentials, @Path("userid") int userId);
 
 
-    @GET ("/v1/stats/{userid}")
+    @GET ("/v1/stats/user/{userid}")
     Call<Score> getStatsForUser(@Header("Authorization") String credentials, @Path("userid") int userId);
 
 
-    @GET ("/v1/stats/{userid}/group/{groupid}")
+    @GET ("/v1/stats/user/{userid}/group/{groupid}")
     Call<Score> getStatsForUserInGroup(@Header("Authorization") String credentials, @Path("userid") int userId, @Path("groupid") int groupId);
 
 
