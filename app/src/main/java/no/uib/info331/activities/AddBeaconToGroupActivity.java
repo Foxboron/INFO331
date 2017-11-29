@@ -69,6 +69,13 @@ public class AddBeaconToGroupActivity extends AppCompatActivity {
                     Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
 
                 }
+
+                btnAcceptRegisteredBeacons.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
             }
         });
 

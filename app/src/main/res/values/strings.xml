@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">INFO331</string>
+    <string name="app_name">ReadProPlus+</string>
 
     <!-- Strings related to login -->
     <string name="prompt_password">Password</string>
@@ -36,11 +36,13 @@
 
     <string name="users">Members</string>
     <string name="beacons">Beacons</string>
+    <string name="beacons_in_group">Beacons in group</string>
 
     <string name="start_member_search">Start searching for users!</string>
     <string name="member_added">Member added to group!</string>
 
     <string name="continue_members">Continue</string>
+    <string name="members">Members</string>
 
     <string name="something_wrong">Something went wrong, try again…</string>
 
@@ -56,6 +58,7 @@
 
 
     <string name="points">Points</string>
+    <string name="personal_points_ingroup">Personal points in this group</string>
 
     <!-- Drawer -->
     <string name="drawer_join_create_group">Join or create a group</string>

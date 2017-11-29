@@ -33,10 +33,9 @@
     <!--Content-->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
-        android:background="@color/colorPrimary"
         android:weightSum="1">
 
         <RelativeLayout
@@ -52,11 +51,16 @@
                 android:layout_centerHorizontal="true"
                 />
         </RelativeLayout>
-
-        <RelativeLayout
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:background="@color/cardview_light_background"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             >
 
             <TextView
@@ -67,8 +71,7 @@
                 android:textSize="35sp"
                 android:layout_marginTop="30dp"
                 android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
                 />
 
             <TextView
@@ -77,9 +80,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/points"
                 android:textSize="15sp"
-                android:layout_below="@id/textview_group_display_name"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+
                 />
 
 
@@ -90,30 +92,109 @@
                     android:text="@string/group_join"
                     android:textColor="@android:color/white"
                     android:backgroundTint="@color/accent"
-                    android:layout_below="@id/textview_group_pts"
-                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
 
                     />
 
 
 
-            <TextView
-                android:id="@+id/text_view_header_member_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/btn_join_group"
-                android:textSize="20sp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/group_members" />
-
-            <ListView
-                android:id="@+id/listview_show_members_in_group"
-                android:layout_height="wrap_content"
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_below="@id/text_view_header_member_list" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
 
-        </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/activity_horizontal_margin">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/personal_points_ingroup"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/textview_group_personal_profile_points"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="28dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="points"
+                        android:textSize="32sp"
+
+                        />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="@dimen/activity_horizontal_margin">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/members"
+                        android:textSize="24sp" />
+
+                    <ListView
+                        android:id="@+id/listview_show_members_in_group"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="@dimen/activity_horizontal_margin">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/beacons_in_group"
+                        android:textSize="24sp" />
+
+                    <ListView
+                        android:id="@+id/listview_beacon_in_group"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

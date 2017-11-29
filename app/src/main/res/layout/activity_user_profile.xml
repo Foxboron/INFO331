@@ -32,88 +32,84 @@
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
+        android:id="@+id/scrollview_user_profile"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollview_user_profile">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:clipToPadding="false"
-            >
+            android:orientation="vertical">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                >
+                android:clipToPadding="false">
 
 
                 <com.intrusoft.squint.DiagonalView
                     android:id="@+id/diagonalview_profile"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
+                    android:elevation="1dp"
                     android:scaleType="centerCrop"
                     android:src="@color/colorPrimary"
-                    app:diagonalDirection="left_to_right"
-                    app:angle="12"
-                    app:gravity="right"
-                    android:elevation="1dp"
                     android:tintMode="add"
-                    app:tint="@color/colorPrimary"
-                    />
+                    app:angle="12"
+                    app:diagonalDirection="left_to_right"
+                    app:gravity="right"
+                    app:tint="@color/colorPrimary" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/circleimageview_user_profile_image"
                     android:layout_width="128dp"
                     android:layout_height="128dp"
+                    android:layout_below="@id/diagonalview_profile"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
-                    android:src="@drawable/avatar2"
-                    android:layout_below="@id/diagonalview_profile"
-                    android:layout_marginTop="-96dp"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="-96dp"
                     android:elevation="5dp"
-                    />
+                    android:src="@drawable/avatar2" />
 
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/activity_horizontal_margin"
                 android:clipToPadding="false"
                 android:orientation="vertical"
-                >
+                android:padding="@dimen/activity_horizontal_margin">
 
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    >
+                    android:layout_marginTop="8dp">
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="@dimen/activity_horizontal_margin"
-                        >
+                        android:padding="@dimen/activity_horizontal_margin">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:textSize="24sp"
-                            android:text="@string/points"
                             android:layout_alignParentTop="true"
-                            />
+                            android:fontFamily="sans-serif-light"
+                            android:text="@string/points"
+                            android:textSize="24sp" />
+
                         <TextView
                             android:id="@+id/textview_user_profile_points"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:textSize="32sp"
-                            android:text="3423 points"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="28dp"
+                            android:fontFamily="sans-serif-light"
+                            android:text="points"
+                            android:textSize="32sp"
 
                             />
                     </RelativeLayout>
@@ -123,62 +119,57 @@
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    >
+                    android:layout_marginTop="8dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="@dimen/activity_horizontal_margin"
                         android:orientation="vertical"
-                        >
+                        android:padding="@dimen/activity_horizontal_margin">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:layout_marginBottom="8dp"
-                            android:textSize="24sp"
-                            android:text="Groups"
                             android:layout_alignParentTop="true"
-                            />
+                            android:layout_marginBottom="8dp"
+                            android:fontFamily="sans-serif-light"
+                            android:text="Groups"
+                            android:textSize="24sp" />
+
                         <ListView
+                            android:id="@+id/listview_profile_group_list"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/listview_profile_group_list" />
+                            android:layout_height="match_parent" />
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_height="400dp"
                     android:layout_marginBottom="8dp"
-                    >
+                    android:layout_marginTop="8dp">
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="@dimen/activity_horizontal_margin"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:textSize="24sp"
-                            android:text="Card of info"
-                            android:layout_alignParentTop="true"
-                            />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:textSize="32sp"
-                            android:text="something to show"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginTop="28dp"
+                        android:padding="@dimen/activity_horizontal_margin">
 
-                            />
+                        <TextView
+                            android:id="@+id/textview_latest_events_user_profile_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:fontFamily="sans-serif-light"
+                            android:text="Latest events"
+                            android:textSize="24sp" />
+
+                        <ListView
+                            android:id="@+id/listview_latest_events_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_below="@+id/textview_latest_events_user_profile_title" />
                     </RelativeLayout>
 
                 </android.support.v7.widget.CardView>

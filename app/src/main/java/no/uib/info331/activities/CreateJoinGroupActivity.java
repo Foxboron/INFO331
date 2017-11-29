@@ -28,7 +28,7 @@ import no.uib.info331.util.Animations;
 import no.uib.info331.util.DataManager;
 
 /**
- * Activity that displays the user a viewpager with options to either create or join an existing group
+ * Activity that displays the profileUser a viewpager with options to either create or join an existing group
  *
  * @author Edvard P. Bjørgen
  *
@@ -65,7 +65,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         initListeners();
 
         /**
-         * If user does not have user group arraylist set, create a new empty list
+         * If profileUser does not have profileUser group arraylist set, create a new empty list
          * This is for avoiding NPE's later on
          */
         if(user.getGroups() == null ){
@@ -94,7 +94,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     }
 
     /**
-     * If user has groups, do not show the skip button
+     * If profileUser has groups, do not show the skip button
      */
     private void hideButtonIfUserHasGroup() {
         if(user.getGroups() != null){
@@ -141,7 +141,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates and writes an empty list to the user
+     * Creates and writes an empty list to the profileUser
      */
     private void createEmptyGroupListForUser() {
         ArrayList<Group> emptyGroupArray = new ArrayList<>();
@@ -151,7 +151,7 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
     }
 
     /**
-     * For showing an animation of the card goin " in to place" when the user uses the back button
+     * For showing an animation of the card goin " in to place" when the profileUser uses the back button
      */
     protected void onResume() {
         super.onResume();

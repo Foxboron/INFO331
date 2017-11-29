@@ -28,7 +28,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import no.uib.info331.R;
+import no.uib.info331.adapters.EventListViewAdapter;
 import no.uib.info331.adapters.GroupListViewAdapter;
+import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
@@ -41,7 +43,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Activity that displays user information, points and groups.
+ * Activity that displays profileUser information, points and groups.
  *
  * @author  Edvard P. Bjørgen, Per-Niklas Longberg
  *
@@ -50,7 +52,7 @@ import retrofit2.Response;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    User user;
+    User profileUser;
     Context context;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -58,11 +60,15 @@ public class UserProfileActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_buildselect_title) TextView toolbarTitle;
     @BindView(R.id.circleimageview_user_profile_image) CircleImageView circleImageViewProfileImage;
     @BindView(R.id.listview_profile_group_list) ListView listViewGroupList;
+    @BindView(R.id.listview_latest_events_list) ListView listViewLatestEvents;
     @BindView(R.id.scrollview_user_profile) ScrollView scrollViewUserProfile;
     @BindView(R.id.textview_user_profile_points) TextView textViewPoints;
     LayoutAdjustments layoutAdj = new LayoutAdjustments();
 
     GroupListViewAdapter memberGroupListViewAdapter;
+    EventListViewAdapter latestEventListViewAdapter;
+    private User loggedInUser;
+    private DataManager dataManager = new DataManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,25 +76,54 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
         ButterKnife.bind(this);
         context = getApplicationContext();
-        user = getUserFromLastActivity();
+
+        loggedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        profileUser = getUserFromLastActivity();
         initGui();
+
     }
 
     private void initGui() {
         initToolbar();
         loadCoverPicture();
         loadProfilePicture();
-        initListViewGroupList(user.getGroups());
+        initListViewGroupList(profileUser.getGroups());
         initListeners();
         initPoints();
+        initLatestEvents();
 
     }
-    private void initPoints() {
+
+    private void initLatestEvents() {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = user.getUsername() + ":" + user.getPassword();
+        String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<Score> call = apiService.getStatsForUser(basic, user.getID());
+        Call<List<Event>> call = apiService.getEventsForUser(basic, profileUser.getID());
+        call.enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                if (response.code() == 200) {
+                    List<Event> eventList = response.body();
+                    if (eventList.size() != 0) {
+                        initListViewLatestEvents(eventList);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+
+            }
+        });
+    }
+            private void initPoints() {
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Call<Score> call = apiService.getStatsForUser(basic, profileUser.getID());
         call.enqueue(new Callback<Score>() {
             @Override
             public void onResponse(Call<Score> call, Response<Score> response) {
@@ -110,8 +145,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 Group group = memberGroupListViewAdapter.getItem(i);
                 if (group.getUsers() == null) {
                     DataManager dataManager = new DataManager();
-                    User currentUser = dataManager.getSavedObjectFromSharedPref(getApplicationContext(), "currentlySignedInUser", new TypeToken<User>(){}.getType());
-                    String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+                    String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
                     final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                     Call<Group> call = apiService.getGroupById(basic, group.getId());
@@ -145,6 +179,15 @@ public class UserProfileActivity extends AppCompatActivity {
         });
 
         listViewGroupList.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                scrollViewUserProfile.requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+        listViewLatestEvents.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -187,13 +230,13 @@ public class UserProfileActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
-            toolbarTitle.setText(user.getUsername());
+            toolbarTitle.setText(profileUser.getUsername());
             layoutAdj.setMargins(toolbar, 0, layoutAdj.getStatusBarHeight(getResources()), 0, 0);
         }
     }
 
     /**
-     * Gets the user from the Extra that was put in the intent.
+     * Gets the profileUser from the Extra that was put in the intent.
      * Retrieves the GSON string.
      * @return a User object
      */
@@ -204,14 +247,14 @@ public class UserProfileActivity extends AppCompatActivity {
         Gson gson = new Gson();
 
         if (extras != null) {
-            userStringObject = extras.getString("currentUser");
+            userStringObject = extras.getString("profileUser");
             Type type = new TypeToken<User>(){}.getType();
 
             user = gson.fromJson(userStringObject, type);
-            // and get whatever type currentUser account id is
+            // and get whatever type profileUser account id is
             return user;
         } else {
-            user = new User("Not a valid currentUser", "nan", "nan", 0);
+            user = new User("Not a valid profileUser", "nan", "nan", 0);
             return user;
         }
     }
@@ -220,8 +263,18 @@ public class UserProfileActivity extends AppCompatActivity {
         listViewGroupList.setAdapter(memberGroupListViewAdapter);
 
     }
+    private void initListViewLatestEvents(List<Event> latestEvents) {
+        latestEventListViewAdapter = new EventListViewAdapter(context, R.layout.list_element_event, latestEvents);
+        listViewLatestEvents.setAdapter(latestEventListViewAdapter);
 
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initLatestEvents();
+        initPoints();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

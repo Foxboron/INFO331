@@ -36,7 +36,7 @@ import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.DialogManager;
 /**
- * Activity that lets the user select members from db, give a name to a group and the creating it.
+ * Activity that lets the profileUser select members from db, give a name to a group and the creating it.
  *
  * @author Edvard P. Bjørgen, Fredrik V. Heimsæter
  *
