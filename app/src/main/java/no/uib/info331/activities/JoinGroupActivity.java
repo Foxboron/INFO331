@@ -25,7 +25,7 @@ import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.util.Animations;
 
 /**
- * Activity that lets the user search for groups in db and click on it in the searched groups list,
+ * Activity that lets the profileUser search for groups in db and click on it in the searched groups list,
  * they  are then taken to the group profile page, GroupProfileActivity
  *
  * @author Edvard P. Bjørgen

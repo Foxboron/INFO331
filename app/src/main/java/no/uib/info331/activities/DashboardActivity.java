@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -53,7 +52,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Activity that displays the user relevant info, and is the "main" activity of the app.
+ * Activity that displays the profileUser relevant info, and is the "main" activity of the app.
  *
  * @author Edvard P. Bjørgen, Fredrik V. Heimsæter
  *
@@ -107,7 +106,7 @@ public class DashboardActivity extends AppCompatActivity {
         } else {
             initListViewGroupList(user.getGroups());
         }
-        intiLatestActivity();
+        initLastEvent();
         initPoints();
         initListeners();
 
@@ -136,7 +135,7 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    private void intiLatestActivity() {
+    private void initLastEvent() {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         String credentials = user.getUsername() + ":" + user.getPassword();
         final String basic =
@@ -205,7 +204,7 @@ public class DashboardActivity extends AppCompatActivity {
         btnLatestActivityRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intiLatestActivity();
+                initLastEvent();
                 initPoints();
             }
         });
@@ -227,7 +226,7 @@ public class DashboardActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         String userStringObject = gson.toJson(user);
                         Intent intent = new Intent(context, UserProfileActivity.class);
-                        intent.putExtra("currentUser", userStringObject);
+                        intent.putExtra("profileUser", userStringObject);
                         startActivity(intent);
                         return false;
                     }
@@ -306,7 +305,7 @@ public class DashboardActivity extends AppCompatActivity {
         super.onResume();
         user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         initListViewGroupList(user.getGroups());
-        intiLatestActivity();
+        initLastEvent();
         initPoints();
     }
 }

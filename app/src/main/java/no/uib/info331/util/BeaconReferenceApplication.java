@@ -139,7 +139,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
             // already manually launched the app.
             //this.startActivity(intent);
 
-            sendNotification("New beacon: " + region.getUniqueId() + ", not active activity");
+            sendNotification("New beacon: " + region.getUniqueId() + ", not active activity", R.mipmap.ic_enter_icon);
 
             haveDetectedBeaconsSinceBoot = true;
         } else {
@@ -147,13 +147,13 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                 // If the Monitoring Activity is visible, we log info about the beacons we have
                 // seen on its display
                 monitoringActivity.logToDisplay("I see a beacon again, " + region.getId1() );
-                sendNotification(region.getUniqueId() + " has been seen before, activity IS active." );
+                sendNotification(region.getUniqueId() + " you have no entered a group region!", R.mipmap.ic_enter_icon);
 
             } else {
                 // If we have already seen beacons before, but the monitoring activity is not in
                 // the foreground, we send a notification to the user on subsequent detections.
                 Log.d(TAG, "Sending notification.");
-                sendNotification(region.getUniqueId() + " has been seen before, activity not active." );
+                sendNotification(region.getUniqueId() + " you have no entered a group region!", R.mipmap.ic_enter_icon);
             }
         }
 
@@ -177,7 +177,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                 eventQueries.createEvent(group.getId(), "Exit", getApplicationContext());
             }
         }
-        sendNotification("You just exited " + region.getUniqueId() + "'s area." );
+        sendNotification(region.getUniqueId() + " you have now exited a group region!", R.mipmap.ic_exit_icon);
     }
 
     @Override
@@ -190,12 +190,12 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     }
 
-    private void sendNotification(String notifString) {
+    private void sendNotification(String notifString, int icon) {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setContentTitle("Beacon Reference Test")
                         .setContentText(notifString)
-                        .setSmallIcon(R.mipmap.ic_icon);
+                        .setSmallIcon(icon);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntent(new Intent(this, MonitoringActivity.class));

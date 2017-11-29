@@ -32,10 +32,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Activity that lets the user log in and register a user in the db. Also stores the user's login info
+ * Activity that lets the profileUser log in and register a profileUser in the db. Also stores the profileUser's login info
  * so that there is only need ofr logging in once.
  *
- * To see how the app determines which activity to send user, see SplashActivity.java
+ * To see how the app determines which activity to send profileUser, see SplashActivity.java
  *
  *
  * @author Edvard P. Bjørgen, Fredrik V. Heimsæter
@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the currentUser entered one.
+        // Check for a valid password, if the profileUser entered one.
         if (TextUtils.isEmpty(password)) {
             editTextLoginPassword.setError(getString(R.string.error_field_required));
             focusView = editTextLoginPassword;
@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the currentUser login attempt.
+            // perform the profileUser login attempt.
             showProgress(true, viewLoginForm, progressViewLogin);
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<User> call = apiService.login(username, password);
@@ -200,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     /**
-     * Registers a new currentUser.
+     * Registers a new profileUser.
      */
     public void registerUser() {
         String username = editTextRegisterUsername.getText().toString();

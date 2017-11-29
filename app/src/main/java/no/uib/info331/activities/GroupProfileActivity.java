@@ -19,13 +19,17 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import no.uib.info331.R;
+import no.uib.info331.adapters.BeaconListViewAdapter;
 import no.uib.info331.adapters.UserListViewAdapter;
+import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Group;
+import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
@@ -52,12 +56,16 @@ public class GroupProfileActivity extends AppCompatActivity {
     @BindView(R.id.listview_show_members_in_group) ListView listViewMemberList;
     @BindView(R.id.textview_group_display_name) TextView textViewGroupDisplayName;
     @BindView(R.id.textview_group_pts) TextView textViewGroupPoints;
+    @BindView(R.id.textview_group_personal_profile_points) TextView textViewPersonalPointsInGroup;
     @BindView(R.id.btn_join_group) Button btnJoinGroup;
+
+    @BindView(R.id.listview_beacon_in_group) ListView listViewBeaconInGroup;
 
     private LayoutAdjustments layoutAdj = new LayoutAdjustments();
     UserListViewAdapter userListViewAdapter;
+    BeaconListViewAdapter beaconListViewAdapter;
     Context context;
-    User currentUser;
+    User user;
     private DataManager dataManager = new DataManager();
 
 
@@ -69,7 +77,7 @@ public class GroupProfileActivity extends AppCompatActivity {
 
         //Group from the last activity
         currentGroup = getGroupFromLastActivity();
-        currentUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
 
         initGui();
 
@@ -79,21 +87,30 @@ public class GroupProfileActivity extends AppCompatActivity {
     private void initGui() {
         ButterKnife.bind(this);
         textViewGroupDisplayName.setText(currentGroup.getName());
-        textViewGroupPoints.setText( getResources().getString(R.string.points)+ ": "+String.valueOf(currentGroup.getPoints()));
         initToolbar();
         checkIfUserIsAlreadyInGroup();
         initListViewMemberList(currentGroup.getUsers());
+        initListViewBeaconInGroup();
         initListeners();
+        initPointsInGroup();
+        initPersonalPointsInGroup();
+    }
+
+    private void initListViewBeaconInGroup() {
+        List<Beacon> beaconList = new ArrayList<>();
+        beaconList.add(currentGroup.getBeacon());
+        beaconListViewAdapter = new BeaconListViewAdapter(context, R.layout.list_element_beacon, beaconList);
+        listViewBeaconInGroup.setAdapter(beaconListViewAdapter);
 
     }
 
 
     /**
-     * Quick fix for checking currentUser is in group already, if so, disable the "join group" button
+     * Quick fix for checking profileUser is in group already, if so, disable the "join group" button
      */
     private void checkIfUserIsAlreadyInGroup() {
         for(User member : currentGroup.getUsers()){
-            if(member.getUsername().equals(currentUser.getUsername())){
+            if(member.getUsername().equals(user.getUsername())){
                 btnJoinGroup.setEnabled(false);
                 btnJoinGroup.setText(R.string.already_in_group);
             }
@@ -107,7 +124,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                 User user = userListViewAdapter.getItem(i);
                 if (user.getGroups() == null) {
                     Log.d("User.groups", "null");
-                    String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+                    String credentials = GroupProfileActivity.this.user.getUsername() + ":" + GroupProfileActivity.this.user.getPassword();
                     final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                     Call<User> call = apiService.getUserById(basic, user.getID());
@@ -118,7 +135,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                                 Gson gson = new Gson();
                                 String userStringObject = gson.toJson(response.body());
                                 Intent intent = new Intent(context, UserProfileActivity.class);
-                                intent.putExtra("currentUser", userStringObject);
+                                intent.putExtra("profileUser", userStringObject);
                                 startActivity(intent);
                             }
                         }
@@ -133,42 +150,45 @@ public class GroupProfileActivity extends AppCompatActivity {
                     Gson gson = new Gson();
                     String userStringObject = gson.toJson(user);
                     Intent intent = new Intent(context, UserProfileActivity.class);
-                    intent.putExtra("currentUser", userStringObject);
+                    intent.putExtra("profileUser", userStringObject);
                     startActivity(intent);
                 }
             }
         });
+
+
+
 /**
- * When user tries to join group, if user is not already in group, it will then add the user to the group
- * The button will be set to "Already joined". First it makes an API call, updating the group with a new user
- * , it then updates the local in-memory user, refreshes the list view of groups members. then it makes
- * a new API-call to get the user again for updating SharedPref.
+ * When profileUser tries to join group, if profileUser is not already in group, it will then add the profileUser to the group
+ * The button will be set to "Already joined". First it makes an API call, updating the group with a new profileUser
+ * , it then updates the local in-memory profileUser, refreshes the list view of groups members. then it makes
+ * a new API-call to get the profileUser again for updating SharedPref.
  *
  */
         btnJoinGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!currentUser.getGroups().contains(currentGroup)) {
-                    String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
+                if(!user.getGroups().contains(currentGroup)) {
+                    String credentials = user.getUsername() + ":" + user.getPassword();
                     final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                    Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getId(), currentUser.getID());
+                    Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getId(), user.getID());
                     call.enqueue(new Callback<ResponseBody>() {
-                        // This adds the user to group in DB
+                        // This adds the profileUser to group in DB
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.code() == 200) {
-                                currentGroup.addMember(currentUser);
+                                currentGroup.addMember(user);
                                 initListViewMemberList(currentGroup.getUsers());
                                 checkIfUserIsAlreadyInGroup();
-                                Call<User> refreshUserCall = apiService.getUserById(basic, currentUser.getID());
+                                Call<User> refreshUserCall = apiService.getUserById(basic, user.getID());
                                 refreshUserCall.enqueue(new Callback<User>() {
-                                    //This is for fetching the user from db to update local storage
+                                    //This is for fetching the profileUser from db to update local storage
                                     @Override
                                     public void onResponse(Call<User> call, Response<User> response) {
                                         if (response.code() == 200) {
                                             User refreshedUser = response.body();
-                                            refreshedUser.setPassword(currentUser.getPassword());
+                                            refreshedUser.setPassword(user.getPassword());
                                             dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
                                         }
                                     }
@@ -191,10 +211,60 @@ public class GroupProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void initPointsInGroup() {
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        String credentials = user.getUsername() + ":" + user.getPassword();
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Call<Score> call = apiService.getStatsForGroup(basic, currentGroup.getId());
+        call.enqueue(new Callback<Score>() {
+            @Override
+            public void onResponse(Call<Score> call, Response<Score> response) {
+                if (response.code() == 200){
+                    textViewGroupPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Score> call, Throwable t) {
+
+            }
+        });
+    }
+    private void initPersonalPointsInGroup() {
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        String credentials = user.getUsername() + ":" + user.getPassword();
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Call<Score> call = apiService.getStatsForUserInGroup(basic, user.getID(), currentGroup.getId());
+        call.enqueue(new Callback<Score>() {
+            @Override
+            public void onResponse(Call<Score> call, Response<Score> response) {
+                if (response.code() == 200){
+                    textViewPersonalPointsInGroup.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Score> call, Throwable t) {
+
+            }
+        });
+    }
+
     private void initListViewMemberList(List<User> usersInGroup) {
         userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, usersInGroup);
         listViewMemberList.setAdapter(userListViewAdapter);
 
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initPointsInGroup();
+        initPersonalPointsInGroup();
     }
 
     private void initToolbar() {
@@ -224,10 +294,10 @@ public class GroupProfileActivity extends AppCompatActivity {
             Type type = new TypeToken<Group>(){}.getType();
 
             group = gson.fromJson(groupStringObject, type);
-            // and get whatever type currentUser account id is
+            // and get whatever type profileUser account id is
             return group;
         } else {
-            group = new Group("Error", new User("Not a valid currentUser", "nan", "nan", 0));
+            group = new Group("Error", new User("Not a valid profileUser", "nan", "nan", 0));
             return group;
         }
     }
