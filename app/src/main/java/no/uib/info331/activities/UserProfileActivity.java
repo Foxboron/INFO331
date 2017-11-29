@@ -93,7 +93,7 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Score> call, Response<Score> response) {
                 if (response.code() == 200){
-                    textViewPoints.setText(Integer.toString(response.body().getScore()) + " Points");
+                    textViewPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
                 }
             }
 

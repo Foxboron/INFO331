@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -124,7 +125,7 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Score> call, Response<Score> response) {
                 if (response.code() == 200){
-                   textViewPoints.setText(Integer.toString(response.body().getScore()) + " Points");
+                   textViewPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
                 }
             }
 
@@ -150,11 +151,11 @@ public class DashboardActivity extends AppCompatActivity {
                         Event event = eventList.get(response.body().size()-1);
                         String text = "";
                         if (event.getEvent().equals("Enter")) {
-                            text = "Entered area for: " + event.getGroup().getName();
+                            text = getText(R.string.enter_area) + " " + event.getGroup().getName();
                         } else if (event.getEvent().equals("Exit")) {
-                            text = "Exited area for: " + event.getGroup().getName();
+                            text = getText(R.string.exit_area) + " " + event.getGroup().getName();
                         } else {
-                            text = "You did something weird in area for: " + event.getGroup().getName();
+                            text = getText(R.string.weird_area) + " " + event.getGroup().getName();
                         }
                         textViewLatestActivityText.setText(text);
                         textViewLatestActivityTimestamp.setText(event.getDate().toString());
