@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -36,10 +39,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import no.uib.info331.R;
 import no.uib.info331.adapters.GroupListViewAdapter;
+import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
+import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.queries.EventQueries;
 import no.uib.info331.util.Animations;
+import no.uib.info331.util.ApiClient;
+import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Activity that displays the user relevant info, and is the "main" activity of the app.
@@ -53,11 +64,15 @@ public class DashboardActivity extends AppCompatActivity {
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.listview_dashboard_user_groups) ListView listViewGroupList;
     @BindView(R.id.scrollview_dashboard) ScrollView scrollViewDashboard;
+    @BindView(R.id.textview_dashboard_latest_activity_text) TextView textViewLatestActivityText;
+    @BindView(R.id.textview_dashboard_latest_activity_timestamp) TextView textViewLatestActivityTimestamp;
+    @BindView(R.id.btn_dashboard_latest_activity) Button btnLatestActivityRefresh;
+    @BindView(R.id.textview_dashboard_points) TextView textViewPoints;
     TextView toolbarTitle;
     ImageButton btnHamburgerMenu;
-    TextView textViewUserPoints;
 
     DataManager dataManager = new DataManager();
+    EventQueries eventQueries = new EventQueries();
     Animations anim = new Animations();
     Context context;
 
@@ -78,7 +93,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void initGui() {
         btnHamburgerMenu = (ImageButton) findViewById(R.id.btn_menu_dashboard);
-        textViewUserPoints = (TextView) findViewById(R.id.textview_dashboard_points);
         toolbarTitle = (TextView) findViewById(R.id.toolbar_buildselect_title);
 
         anim.fadeInView(toolbarTitle, 200, 200);
@@ -93,11 +107,68 @@ public class DashboardActivity extends AppCompatActivity {
         } else {
             initListViewGroupList(user.getGroups());
         }
+        intiLatestActivity();
+        initPoints();
         initListeners();
 
-        textViewUserPoints.setText(Integer.toString(user.getPoints()) + " " + getResources().getString(R.string.points).toLowerCase());
 
 
+    }
+
+    private void initPoints() {
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        String credentials = user.getUsername() + ":" + user.getPassword();
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Call<Score> call = apiService.getStatsForUser(basic, user.getID());
+        call.enqueue(new Callback<Score>() {
+            @Override
+            public void onResponse(Call<Score> call, Response<Score> response) {
+                if (response.code() == 200){
+                   textViewPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Score> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void intiLatestActivity() {
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        String credentials = user.getUsername() + ":" + user.getPassword();
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Call<List<Event>> call = apiService.getEventsForUser(basic, user.getID());
+        call.enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                if (response.code() == 200) {
+                    List<Event> eventList = response.body();
+                    if(eventList.size()!= 0) {
+                        Event event = eventList.get(response.body().size()-1);
+                        String text = "";
+                        if (event.getEvent().equals("Enter")) {
+                            text = getText(R.string.enter_area) + " " + event.getGroup().getName();
+                        } else if (event.getEvent().equals("Exit")) {
+                            text = getText(R.string.exit_area) + " " + event.getGroup().getName();
+                        } else {
+                            text = getText(R.string.weird_area) + " " + event.getGroup().getName();
+                        }
+                        textViewLatestActivityText.setText(text);
+                        textViewLatestActivityTimestamp.setText(event.getDate().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+
+            }
+
+        });
     }
 
     private void initListeners() {
@@ -129,6 +200,13 @@ public class DashboardActivity extends AppCompatActivity {
                 // Disallow the touch request for parent scroll on touch of child view
                 scrollViewDashboard.requestDisallowInterceptTouchEvent(true);
                 return false;
+            }
+        });
+        btnLatestActivityRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intiLatestActivity();
+                initPoints();
             }
         });
 
@@ -228,5 +306,7 @@ public class DashboardActivity extends AppCompatActivity {
         super.onResume();
         user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         initListViewGroupList(user.getGroups());
+        intiLatestActivity();
+        initPoints();
     }
 }
