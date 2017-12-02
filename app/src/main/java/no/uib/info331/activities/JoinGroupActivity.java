@@ -66,6 +66,7 @@ public class JoinGroupActivity extends AppCompatActivity {
         anim.moveViewToTranslationY(cardViewJoinGroup, 0 , shortAnimTime, 5000, false);
         anim.fadeInView(cardViewJoinGroup, 0, shortAnimTime);
         anim.moveViewToTranslationY(cardViewJoinGroup, 100 , shortAnimTime, 0, false);
+        groupQueries.getAllGroups(context);
     }
 
     private void initListeners() {
@@ -74,7 +75,11 @@ public class JoinGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForGroups.getText());
-                groupQueries.getGroupsByStringFromDb(context, query);
+                if(query == null || query.equals("") || query.equals(" ")){
+                    groupQueries.getAllGroups(context);
+                }else {
+                    groupQueries.getGroupsByStringFromDb(context, query);
+                }
             }
         });
 
@@ -105,7 +110,6 @@ public class JoinGroupActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
-<<<<<<< HEAD
 
     @Override
     protected void onResume() {
@@ -118,6 +122,4 @@ public class JoinGroupActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
-=======
->>>>>>> formatting code to prettier standards
 }
