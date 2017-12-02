@@ -19,6 +19,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +34,9 @@ import no.uib.info331.R;
 import no.uib.info331.adapters.BeaconListViewAdapter;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Beacon;
+import no.uib.info331.models.Event;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.UserListEvent;
 import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
@@ -181,14 +187,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForUsers.getText());
-                List<User> userSearch = userQueries.getUsersByStringFromDb(context, query);
-                try {
-                    initListViewMemberList(userSearch);
-                } catch (Exception e){
-                    e.printStackTrace();
-                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-
-                }
+                userQueries.getUsersByStringFromDb(context, query);
             }
         });
 
@@ -202,6 +201,11 @@ public class CreateGroupActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUserListEvent(UserListEvent userListEvent){
+        initListViewMemberList(userListEvent.getUserList());
     }
 
 
@@ -270,5 +274,15 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
 
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
 }
