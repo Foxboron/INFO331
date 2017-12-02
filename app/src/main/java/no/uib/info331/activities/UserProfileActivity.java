@@ -21,6 +21,10 @@ import com.google.gson.reflect.TypeToken;
 import com.intrusoft.squint.DiagonalView;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -34,6 +38,9 @@ import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.ScoreEvent;
+import no.uib.info331.queries.EventQueries;
+import no.uib.info331.queries.StatsQueries;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -69,6 +76,7 @@ public class UserProfileActivity extends AppCompatActivity {
     EventListViewAdapter latestEventListViewAdapter;
     private User loggedInUser;
     private DataManager dataManager = new DataManager();
+    StatsQueries statsQueries = new StatsQueries();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,25 +125,14 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void initPoints() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<Score> call = apiService.getStatsForUser(basic, profileUser.getID());
-        call.enqueue(new Callback<Score>() {
-            @Override
-            public void onResponse(Call<Score> call, Response<Score> response) {
-                if (response.code() == 200){
-                    textViewPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Score> call, Throwable t) {
-                System.out.println(t.toString());
-            }
-        });
+        statsQueries.getUserScore(profileUser.getID(), getApplicationContext());
     }
+    
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onScoreEvent(ScoreEvent scoreEvent){
+        textViewPoints.setText(Integer.toString(scoreEvent.getScore().getScore()) + " " + getText(R.string.points));
+    }
+
     private void initListeners() {
         listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -271,8 +268,15 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         initLatestEvents();
         initPoints();
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override

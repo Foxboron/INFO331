@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,6 +32,10 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +47,9 @@ import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.ScoreEvent;
 import no.uib.info331.queries.EventQueries;
+import no.uib.info331.queries.StatsQueries;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
@@ -72,6 +79,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     DataManager dataManager = new DataManager();
     EventQueries eventQueries = new EventQueries();
+    StatsQueries statsQueries = new StatsQueries();
     Animations anim = new Animations();
     Context context;
 
@@ -111,25 +119,14 @@ public class DashboardActivity extends AppCompatActivity {
         initListeners();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onScoreEvent(ScoreEvent scoreEvent){
+        Log.d("EventBus", "Recieved");
+        textViewPoints.setText(Integer.toString(scoreEvent.getScore().getScore()) + " " + getText(R.string.points));
+    }
+
     private void initPoints() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = user.getUsername() + ":" + user.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<Score> call = apiService.getStatsForUser(basic, user.getID());
-        call.enqueue(new Callback<Score>() {
-            @Override
-            public void onResponse(Call<Score> call, Response<Score> response) {
-                if (response.code() == 200){
-                   textViewPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Score> call, Throwable t) {
-
-            }
-        });
+        statsQueries.getUserScore(user.getID(), getApplicationContext());
     }
 
     private void initLastEvent() {
@@ -300,9 +297,28 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         initListViewGroupList(user.getGroups());
         initLastEvent();
         initPoints();
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 }
