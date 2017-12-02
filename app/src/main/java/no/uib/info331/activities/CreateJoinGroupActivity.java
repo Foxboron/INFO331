@@ -13,10 +13,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,8 +73,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         if(user.getGroups() == null ){
             createEmptyGroupListForUser();
         }
-
-
     }
 
     /**
@@ -82,7 +82,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         CustomPagerAdapter adapter = new CustomPagerAdapter(this);
         pager = (ViewPager) findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
-
     }
 
     private void initGui() {
@@ -90,7 +89,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         longAnimTime = anim.getLongAnimTime(context);
         anim.fadeInView(textViewTitle, 200, shortAnimTime);
         hideButtonIfUserHasGroup();
-
     }
 
     /**
@@ -103,19 +101,13 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
                 btnSkipGroupSelection.setVisibility(View.GONE);
             }
         }
-
     }
-
-
 
     /**
      * Inits the
      */
     private void initListeners() {
         mDetector = new GestureDetectorCompat(this,  new MyGestureListener());
-
-
-
         btnSkipGroupSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,17 +117,13 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             }
         });
 
-        /**
-         * Init for OnTouchListners for detecting downward flings, is used by the ViewPager
-         */
-
+        //Init for OnTouchListners for detecting downward flings, is used by the ViewPager
         touchListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                return mDetector.onTouchEvent(motionEvent);}
+                return mDetector.onTouchEvent(motionEvent);
+            }
         };
-
         pager.setOnTouchListener(touchListener);
 
     }
@@ -165,7 +153,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
      * a downward fling it performs actions, depending on which page of the ViewPager
      */
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2,
@@ -198,6 +185,5 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }

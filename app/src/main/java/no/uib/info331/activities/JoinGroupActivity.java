@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -42,9 +43,8 @@ public class JoinGroupActivity extends AppCompatActivity {
     private GroupListViewAdapter searchedGroupListViewAdapter;
     private GroupQueries groupQueries = new GroupQueries();
     private Animations anim = new Animations();
-    Context context;
+    private Context context;
     private int shortAnimTime;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,7 @@ public class JoinGroupActivity extends AppCompatActivity {
     }
 
     private void initListeners() {
+
         imageBtnSearchForGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,7 +80,6 @@ public class JoinGroupActivity extends AppCompatActivity {
                 } catch (Exception e){
                     e.printStackTrace();
                     Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-
                 }
             }
         });
@@ -93,23 +93,17 @@ public class JoinGroupActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, GroupProfileActivity.class);
                 intent.putExtra("group", userStringObject);
                 startActivity(intent);
-
-
             }
         });
-
     }
 
     private void initListViewGroupList(List<Group> searchedGroups) {
         searchedGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
         listViewGroupList.setAdapter(searchedGroupListViewAdapter);
-
     }
 
     public void onBackPressed() {
-
-            super.onBackPressed();
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
-
 }
