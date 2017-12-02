@@ -105,6 +105,7 @@ public class JoinGroupActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
+<<<<<<< HEAD
 
     @Override
     protected void onResume() {
@@ -117,4 +118,6 @@ public class JoinGroupActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
+=======
+>>>>>>> formatting code to prettier standards
 }
