@@ -8,10 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     private Group currentGroup;
 
     @BindView(R.id.toolbar_group_profile) Toolbar toolbar;
+    @BindView(R.id.scrollview_group_profile) ScrollView scrollViewGroup;
     @BindView(R.id.textview_group_profile_toolbar_title) TextView toolbarTitle;
     @BindView(R.id.listview_show_members_in_group) ListView listViewMemberList;
     @BindView(R.id.textview_group_display_name) TextView textViewGroupDisplayName;
@@ -80,8 +83,6 @@ public class GroupProfileActivity extends AppCompatActivity {
         user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
 
         initGui();
-
-
     }
 
     private void initGui() {
@@ -101,7 +102,6 @@ public class GroupProfileActivity extends AppCompatActivity {
         beaconList.add(currentGroup.getBeacon());
         beaconListViewAdapter = new BeaconListViewAdapter(context, R.layout.list_element_beacon, beaconList);
         listViewBeaconInGroup.setAdapter(beaconListViewAdapter);
-
     }
 
 
@@ -166,48 +166,58 @@ public class GroupProfileActivity extends AppCompatActivity {
         btnJoinGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            if(!user.getGroups().contains(currentGroup)) {
-                String credentials = user.getUsername() + ":" + user.getPassword();
-                final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getId(), user.getID());
-                call.enqueue(new Callback<ResponseBody>() {
-                    // This adds the profileUser to group in DB
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.code() == 200) {
-                            currentGroup.addMember(user);
-                            initListViewMemberList(currentGroup.getUsers());
-                            checkIfUserIsAlreadyInGroup();
-                            Call<User> refreshUserCall = apiService.getUserById(basic, user.getID());
-                            refreshUserCall.enqueue(new Callback<User>() {
-                                //This is for fetching the profileUser from db to update local storage
-                                @Override
-                                public void onResponse(Call<User> call, Response<User> response) {
-                                    if (response.code() == 200) {
-                                        User refreshedUser = response.body();
-                                        refreshedUser.setPassword(user.getPassword());
-                                        dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
+                if(!user.getGroups().contains(currentGroup)) {
+                    String credentials = user.getUsername() + ":" + user.getPassword();
+                    final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                    final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                    Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getId(), user.getID());
+                    call.enqueue(new Callback<ResponseBody>() {
+                        // This adds the profileUser to group in DB
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.code() == 200) {
+                                currentGroup.addMember(user);
+                                initListViewMemberList(currentGroup.getUsers());
+                                checkIfUserIsAlreadyInGroup();
+                                Call<User> refreshUserCall = apiService.getUserById(basic, user.getID());
+                                refreshUserCall.enqueue(new Callback<User>() {
+                                    //This is for fetching the profileUser from db to update local storage
+                                    @Override
+                                    public void onResponse(Call<User> call, Response<User> response) {
+                                        if (response.code() == 200) {
+                                            User refreshedUser = response.body();
+                                            refreshedUser.setPassword(user.getPassword());
+                                            dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onFailure(Call<User> call, Throwable t) {
-                                    Toast.makeText(context, getResources().getString(R.string.could_not_refres_user), Toast.LENGTH_LONG).show();
-                                    btnJoinGroup.setEnabled(true);
-                                    btnJoinGroup.setText(R.string.group_join);
-                                    currentGroup.deleteMember(user);
-                                }
-                            });
+                                    @Override
+                                    public void onFailure(Call<User> call, Throwable t) {
+                                        Toast.makeText(context, getResources().getString(R.string.could_not_refres_user), Toast.LENGTH_LONG).show();
+                                        btnJoinGroup.setEnabled(true);
+                                        btnJoinGroup.setText(R.string.group_join);
+                                        currentGroup.deleteMember(user);
+                                    }
+                                });
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
+        });
+
+        listViewMemberList.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                scrollViewGroup.requestDisallowInterceptTouchEvent(true);
+                return false;
             }
         });
     }
@@ -228,7 +238,7 @@ public class GroupProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Score> call, Throwable t) {
-
+                System.out.println(t.toString());
             }
         });
     }

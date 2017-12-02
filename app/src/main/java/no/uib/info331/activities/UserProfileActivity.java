@@ -80,7 +80,6 @@ public class UserProfileActivity extends AppCompatActivity {
         loggedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         profileUser = getUserFromLastActivity();
         initGui();
-
     }
 
     private void initGui() {
@@ -91,7 +90,6 @@ public class UserProfileActivity extends AppCompatActivity {
         initListeners();
         initPoints();
         initLatestEvents();
-
     }
 
     private void initLatestEvents() {
@@ -109,16 +107,16 @@ public class UserProfileActivity extends AppCompatActivity {
                         initListViewLatestEvents(eventList);
                     }
                 }
-
             }
 
             @Override
             public void onFailure(Call<List<Event>> call, Throwable t) {
-
+                System.out.println(t.toString());
             }
         });
     }
-            private void initPoints() {
+
+    private void initPoints() {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
         final String basic =
@@ -134,7 +132,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Score> call, Throwable t) {
-
+                System.out.println(t.toString());
             }
         });
     }
@@ -142,39 +140,39 @@ public class UserProfileActivity extends AppCompatActivity {
         listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Group group = memberGroupListViewAdapter.getItem(i);
-                if (group.getUsers() == null) {
-                    DataManager dataManager = new DataManager();
-                    String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
-                    final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                    final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                    Call<Group> call = apiService.getGroupById(basic, group.getId());
-                    call.enqueue(new Callback<Group>() {
-                        @Override
-                        public void onResponse(Call<Group> call, Response<Group> response) {
-                            if (response.code() == 200) {
-                                Gson gson = new Gson();
-                                String userStringObject = gson.toJson(response.body());
-                                Intent intent = new Intent(context, GroupProfileActivity.class);
-                                intent.putExtra("group", userStringObject);
-                                startActivity(intent);
-                            }
+            Group group = memberGroupListViewAdapter.getItem(i);
+
+            if (group.getUsers() == null) {
+                DataManager dataManager = new DataManager();
+                String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
+                final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<Group> call = apiService.getGroupById(basic, group.getId());
+
+                call.enqueue(new Callback<Group>() {
+                    @Override
+                    public void onResponse(Call<Group> call, Response<Group> response) {
+                        if (response.code() == 200) {
+                            Gson gson = new Gson();
+                            String userStringObject = gson.toJson(response.body());
+                            Intent intent = new Intent(context, GroupProfileActivity.class);
+                            intent.putExtra("group", userStringObject);
+                            startActivity(intent);
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Call<Group> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<Group> call, Throwable t) {
 
-                        }
-                    });
-                } else {
-                    Gson gson = new Gson();
-                    String userStringObject = gson.toJson(group);
-                    Intent intent = new Intent(context, GroupProfileActivity.class);
-                    intent.putExtra("group", userStringObject);
-                    startActivity(intent);
-                }
-
-
+                    }
+                });
+            } else {
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(group);
+                Intent intent = new Intent(context, GroupProfileActivity.class);
+                intent.putExtra("group", userStringObject);
+                startActivity(intent);
+            }
             }
         });
 
@@ -187,6 +185,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+
         listViewLatestEvents.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
