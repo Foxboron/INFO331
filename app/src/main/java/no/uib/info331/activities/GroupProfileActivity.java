@@ -104,7 +104,6 @@ public class GroupProfileActivity extends AppCompatActivity {
         listViewBeaconInGroup.setAdapter(beaconListViewAdapter);
     }
 
-
     /**
      * Quick fix for checking profileUser is in group already, if so, disable the "join group" button
      */
@@ -143,7 +142,6 @@ public class GroupProfileActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
                             Log.d("Whoops", "Fuck");
-
                         }
                     });
                 } else {
@@ -267,9 +265,6 @@ public class GroupProfileActivity extends AppCompatActivity {
     private void initListViewMemberList(List<User> usersInGroup) {
         userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, usersInGroup);
         listViewMemberList.setAdapter(userListViewAdapter);
-        for(User u : usersInGroup){
-            System.out.print(u.getUsername());
-        }
     }
 
     @Override

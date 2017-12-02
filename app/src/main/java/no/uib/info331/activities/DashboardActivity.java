@@ -166,8 +166,6 @@ public class DashboardActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, GroupProfileActivity.class);
                 intent.putExtra("group", userStringObject);
                 startActivity(intent);
-
-
             }
         });
 
@@ -225,9 +223,7 @@ public class DashboardActivity extends AppCompatActivity {
                         new SecondaryDrawerItem().withName(R.string.drawer_join_create_group).withIcon(R.drawable.ic_group).withSelectable(false).withIdentifier(1),
                         new SecondaryDrawerItem().withName("MonitorTest").withIcon(R.drawable.ic_bt_beacon).withSelectable(false).withIdentifier(2),
                         new DividerDrawerItem()
-
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         Intent intent = null;
@@ -263,7 +259,6 @@ public class DashboardActivity extends AppCompatActivity {
         result.addStickyFooterItem(new PrimaryDrawerItem().withName(R.string.drawer_settings).withIcon(R.drawable.ic_settings).withSelectable(false).withIdentifier(99));
     }
 
-
     private void initToolbar() {
 
         setSupportActionBar(toolbar);
@@ -276,7 +271,6 @@ public class DashboardActivity extends AppCompatActivity {
     private void initListViewGroupList(List<Group> userGroups) {
         userGroupsListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, userGroups);
         listViewGroupList.setAdapter(userGroupsListViewAdapter);
-
     }
 
     @Override
