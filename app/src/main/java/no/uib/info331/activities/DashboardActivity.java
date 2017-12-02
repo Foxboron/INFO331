@@ -109,9 +109,6 @@ public class DashboardActivity extends AppCompatActivity {
         initLastEvent();
         initPoints();
         initListeners();
-
-
-
     }
 
     private void initPoints() {

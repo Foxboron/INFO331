@@ -156,57 +156,58 @@ public class GroupProfileActivity extends AppCompatActivity {
             }
         });
 
-
-
-/**
- * When profileUser tries to join group, if profileUser is not already in group, it will then add the profileUser to the group
- * The button will be set to "Already joined". First it makes an API call, updating the group with a new profileUser
- * , it then updates the local in-memory profileUser, refreshes the list view of groups members. then it makes
- * a new API-call to get the profileUser again for updating SharedPref.
- *
- */
+        /**
+         * When profileUser tries to join group, if profileUser is not already in group, it will then add the profileUser to the group
+         * The button will be set to "Already joined". First it makes an API call, updating the group with a new profileUser
+         * , it then updates the local in-memory profileUser, refreshes the list view of groups members. then it makes
+         * a new API-call to get the profileUser again for updating SharedPref.
+         *
+         */
         btnJoinGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!user.getGroups().contains(currentGroup)) {
-                    String credentials = user.getUsername() + ":" + user.getPassword();
-                    final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                    final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                    Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getId(), user.getID());
-                    call.enqueue(new Callback<ResponseBody>() {
-                        // This adds the profileUser to group in DB
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (response.code() == 200) {
-                                currentGroup.addMember(user);
-                                initListViewMemberList(currentGroup.getUsers());
-                                checkIfUserIsAlreadyInGroup();
-                                Call<User> refreshUserCall = apiService.getUserById(basic, user.getID());
-                                refreshUserCall.enqueue(new Callback<User>() {
-                                    //This is for fetching the profileUser from db to update local storage
-                                    @Override
-                                    public void onResponse(Call<User> call, Response<User> response) {
-                                        if (response.code() == 200) {
-                                            User refreshedUser = response.body();
-                                            refreshedUser.setPassword(user.getPassword());
-                                            dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
-                                        }
+            if(!user.getGroups().contains(currentGroup)) {
+                String credentials = user.getUsername() + ":" + user.getPassword();
+                final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<ResponseBody> call = apiService.addUserToGroup(basic, currentGroup.getId(), user.getID());
+                call.enqueue(new Callback<ResponseBody>() {
+                    // This adds the profileUser to group in DB
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() == 200) {
+                            currentGroup.addMember(user);
+                            initListViewMemberList(currentGroup.getUsers());
+                            checkIfUserIsAlreadyInGroup();
+                            Call<User> refreshUserCall = apiService.getUserById(basic, user.getID());
+                            refreshUserCall.enqueue(new Callback<User>() {
+                                //This is for fetching the profileUser from db to update local storage
+                                @Override
+                                public void onResponse(Call<User> call, Response<User> response) {
+                                    if (response.code() == 200) {
+                                        User refreshedUser = response.body();
+                                        refreshedUser.setPassword(user.getPassword());
+                                        dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
                                     }
+                                }
 
-                                    @Override
-                                    public void onFailure(Call<User> call, Throwable t) {
-                                        Toast.makeText(context, getResources().getString(R.string.could_not_refres_user), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
+                                @Override
+                                public void onFailure(Call<User> call, Throwable t) {
+                                    Toast.makeText(context, getResources().getString(R.string.could_not_refres_user), Toast.LENGTH_LONG).show();
+                                    btnJoinGroup.setEnabled(true);
+                                    btnJoinGroup.setText(R.string.group_join);
+                                    currentGroup.deleteMember(user);
+                                }
+                            });
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
             }
         });
     }
@@ -231,6 +232,7 @@ public class GroupProfileActivity extends AppCompatActivity {
             }
         });
     }
+
     private void initPersonalPointsInGroup() {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         String credentials = user.getUsername() + ":" + user.getPassword();
@@ -247,7 +249,7 @@ public class GroupProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Score> call, Throwable t) {
-
+                System.out.println(t.toString());
             }
         });
     }
@@ -255,8 +257,6 @@ public class GroupProfileActivity extends AppCompatActivity {
     private void initListViewMemberList(List<User> usersInGroup) {
         userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, usersInGroup);
         listViewMemberList.setAdapter(userListViewAdapter);
-
-
     }
 
 

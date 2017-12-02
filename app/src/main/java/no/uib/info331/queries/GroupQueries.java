@@ -33,7 +33,6 @@ public class GroupQueries {
     ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
     DataManager dataManager = new DataManager();
 
-
     /**
      * Search for a group in the database and save it to sharedPreferences, also deletes the results when returned
      * @param context The activity context
@@ -41,17 +40,15 @@ public class GroupQueries {
      * @return The list of groups where the name matches the query
      */
     public List<Group> getGroupsByStringFromDb(final Context context, String query) {
-        //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
-
         Log.d("TAG", credentials);
+
         final String prefKey = "searchGroupByUsername";
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
-
         Call<List<Group>> call = apiService.searchGroupByName(basic, query);
+
         call.enqueue(new Callback<List<Group>>() {
             @Override
             public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
@@ -60,19 +57,14 @@ public class GroupQueries {
                 System.out.println("response code: " + response.code());
 
                 if(response.code()==200) {
-                    //System.out.println(response.body());
-
                     for(Group group: response.body()) {
                         allGroups.add(group);
-
                     }
                     dataManager.storeObjectInSharedPref(context, prefKey, allGroups);
-
                 } else {
                     System.out.println("APA: " + response.body());
                     System.out.println("response: " + response);
                 }
-
             }
 
             @Override
@@ -82,10 +74,8 @@ public class GroupQueries {
             }
         });
         Type type = new TypeToken<List<Group>>(){}.getType();
-
         List<Group> result = dataManager.getSavedObjectFromSharedPref(context, prefKey, type);
         dataManager.deleteSavedObjectFromSharedPref(context, prefKey);
-
         return result;
     }
 
@@ -101,7 +91,6 @@ public class GroupQueries {
             final User currentUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
             final String credentials = currentUser.getUsername() + ":" + currentUser.getPassword();
             final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
             Group group = new Group(groupName, currentUser);
             final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<Group> call = apiService.createGroup(basic, group.getName());
@@ -127,11 +116,10 @@ public class GroupQueries {
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     error[0] = true;
                                     t.printStackTrace();
-
                                 }
                             });
-
                         }
+
                         Log.d("AddBeacon: ", beacon.toString());
                         Call<ResponseBody> addBeaconCall = apiService.addBeaconToGroup(basic, registeredGroup.getId(), beacon.getID());
                         addBeaconCall.enqueue(new Callback<ResponseBody>() {
@@ -146,23 +134,19 @@ public class GroupQueries {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 error[0] = true;
                                 t.printStackTrace();
-
                             }
                         });
                     }
-
                 }
 
                 @Override
                 public void onFailure(Call<Group> call, Throwable t) {
                     error[0] = true;
                     t.printStackTrace();
-
                 }
             });
 
         }
-
 
     /**
      * Updates the group, [NOT BEEN TESTED YET, MAY NOT WORK]
@@ -188,9 +172,7 @@ public class GroupQueries {
                 if(response.code()==200) {
                     Toast.makeText(context, "Added: " +  USER.getUsername() + " to " + GROUP.getName(), Toast.LENGTH_SHORT).show();
                     System.out.println("response code");
-
                 }
-
             }
 
             @Override
@@ -198,18 +180,14 @@ public class GroupQueries {
                 error[0] = true;
                 System.out.println("WROMG");
                 t.printStackTrace();
-
             }
         });
+
         if(!error[0]){
+
         } else {
             Toast.makeText(context, context.getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
         }
 
     }
-
-
-    }
-
-
-
+}

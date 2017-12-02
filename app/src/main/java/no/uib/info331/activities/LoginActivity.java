@@ -63,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
 
     boolean isFlipStateFront = true;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,11 +76,11 @@ public class LoginActivity extends AppCompatActivity {
         editTextLoginPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
+            if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                attemptLogin();
+                return true;
+            }
+            return false;
             }
         });
 
@@ -95,9 +94,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLoginRegisterAccount.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                flipViewLoginCard.flipTheView(true);
-                isFlipStateFront = false;
-
+            flipViewLoginCard.flipTheView(true);
+            isFlipStateFront = false;
             }
         });
 //Register card
@@ -110,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         btnBackToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                flipViewLoginCard.flipTheView(true);
+            flipViewLoginCard.flipTheView(true);
             }
         });
 
@@ -184,7 +182,6 @@ public class LoginActivity extends AppCompatActivity {
                         editTextLoginPassword.setError(getString(R.string.error_incorrect_password));
                         editTextLoginPassword.requestFocus();
                     }
-
                 }
 
                 @Override
@@ -192,7 +189,6 @@ public class LoginActivity extends AppCompatActivity {
                     showProgress(false, viewLoginForm, progressViewLogin);
                     btnLoginUsernameSignIn.setError(getString(R.string.error_register));
                     btnLoginUsernameSignIn.requestFocus();
-
                 }
             });
         }
@@ -309,10 +305,5 @@ public class LoginActivity extends AppCompatActivity {
         } else if (isFlipStateFront){
             this.finishAffinity();
         }
-
-
-
-
     }
-
 }
