@@ -13,6 +13,7 @@ import java.util.List;
 
 import no.uib.info331.models.Event;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.EventEvent;
 import no.uib.info331.models.messages.EventListEvent;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
@@ -68,6 +69,8 @@ public class EventQueries {
             @Override
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
                 if (response.code() == 200) {
+                    int latestIndex = response.body().size()-1;
+                    EventBus.getDefault().post(new EventEvent(response.body().get(latestIndex)));
                 }
             }
 
@@ -89,6 +92,7 @@ public class EventQueries {
             @Override
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
                 if (response.code() == 200) {
+                    Log.d("Events:", response.body().get(response.body().size()-1).toString());
                     EventBus.getDefault().post(new EventListEvent(response.body()));
                 }
             }

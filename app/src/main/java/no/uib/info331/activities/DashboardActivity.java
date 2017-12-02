@@ -47,6 +47,7 @@ import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.EventEvent;
 import no.uib.info331.models.messages.ScoreEvent;
 import no.uib.info331.queries.EventQueries;
 import no.uib.info331.queries.StatsQueries;
@@ -130,38 +131,22 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void initLastEvent() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = user.getUsername() + ":" + user.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<List<Event>> call = apiService.getEventsForUser(basic, user.getID());
-        call.enqueue(new Callback<List<Event>>() {
-            @Override
-            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
-                if (response.code() == 200) {
-                    List<Event> eventList = response.body();
-                    if(eventList.size()!= 0) {
-                        Event event = eventList.get(response.body().size()-1);
-                        String text = "";
-                        if (event.getEvent().equals("Enter")) {
-                            text = getText(R.string.enter_area) + " " + event.getGroup().getName();
-                        } else if (event.getEvent().equals("Exit")) {
-                            text = getText(R.string.exit_area) + " " + event.getGroup().getName();
-                        } else {
-                            text = getText(R.string.weird_area) + " " + event.getGroup().getName();
-                        }
-                        textViewLatestActivityText.setText(text);
-                        textViewLatestActivityTimestamp.setText(event.getDate().toString());
-                    }
-                }
-            }
+        eventQueries.getLatestEvent(getApplicationContext());
+    }
 
-            @Override
-            public void onFailure(Call<List<Event>> call, Throwable t) {
-
-            }
-
-        });
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventEvent(EventEvent eventEvent){
+        Event event = eventEvent.getEvent();
+        String text = "";
+        if (event.getEvent().equals("Enter")) {
+            text = getText(R.string.enter_area) + " " + event.getGroup().getName();
+        } else if (event.getEvent().equals("Exit")) {
+            text = getText(R.string.exit_area) + " " + event.getGroup().getName();
+        } else {
+            text = getText(R.string.weird_area) + " " + event.getGroup().getName();
+        }
+        textViewLatestActivityText.setText(text);
+        textViewLatestActivityTimestamp.setText(event.getDate().toString());
     }
 
     private void initListeners() {
