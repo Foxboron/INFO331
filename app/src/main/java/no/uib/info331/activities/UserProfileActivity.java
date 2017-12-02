@@ -114,7 +114,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private void initPoints() {
         statsQueries.getUserScore(profileUser.getID(), getApplicationContext());
     }
-    
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onScoreEvent(ScoreEvent scoreEvent){
         textViewPoints.setText(Integer.toString(scoreEvent.getScore().getScore()) + " " + getText(R.string.points));
@@ -179,7 +179,6 @@ public class UserProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
-
     }
 
     private void loadCoverPicture() {
@@ -208,7 +207,6 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -241,11 +239,13 @@ public class UserProfileActivity extends AppCompatActivity {
             return user;
         }
     }
+
     private void initListViewGroupList(List<Group> searchedGroups) {
         memberGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
         listViewGroupList.setAdapter(memberGroupListViewAdapter);
 
     }
+
     private void initListViewLatestEvents(List<Event> latestEvents) {
         latestEventListViewAdapter = new EventListViewAdapter(context, R.layout.list_element_event, latestEvents);
         listViewLatestEvents.setAdapter(latestEventListViewAdapter);
