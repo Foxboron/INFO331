@@ -15,6 +15,10 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,6 +26,7 @@ import butterknife.ButterKnife;
 import no.uib.info331.R;
 import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
+import no.uib.info331.models.messages.GroupListEvent;
 import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.util.Animations;
 
@@ -69,18 +74,7 @@ public class JoinGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForGroups.getText());
-                List<Group> groupSearch = groupQueries.getGroupsByStringFromDb(context, query);
-                try {
-                    if(groupSearch != null){
-                        initListViewGroupList(groupSearch);
-                        searchedGroupListViewAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(context, "Can't return results", Toast.LENGTH_LONG).show();
-                    }
-                } catch (Exception e){
-                    e.printStackTrace();
-                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-                }
+                groupQueries.getGroupsByStringFromDb(context, query);
             }
         });
 
@@ -96,6 +90,11 @@ public class JoinGroupActivity extends AppCompatActivity {
             }
         });
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGroupListEvent(GroupListEvent groupListEvent){
+        initListViewGroupList(groupListEvent.getGroupList());
+
+    }
 
     private void initListViewGroupList(List<Group> searchedGroups) {
         searchedGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
@@ -105,5 +104,17 @@ public class JoinGroupActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 }

@@ -7,6 +7,8 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import no.uib.info331.R;
 import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.GroupListEvent;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -39,7 +42,12 @@ public class GroupQueries {
      * @param query The query to search for
      * @return The list of groups where the name matches the query
      */
+<<<<<<< HEAD
     public List<Group> getGroupsByStringFromDb(final Context context, String query) {
+=======
+    public void getGroupsByStringFromDb(final Context context, String query) {
+        //username:password
+>>>>>>> Implement eventbus for group search
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
         Log.d("TAG", credentials);
@@ -60,6 +68,7 @@ public class GroupQueries {
                     for(Group group: response.body()) {
                         allGroups.add(group);
                     }
+                    EventBus.getDefault().post(new GroupListEvent(allGroups));
                     dataManager.storeObjectInSharedPref(context, prefKey, allGroups);
                 } else {
                     System.out.println("APA: " + response.body());
@@ -73,10 +82,13 @@ public class GroupQueries {
                 System.out.println("FAIL");
             }
         });
+<<<<<<< HEAD
         Type type = new TypeToken<List<Group>>(){}.getType();
         List<Group> result = dataManager.getSavedObjectFromSharedPref(context, prefKey, type);
         dataManager.deleteSavedObjectFromSharedPref(context, prefKey);
         return result;
+=======
+>>>>>>> Implement eventbus for group search
     }
 
     /**
