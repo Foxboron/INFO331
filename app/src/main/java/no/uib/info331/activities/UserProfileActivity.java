@@ -38,6 +38,7 @@ import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.EventListEvent;
 import no.uib.info331.models.messages.ScoreEvent;
 import no.uib.info331.queries.EventQueries;
 import no.uib.info331.queries.StatsQueries;
@@ -77,6 +78,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private User loggedInUser;
     private DataManager dataManager = new DataManager();
     StatsQueries statsQueries = new StatsQueries();
+    EventQueries eventQueries = new EventQueries();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,27 +103,12 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void initLatestEvents() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<List<Event>> call = apiService.getEventsForUser(basic, profileUser.getID());
-        call.enqueue(new Callback<List<Event>>() {
-            @Override
-            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
-                if (response.code() == 200) {
-                    List<Event> eventList = response.body();
-                    if (eventList.size() != 0) {
-                        initListViewLatestEvents(eventList);
-                    }
-                }
-            }
+        eventQueries.getAllEventsForUser(profileUser.getID(), getApplicationContext());
+    }
 
-            @Override
-            public void onFailure(Call<List<Event>> call, Throwable t) {
-                System.out.println(t.toString());
-            }
-        });
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventListEvent(EventListEvent eventListEvent){
+        initListViewLatestEvents(eventListEvent.getEventList());
     }
 
     private void initPoints() {
