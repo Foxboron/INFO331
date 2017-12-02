@@ -257,8 +257,10 @@ public class GroupProfileActivity extends AppCompatActivity {
     private void initListViewMemberList(List<User> usersInGroup) {
         userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, usersInGroup);
         listViewMemberList.setAdapter(userListViewAdapter);
+        for(User u : usersInGroup){
+            System.out.print(u.getUsername());
+        }
     }
-
 
     @Override
     protected void onResume() {

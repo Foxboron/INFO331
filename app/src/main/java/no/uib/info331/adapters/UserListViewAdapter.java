@@ -30,7 +30,7 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
     private final Context context;
     private final int textViewResourceId;
     private final List<User> users;
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
 
     public UserListViewAdapter(Context context, int textViewResourceId, List<User> users) {
         super(context, textViewResourceId, users);
@@ -38,7 +38,6 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
         inflater = LayoutInflater.from(context);
         this.textViewResourceId = textViewResourceId;
         this.users = users;
-
     }
 
     public int getCount() {
@@ -61,22 +60,17 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
         if (row == null) {
             holder = new UserHolder();
             row = inflater.inflate(textViewResourceId, parent, false);
-
             holder.circleImageViewUserImage = (CircleImageView) row.findViewById(R.id.circleimageview_user_image);
             holder.textViewUserName = (TextView) row.findViewById(R.id.textview_username_list);
 
-
             row.setTag(holder);
 
-
         } else {
-
             holder = (UserHolder) row.getTag();
         }
+
         holder.textViewUserName.setText(users.get(position).getUsername());
-
         Drawable imageResource = ContextCompat.getDrawable(context, R.drawable.avatar2);
-
         String url = "url";
         Picasso.with(context)
                 .load(url)
@@ -84,26 +78,11 @@ public class UserListViewAdapter extends ArrayAdapter<User> {
                 .fit()
                 .placeholder(imageResource)
                 .into(holder.circleImageViewUserImage);
-
-        /*row.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View arg0) {
-                System.out.println("LIST CLICK FROM ADAPTER");
-
-
-
-            }
-        });*/
-
-
-
         return row;
     }
-
 
     static class UserHolder {
         CircleImageView circleImageViewUserImage;
         TextView textViewUserName;
     }
-
 }
