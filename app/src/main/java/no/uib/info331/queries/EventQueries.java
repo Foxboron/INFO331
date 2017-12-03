@@ -31,7 +31,7 @@ public class EventQueries {
     ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
     DataManager dataManager = new DataManager();
 
-    //TODO should not be void, should return something so that we can give approperiate feedback
+
     public void createEvent(int groupId, String event, Context context) {
 
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
@@ -51,8 +51,6 @@ public class EventQueries {
 
             @Override
             public void onFailure(Call<Event> call, Throwable t) {
-                Log.d("Event: ", "Well, fuck");
-                Log.d("Event: ", t.getMessage());
             }
         });
     }

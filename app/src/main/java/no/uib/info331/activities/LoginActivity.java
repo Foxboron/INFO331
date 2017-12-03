@@ -165,7 +165,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<User> call, Response<User> response) {
                     if(response.code()==200) {
                         User currentUser = response.body();
-                        currentUser.setPassword(password); //Save password in plaintext, hehe :/
+                        currentUser.setPassword(password);
                         DataManager dataManager = new DataManager();
                         dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", currentUser);
                         if(currentUser.getGroups() == null || currentUser.getGroups().size()<1) {

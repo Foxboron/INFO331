@@ -90,7 +90,7 @@ public interface ApiInterface {
      */
     @FormUrlEncoded
     @PUT ("/v1/user/{id}")
-    Call<User> updateUserById(@Header("Authorization") String credentials, @Field("user") User user); //Don't know how put works yet. This may be wrong
+    Call<User> updateUserById(@Header("Authorization") String credentials, @Field("user") User user);
 
     /**
      * Get all the groups from the database
@@ -126,7 +126,7 @@ public interface ApiInterface {
      * @return The updated group-object from the database
      */
     @PUT ("/v1/group/{id}")
-    Call<Group> updateGroupById(@Header("Authorization") String credentials, @Body Group group, @Path("id") int groupId); //Don't know how put works yet. This may be wrong
+    Call<Group> updateGroupById(@Header("Authorization") String credentials, @Body Group group, @Path("id") int groupId);
 
     /**
      * Delete a group

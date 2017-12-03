@@ -44,7 +44,6 @@ public class GroupQueries {
      * @return The list of groups where the name matches the query
      */
     public void getGroupsByStringFromDb(final Context context, String query) {
-        //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
 
@@ -152,8 +151,6 @@ public class GroupQueries {
         final String credentials = USER.getUsername() + ":" + USER.getPassword();
         final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
-        final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        //Mulig at dette er unødvendig, men retrofit-skills er ikke helt 100%
         Call<Group> call = apiService.updateGroupById(basic, GROUP, GROUP.getId());
 
         final boolean[] error = {false};
@@ -181,7 +178,7 @@ public class GroupQueries {
     }
 
     public void getAllGroups(final Context context) {
-        //username:password
+
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
 

@@ -96,7 +96,6 @@ public class CreateGroupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         context = getApplicationContext();
 
-        //getAllUsers();
         initGui();
         initListeners();
         initListenerAddMemberView();

@@ -56,7 +56,7 @@ public class DialogManager {
                     tv.setTextSize(16);
                     snack.show();
 
-                    //Countdown to when to start the calendar intent, this for showing currentUser the snackbar of whats happening next
+                    //Countdown to when to start the calendar intent, this for showing currentUser the snackbar of whats happening next TODO: This description is wrong
                     new CountDownTimer(800, 1000) {
                         @Override
                         public void onTick(long millisUntilFinished) {}
