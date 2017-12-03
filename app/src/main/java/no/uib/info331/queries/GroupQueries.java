@@ -47,7 +47,6 @@ public class GroupQueries {
         //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
-        Log.d("TAG", credentials);
 
         final String prefKey = "searchGroupByUsername";
         final String basic =
@@ -123,14 +122,13 @@ public class GroupQueries {
                             });
                         }
 
-                        Log.d("AddBeacon: ", beacon.toString());
                         Call<ResponseBody> addBeaconCall = apiService.addBeaconToGroup(basic, registeredGroup.getId(), beacon.getID());
                         addBeaconCall.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 if (response.code() != 200){
                                     error[0] = true;
-                                } else Log.d("AddBeacon", "Success");
+                                }
                             }
 
                             @Override
@@ -198,7 +196,6 @@ public class GroupQueries {
         //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
-        Log.d("TAG", credentials);
 
         final String prefKey = "getAllGroups";
         final String basic =

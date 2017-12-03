@@ -51,7 +51,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "setting up background monitoring for beacons and power saving");
         beaconManager = org.altbeacon.beacon.BeaconManager.getInstanceForApplication(this);
 
         // By default the AndroidBeaconLibrary will only find AltBeacons.  If you wish to make it
@@ -125,10 +124,8 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     public void didEnterRegion(Region region) {
         // In this example, this class sends a notification to the user whenever a Beacon
         // matching a Region (defined above) are first seen.
-        Log.d(TAG, "did enter region.");
         System.out.println("Beacon1 " + region.getId1());
         if (!haveDetectedBeaconsSinceBoot) {
-            Log.d(TAG, "auto launching MainActivity");
 
             // The very first time since boot that we detect an beacon, we launch the
             // MainActivity
@@ -152,7 +149,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
             } else {
                 // If we have already seen beacons before, but the monitoring activity is not in
                 // the foreground, we send a notification to the user on subsequent detections.
-                Log.d(TAG, "Sending notification.");
                 sendNotification(region.getUniqueId() + " you have no entered a group region!", R.mipmap.ic_enter_icon);
             }
         }

@@ -157,8 +157,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2,
                                float velocityX, float velocityY) {
-            Log.d("TAG", "onFlingY: "+ velocityY);
-            Log.d("TAG", "onFlingX: "+ velocityX);
             if(velocityY > 500 && velocityX < 2000 && velocityX > -2000){
                 switch (pager.getCurrentItem()){
                     case 0:

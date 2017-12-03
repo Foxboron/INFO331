@@ -30,7 +30,6 @@ public class MonitoringActivity extends Activity  {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_monitoring);
 		verifyBluetooth();
@@ -64,7 +63,6 @@ public class MonitoringActivity extends Activity  {
 		switch (requestCode) {
 			case PERMISSION_REQUEST_COARSE_LOCATION: {
 				if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					Log.d(TAG, "coarse location permission granted");
 				} else {
 					final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 					builder.setTitle("Functionality limited");
