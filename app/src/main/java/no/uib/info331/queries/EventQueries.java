@@ -92,7 +92,6 @@ public class EventQueries {
             @Override
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
                 if (response.code() == 200) {
-                    Log.d("Events:", response.body().get(response.body().size()-1).toString());
                     EventBus.getDefault().post(new EventListEvent(response.body()));
                 }
             }
