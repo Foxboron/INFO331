@@ -124,7 +124,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     public void didEnterRegion(Region region) {
         // In this example, this class sends a notification to the user whenever a Beacon
         // matching a Region (defined above) are first seen.
-        System.out.println("Beacon1 " + region.getId1());
         if (!haveDetectedBeaconsSinceBoot) {
 
             // The very first time since boot that we detect an beacon, we launch the

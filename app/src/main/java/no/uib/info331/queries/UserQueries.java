@@ -57,11 +57,8 @@ public class UserQueries {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 List<User> allUsers = new ArrayList<User>();
-                System.out.println("onResponse ok");
-                System.out.println("response code: " + response.code());
 
                 if(response.code()==200) {
-                    //System.out.println(response.body());
 
                     for(User user: response.body()) {
                         allUsers.add(user);
@@ -70,16 +67,12 @@ public class UserQueries {
                     EventBus.getDefault().post(new UserListEvent(allUsers));
 
                 } else {
-                    System.out.println("APA: " + response.body());
-                    System.out.println("response: " + response);
                 }
 
             }
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-                System.out.println(t.getMessage());
-                System.out.println("FAIL");
             }
         });
     }
@@ -107,19 +100,15 @@ public class UserQueries {
 
                 if(response.code()==200) {
                     for(User user: response.body()) {
-                        System.out.println(user.getUsername());
                     }
 
                 } else {
-                    System.out.println("APA: " + response.body());
-                    System.out.println("response: " + response);
                 }
 
             }
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-                System.out.println(t.getMessage());
 
             }
         });

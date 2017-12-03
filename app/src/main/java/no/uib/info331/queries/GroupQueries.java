@@ -57,8 +57,6 @@ public class GroupQueries {
             @Override
             public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
                 List<Group> allGroups = new ArrayList<>();
-                System.out.println("onResponse ok");
-                System.out.println("response code: " + response.code());
 
                 if(response.code()==200) {
                     for(Group group: response.body()) {
@@ -67,15 +65,11 @@ public class GroupQueries {
                     EventBus.getDefault().post(new GroupListEvent(allGroups));
                     dataManager.storeObjectInSharedPref(context, prefKey, allGroups);
                 } else {
-                    System.out.println("APA: " + response.body());
-                    System.out.println("response: " + response);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Group>> call, Throwable t) {
-                System.out.println(t.getMessage());
-                System.out.println("FAIL");
             }
         });
 
@@ -108,7 +102,6 @@ public class GroupQueries {
                             addUserCall.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    System.out.println(response);
                                     if(response.code()!=200) {
                                         error[0] = true;
                                     }
@@ -167,20 +160,15 @@ public class GroupQueries {
         call.enqueue(new Callback<Group>() {
             @Override
             public void onResponse(Call<Group> call, Response<Group> response) {
-                System.out.println("OnRespone");
-                System.out.println("onResponse" + response.code());
 
                 if(response.code()==200) {
                     Toast.makeText(context, "Added: " +  USER.getUsername() + " to " + GROUP.getName(), Toast.LENGTH_SHORT).show();
-                    System.out.println("response code");
                 }
             }
 
             @Override
             public void onFailure(Call<Group> call, Throwable t) {
                 error[0] = true;
-                System.out.println("WROMG");
-                t.printStackTrace();
             }
         });
 
@@ -206,8 +194,6 @@ public class GroupQueries {
             @Override
             public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
                 List<Group> allGroups = new ArrayList<>();
-                System.out.println("onResponse ok");
-                System.out.println("response code: " + response.code());
 
                 if(response.code()==200) {
                     for(Group group: response.body()) {
@@ -216,15 +202,11 @@ public class GroupQueries {
                     EventBus.getDefault().post(new GroupListEvent(allGroups));
                     dataManager.storeObjectInSharedPref(context, prefKey, allGroups);
                 } else {
-                    System.out.println("APA: " + response.body());
-                    System.out.println("response: " + response);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Group>> call, Throwable t) {
-                System.out.println(t.getMessage());
-                System.out.println("FAIL");
             }
         });
 
