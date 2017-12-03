@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,9 +40,11 @@ import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
 import no.uib.info331.models.messages.EventListEvent;
+import no.uib.info331.models.messages.GroupListEvent;
 import no.uib.info331.models.messages.ScoreEvent;
 import no.uib.info331.queries.EventQueries;
 import no.uib.info331.queries.StatsQueries;
+import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -79,6 +82,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private DataManager dataManager = new DataManager();
     StatsQueries statsQueries = new StatsQueries();
     EventQueries eventQueries = new EventQueries();
+    UserQueries userQueries = new UserQueries();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,38 +129,11 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Group group = memberGroupListViewAdapter.getItem(i);
-
-            if (group.getUsers() == null) {
-                DataManager dataManager = new DataManager();
-                String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
-                final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<Group> call = apiService.getGroupById(basic, group.getId());
-
-                call.enqueue(new Callback<Group>() {
-                    @Override
-                    public void onResponse(Call<Group> call, Response<Group> response) {
-                        if (response.code() == 200) {
-                            Gson gson = new Gson();
-                            String userStringObject = gson.toJson(response.body());
-                            Intent intent = new Intent(context, GroupProfileActivity.class);
-                            intent.putExtra("group", userStringObject);
-                            startActivity(intent);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Group> call, Throwable t) {
-
-                    }
-                });
-            } else {
                 Gson gson = new Gson();
-                String userStringObject = gson.toJson(group);
+                String groupStringObject = gson.toJson(group);
                 Intent intent = new Intent(context, GroupProfileActivity.class);
-                intent.putExtra("group", userStringObject);
+                intent.putExtra("group", groupStringObject);
                 startActivity(intent);
-            }
             }
         });
 
@@ -241,9 +218,19 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void initListViewGroupList(List<Group> searchedGroups) {
-        memberGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
-        listViewGroupList.setAdapter(memberGroupListViewAdapter);
+        if (searchedGroups == null) {
+            userQueries.getUserGroups(profileUser.getID(), getApplicationContext());
+        } else {
+            memberGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
+            listViewGroupList.setAdapter(memberGroupListViewAdapter);
+        }
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGroupListEvent(GroupListEvent groupListEvent) {
+        memberGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, groupListEvent.getGroupList());
+        listViewGroupList.setAdapter(memberGroupListViewAdapter);
     }
 
     private void initListViewLatestEvents(List<Event> latestEvents) {

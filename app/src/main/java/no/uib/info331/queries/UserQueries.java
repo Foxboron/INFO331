@@ -17,7 +17,9 @@ import java.util.List;
 
 import no.uib.info331.R;
 import no.uib.info331.activities.DashboardActivity;
+import no.uib.info331.models.Event;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.GroupListEvent;
 import no.uib.info331.models.messages.UserListEvent;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
@@ -92,7 +94,7 @@ public class UserQueries {
 
         //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(CONTEXT, "currentlySignedInUser", new TypeToken<User>(){}.getType());
-        String credentials = signedInUser.getUsername() + ":" + signedInUser;
+        String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
 
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -170,6 +172,30 @@ public class UserQueries {
         } else {
             Toast.makeText(CONTEXT, RESOURCES.getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void getUserGroups(int userId, Context context) {
+        User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
+
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+
+        Call<User> call = apiService.getUserById(basic, userId);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.code() == 200) {
+                    EventBus.getDefault().post(new GroupListEvent(response.body().getGroups()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+            }
+        });
     }
 
 

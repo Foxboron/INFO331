@@ -18,6 +18,7 @@ import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
 import no.uib.info331.models.messages.GroupListEvent;
+import no.uib.info331.models.messages.UserListEvent;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -227,6 +228,30 @@ public class GroupQueries {
             public void onFailure(Call<List<Group>> call, Throwable t) {
                 System.out.println(t.getMessage());
                 System.out.println("FAIL");
+            }
+        });
+
+    }
+
+    public void getUsersInGroup(int groupId, Context context) {
+        User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
+
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Call<Group> call = apiService.getGroupById(basic, groupId);
+        call.enqueue(new Callback<Group>() {
+            @Override
+            public void onResponse(Call<Group> call, Response<Group> response) {
+                if (response.code() == 200) {
+                    EventBus.getDefault().post(new UserListEvent(response.body().getUsers()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Group> call, Throwable t) {
+
             }
         });
 
