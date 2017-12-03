@@ -20,6 +20,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +34,13 @@ import no.uib.info331.R;
 import no.uib.info331.adapters.BeaconListViewAdapter;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Beacon;
+import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.GroupScoreEvent;
+import no.uib.info331.models.messages.ScoreEvent;
+import no.uib.info331.queries.StatsQueries;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -70,6 +78,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     Context context;
     User user;
     private DataManager dataManager = new DataManager();
+    private StatsQueries statsQueries = new StatsQueries();
 
 
     @Override
@@ -221,45 +230,21 @@ public class GroupProfileActivity extends AppCompatActivity {
     }
 
     private void initPointsInGroup() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = user.getUsername() + ":" + user.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<Score> call = apiService.getStatsForGroup(basic, currentGroup.getId());
-        call.enqueue(new Callback<Score>() {
-            @Override
-            public void onResponse(Call<Score> call, Response<Score> response) {
-                if (response.code() == 200){
-                    textViewGroupPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
-                }
-            }
+        statsQueries.getGroupScore(currentGroup.getId(), getApplicationContext());
+    }
 
-            @Override
-            public void onFailure(Call<Score> call, Throwable t) {
-                System.out.println(t.toString());
-            }
-        });
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGroupScoreEvent(GroupScoreEvent groupScoreEvent) {
+        textViewGroupPoints.setText(groupScoreEvent.getScore().getScore() + " " + getText(R.string.points));
     }
 
     private void initPersonalPointsInGroup() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = user.getUsername() + ":" + user.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<Score> call = apiService.getStatsForUserInGroup(basic, user.getID(), currentGroup.getId());
-        call.enqueue(new Callback<Score>() {
-            @Override
-            public void onResponse(Call<Score> call, Response<Score> response) {
-                if (response.code() == 200){
-                    textViewPersonalPointsInGroup.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
-                }
-            }
+        statsQueries.getUserScoreInGroup(user.getID(), currentGroup.getId(), getApplicationContext());
+    }
 
-            @Override
-            public void onFailure(Call<Score> call, Throwable t) {
-                System.out.println(t.toString());
-            }
-        });
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onScoreEvent(ScoreEvent scoreEvent) {
+        textViewPersonalPointsInGroup.setText(scoreEvent.getScore().getScore() + " " + getText(R.string.points));
     }
 
     private void initListViewMemberList(List<User> usersInGroup) {
@@ -270,8 +255,15 @@ public class GroupProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         initPointsInGroup();
         initPersonalPointsInGroup();
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     private void initToolbar() {
@@ -321,4 +313,5 @@ public class GroupProfileActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
