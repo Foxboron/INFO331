@@ -8,10 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     private Group currentGroup;
 
     @BindView(R.id.toolbar_group_profile) Toolbar toolbar;
+    @BindView(R.id.scrollview_group_profile) ScrollView scrollViewGroup;
     @BindView(R.id.textview_group_profile_toolbar_title) TextView toolbarTitle;
     @BindView(R.id.listview_show_members_in_group) ListView listViewMemberList;
     @BindView(R.id.textview_group_display_name) TextView textViewGroupDisplayName;
@@ -80,8 +83,6 @@ public class GroupProfileActivity extends AppCompatActivity {
         user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
 
         initGui();
-
-
     }
 
     private void initGui() {
@@ -101,9 +102,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         beaconList.add(currentGroup.getBeacon());
         beaconListViewAdapter = new BeaconListViewAdapter(context, R.layout.list_element_beacon, beaconList);
         listViewBeaconInGroup.setAdapter(beaconListViewAdapter);
-
     }
-
 
     /**
      * Quick fix for checking profileUser is in group already, if so, disable the "join group" button
@@ -143,7 +142,6 @@ public class GroupProfileActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
                             Log.d("Whoops", "Fuck");
-
                         }
                     });
                 } else {
@@ -156,15 +154,13 @@ public class GroupProfileActivity extends AppCompatActivity {
             }
         });
 
-
-
-/**
- * When profileUser tries to join group, if profileUser is not already in group, it will then add the profileUser to the group
- * The button will be set to "Already joined". First it makes an API call, updating the group with a new profileUser
- * , it then updates the local in-memory profileUser, refreshes the list view of groups members. then it makes
- * a new API-call to get the profileUser again for updating SharedPref.
- *
- */
+        /**
+         * When profileUser tries to join group, if profileUser is not already in group, it will then add the profileUser to the group
+         * The button will be set to "Already joined". First it makes an API call, updating the group with a new profileUser
+         * , it then updates the local in-memory profileUser, refreshes the list view of groups members. then it makes
+         * a new API-call to get the profileUser again for updating SharedPref.
+         *
+         */
         btnJoinGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,6 +192,9 @@ public class GroupProfileActivity extends AppCompatActivity {
                                     @Override
                                     public void onFailure(Call<User> call, Throwable t) {
                                         Toast.makeText(context, getResources().getString(R.string.could_not_refres_user), Toast.LENGTH_LONG).show();
+                                        btnJoinGroup.setEnabled(true);
+                                        btnJoinGroup.setText(R.string.group_join);
+                                        currentGroup.deleteMember(user);
                                     }
                                 });
                             }
@@ -207,6 +206,16 @@ public class GroupProfileActivity extends AppCompatActivity {
                         }
                     });
                 }
+            }
+        });
+
+        listViewMemberList.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                scrollViewGroup.requestDisallowInterceptTouchEvent(true);
+                return false;
             }
         });
     }
@@ -227,10 +236,11 @@ public class GroupProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Score> call, Throwable t) {
-
+                System.out.println(t.toString());
             }
         });
     }
+
     private void initPersonalPointsInGroup() {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         String credentials = user.getUsername() + ":" + user.getPassword();
@@ -247,7 +257,7 @@ public class GroupProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Score> call, Throwable t) {
-
+                System.out.println(t.toString());
             }
         });
     }
@@ -255,10 +265,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     private void initListViewMemberList(List<User> usersInGroup) {
         userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, usersInGroup);
         listViewMemberList.setAdapter(userListViewAdapter);
-
-
     }
-
 
     @Override
     protected void onResume() {

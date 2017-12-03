@@ -7,10 +7,14 @@ import android.util.Log;
 import com.google.gson.reflect.TypeToken;
 
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 import no.uib.info331.models.Event;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.EventEvent;
+import no.uib.info331.models.messages.EventListEvent;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -65,6 +69,8 @@ public class EventQueries {
             @Override
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
                 if (response.code() == 200) {
+                    int latestIndex = response.body().size()-1;
+                    EventBus.getDefault().post(new EventEvent(response.body().get(latestIndex)));
                 }
             }
 
@@ -74,5 +80,26 @@ public class EventQueries {
             }
         });
 
+    }
+
+    public void getAllEventsForUser(final int USER_ID, final Context CONTEXT){
+        User signedInUser = dataManager.getSavedObjectFromSharedPref(CONTEXT, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
+        final String basic =
+                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Call<List<Event>> call = apiService.getEventsForUser(basic, USER_ID);
+        call.enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                if (response.code() == 200) {
+                    EventBus.getDefault().post(new EventListEvent(response.body()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+
+            }
+        });
     }
 }

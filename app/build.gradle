@@ -53,6 +53,7 @@ dependencies {
     compile 'com.wajahatkarim3.EasyFlipView:EasyFlipView:1.0.2'
     compile 'com.github.ronaldsmartin:Material-ViewPagerIndicator:1.0.4'
     compile 'org.altbeacon:android-beacon-library:2.12.3'
+    compile 'org.greenrobot:eventbus:3.1.1'
 
 
     testCompile 'junit:junit:4.12'

@@ -21,6 +21,10 @@ import com.google.gson.reflect.TypeToken;
 import com.intrusoft.squint.DiagonalView;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -34,6 +38,10 @@ import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.EventListEvent;
+import no.uib.info331.models.messages.ScoreEvent;
+import no.uib.info331.queries.EventQueries;
+import no.uib.info331.queries.StatsQueries;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -69,6 +77,8 @@ public class UserProfileActivity extends AppCompatActivity {
     EventListViewAdapter latestEventListViewAdapter;
     private User loggedInUser;
     private DataManager dataManager = new DataManager();
+    StatsQueries statsQueries = new StatsQueries();
+    EventQueries eventQueries = new EventQueries();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +90,6 @@ public class UserProfileActivity extends AppCompatActivity {
         loggedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         profileUser = getUserFromLastActivity();
         initGui();
-
     }
 
     private void initGui() {
@@ -91,90 +100,63 @@ public class UserProfileActivity extends AppCompatActivity {
         initListeners();
         initPoints();
         initLatestEvents();
-
     }
 
     private void initLatestEvents() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<List<Event>> call = apiService.getEventsForUser(basic, profileUser.getID());
-        call.enqueue(new Callback<List<Event>>() {
-            @Override
-            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
-                if (response.code() == 200) {
-                    List<Event> eventList = response.body();
-                    if (eventList.size() != 0) {
-                        initListViewLatestEvents(eventList);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Event>> call, Throwable t) {
-
-            }
-        });
+        eventQueries.getAllEventsForUser(profileUser.getID(), getApplicationContext());
     }
-            private void initPoints() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<Score> call = apiService.getStatsForUser(basic, profileUser.getID());
-        call.enqueue(new Callback<Score>() {
-            @Override
-            public void onResponse(Call<Score> call, Response<Score> response) {
-                if (response.code() == 200){
-                    textViewPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Score> call, Throwable t) {
-
-            }
-        });
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventListEvent(EventListEvent eventListEvent){
+        initListViewLatestEvents(eventListEvent.getEventList());
     }
+
+    private void initPoints() {
+        statsQueries.getUserScore(profileUser.getID(), getApplicationContext());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onScoreEvent(ScoreEvent scoreEvent){
+        textViewPoints.setText(Integer.toString(scoreEvent.getScore().getScore()) + " " + getText(R.string.points));
+    }
+
     private void initListeners() {
         listViewGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Group group = memberGroupListViewAdapter.getItem(i);
-                if (group.getUsers() == null) {
-                    DataManager dataManager = new DataManager();
-                    String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
-                    final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                    final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                    Call<Group> call = apiService.getGroupById(basic, group.getId());
-                    call.enqueue(new Callback<Group>() {
-                        @Override
-                        public void onResponse(Call<Group> call, Response<Group> response) {
-                            if (response.code() == 200) {
-                                Gson gson = new Gson();
-                                String userStringObject = gson.toJson(response.body());
-                                Intent intent = new Intent(context, GroupProfileActivity.class);
-                                intent.putExtra("group", userStringObject);
-                                startActivity(intent);
-                            }
+            Group group = memberGroupListViewAdapter.getItem(i);
+
+            if (group.getUsers() == null) {
+                DataManager dataManager = new DataManager();
+                String credentials = loggedInUser.getUsername() + ":" + loggedInUser.getPassword();
+                final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<Group> call = apiService.getGroupById(basic, group.getId());
+
+                call.enqueue(new Callback<Group>() {
+                    @Override
+                    public void onResponse(Call<Group> call, Response<Group> response) {
+                        if (response.code() == 200) {
+                            Gson gson = new Gson();
+                            String userStringObject = gson.toJson(response.body());
+                            Intent intent = new Intent(context, GroupProfileActivity.class);
+                            intent.putExtra("group", userStringObject);
+                            startActivity(intent);
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Call<Group> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<Group> call, Throwable t) {
 
-                        }
-                    });
-                } else {
-                    Gson gson = new Gson();
-                    String userStringObject = gson.toJson(group);
-                    Intent intent = new Intent(context, GroupProfileActivity.class);
-                    intent.putExtra("group", userStringObject);
-                    startActivity(intent);
-                }
-
-
+                    }
+                });
+            } else {
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(group);
+                Intent intent = new Intent(context, GroupProfileActivity.class);
+                intent.putExtra("group", userStringObject);
+                startActivity(intent);
+            }
             }
         });
 
@@ -187,6 +169,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+
         listViewLatestEvents.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
@@ -196,7 +179,6 @@ public class UserProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
-
     }
 
     private void loadCoverPicture() {
@@ -225,7 +207,6 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -258,11 +239,13 @@ public class UserProfileActivity extends AppCompatActivity {
             return user;
         }
     }
+
     private void initListViewGroupList(List<Group> searchedGroups) {
         memberGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
         listViewGroupList.setAdapter(memberGroupListViewAdapter);
 
     }
+
     private void initListViewLatestEvents(List<Event> latestEvents) {
         latestEventListViewAdapter = new EventListViewAdapter(context, R.layout.list_element_event, latestEvents);
         listViewLatestEvents.setAdapter(latestEventListViewAdapter);
@@ -272,8 +255,15 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         initLatestEvents();
         initPoints();
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override

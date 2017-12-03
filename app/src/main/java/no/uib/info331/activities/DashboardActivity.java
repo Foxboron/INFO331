@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,6 +32,10 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +47,10 @@ import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.EventEvent;
+import no.uib.info331.models.messages.ScoreEvent;
 import no.uib.info331.queries.EventQueries;
+import no.uib.info331.queries.StatsQueries;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
@@ -72,6 +80,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     DataManager dataManager = new DataManager();
     EventQueries eventQueries = new EventQueries();
+    StatsQueries statsQueries = new StatsQueries();
     Animations anim = new Animations();
     Context context;
 
@@ -109,65 +118,35 @@ public class DashboardActivity extends AppCompatActivity {
         initLastEvent();
         initPoints();
         initListeners();
+    }
 
-
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onScoreEvent(ScoreEvent scoreEvent){
+        Log.d("EventBus", "Recieved");
+        textViewPoints.setText(Integer.toString(scoreEvent.getScore().getScore()) + " " + getText(R.string.points));
     }
 
     private void initPoints() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = user.getUsername() + ":" + user.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<Score> call = apiService.getStatsForUser(basic, user.getID());
-        call.enqueue(new Callback<Score>() {
-            @Override
-            public void onResponse(Call<Score> call, Response<Score> response) {
-                if (response.code() == 200){
-                   textViewPoints.setText(Integer.toString(response.body().getScore()) + " " + getText(R.string.points));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Score> call, Throwable t) {
-
-            }
-        });
+        statsQueries.getUserScore(user.getID(), getApplicationContext());
     }
 
     private void initLastEvent() {
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        String credentials = user.getUsername() + ":" + user.getPassword();
-        final String basic =
-                "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        Call<List<Event>> call = apiService.getEventsForUser(basic, user.getID());
-        call.enqueue(new Callback<List<Event>>() {
-            @Override
-            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
-                if (response.code() == 200) {
-                    List<Event> eventList = response.body();
-                    if(eventList.size()!= 0) {
-                        Event event = eventList.get(response.body().size()-1);
-                        String text = "";
-                        if (event.getEvent().equals("Enter")) {
-                            text = getText(R.string.enter_area) + " " + event.getGroup().getName();
-                        } else if (event.getEvent().equals("Exit")) {
-                            text = getText(R.string.exit_area) + " " + event.getGroup().getName();
-                        } else {
-                            text = getText(R.string.weird_area) + " " + event.getGroup().getName();
-                        }
-                        textViewLatestActivityText.setText(text);
-                        textViewLatestActivityTimestamp.setText(event.getDate().toString());
-                    }
-                }
-            }
+        eventQueries.getLatestEvent(getApplicationContext());
+    }
 
-            @Override
-            public void onFailure(Call<List<Event>> call, Throwable t) {
-
-            }
-
-        });
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventEvent(EventEvent eventEvent){
+        Event event = eventEvent.getEvent();
+        String text = "";
+        if (event.getEvent().equals("Enter")) {
+            text = getText(R.string.enter_area) + " " + event.getGroup().getName();
+        } else if (event.getEvent().equals("Exit")) {
+            text = getText(R.string.exit_area) + " " + event.getGroup().getName();
+        } else {
+            text = getText(R.string.weird_area) + " " + event.getGroup().getName();
+        }
+        textViewLatestActivityText.setText(text);
+        textViewLatestActivityTimestamp.setText(event.getDate().toString());
     }
 
     private void initListeners() {
@@ -187,8 +166,6 @@ public class DashboardActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, GroupProfileActivity.class);
                 intent.putExtra("group", userStringObject);
                 startActivity(intent);
-
-
             }
         });
 
@@ -246,9 +223,7 @@ public class DashboardActivity extends AppCompatActivity {
                         new SecondaryDrawerItem().withName(R.string.drawer_join_create_group).withIcon(R.drawable.ic_group).withSelectable(false).withIdentifier(1),
                         new SecondaryDrawerItem().withName("MonitorTest").withIcon(R.drawable.ic_bt_beacon).withSelectable(false).withIdentifier(2),
                         new DividerDrawerItem()
-
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         Intent intent = null;
@@ -284,7 +259,6 @@ public class DashboardActivity extends AppCompatActivity {
         result.addStickyFooterItem(new PrimaryDrawerItem().withName(R.string.drawer_settings).withIcon(R.drawable.ic_settings).withSelectable(false).withIdentifier(99));
     }
 
-
     private void initToolbar() {
 
         setSupportActionBar(toolbar);
@@ -297,15 +271,33 @@ public class DashboardActivity extends AppCompatActivity {
     private void initListViewGroupList(List<Group> userGroups) {
         userGroupsListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, userGroups);
         listViewGroupList.setAdapter(userGroupsListViewAdapter);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         user = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         initListViewGroupList(user.getGroups());
         initLastEvent();
         initPoints();
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 }

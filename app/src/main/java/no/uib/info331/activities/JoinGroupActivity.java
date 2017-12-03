@@ -7,12 +7,17 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -21,6 +26,7 @@ import butterknife.ButterKnife;
 import no.uib.info331.R;
 import no.uib.info331.adapters.GroupListViewAdapter;
 import no.uib.info331.models.Group;
+import no.uib.info331.models.messages.GroupListEvent;
 import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.util.Animations;
 
@@ -42,9 +48,8 @@ public class JoinGroupActivity extends AppCompatActivity {
     private GroupListViewAdapter searchedGroupListViewAdapter;
     private GroupQueries groupQueries = new GroupQueries();
     private Animations anim = new Animations();
-    Context context;
+    private Context context;
     private int shortAnimTime;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,25 +66,19 @@ public class JoinGroupActivity extends AppCompatActivity {
         anim.moveViewToTranslationY(cardViewJoinGroup, 0 , shortAnimTime, 5000, false);
         anim.fadeInView(cardViewJoinGroup, 0, shortAnimTime);
         anim.moveViewToTranslationY(cardViewJoinGroup, 100 , shortAnimTime, 0, false);
+        groupQueries.getAllGroups(context);
     }
 
     private void initListeners() {
+
         imageBtnSearchForGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForGroups.getText());
-                List<Group> groupSearch = groupQueries.getGroupsByStringFromDb(context, query);
-                try {
-                    if(groupSearch != null){
-                        initListViewGroupList(groupSearch);
-                        searchedGroupListViewAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(context, "Can't return results", Toast.LENGTH_LONG).show();
-                    }
-                } catch (Exception e){
-                    e.printStackTrace();
-                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
-
+                if(query == null || query.equals("") || query.equals(" ")){
+                    groupQueries.getAllGroups(context);
+                }else {
+                    groupQueries.getGroupsByStringFromDb(context, query);
                 }
             }
         });
@@ -93,23 +92,34 @@ public class JoinGroupActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, GroupProfileActivity.class);
                 intent.putExtra("group", userStringObject);
                 startActivity(intent);
-
-
             }
         });
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGroupListEvent(GroupListEvent groupListEvent){
+        initListViewGroupList(groupListEvent.getGroupList());
 
     }
 
     private void initListViewGroupList(List<Group> searchedGroups) {
         searchedGroupListViewAdapter = new GroupListViewAdapter(context, R.layout.list_element_join_group, searchedGroups);
         listViewGroupList.setAdapter(searchedGroupListViewAdapter);
-
     }
 
     public void onBackPressed() {
-
-            super.onBackPressed();
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
 }
