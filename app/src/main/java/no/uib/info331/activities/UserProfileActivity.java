@@ -27,6 +27,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -48,6 +49,7 @@ import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
+import no.uib.info331.util.EventComparator;
 import no.uib.info331.util.LayoutAdjustments;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -234,6 +236,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void initListViewLatestEvents(List<Event> latestEvents) {
+        Collections.sort(latestEvents, new EventComparator());
         latestEventListViewAdapter = new EventListViewAdapter(context, R.layout.list_element_event, latestEvents);
         listViewLatestEvents.setAdapter(latestEventListViewAdapter);
 
