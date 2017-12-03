@@ -122,7 +122,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onScoreEvent(ScoreEvent scoreEvent){
-        Log.d("EventBus", "Recieved");
         textViewPoints.setText(Integer.toString(scoreEvent.getScore().getScore()) + " " + getText(R.string.points));
     }
 

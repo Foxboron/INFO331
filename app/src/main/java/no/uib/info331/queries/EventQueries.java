@@ -45,9 +45,7 @@ public class EventQueries {
             @Override
             public void onResponse(Call<Event> call, Response<Event> response) {
                 if (response.code() == 200) {
-                    Log.d("Event: ", "All is good");
                 } else {
-                    Log.d("Event: ", "Wrong status code");
                 }
             }
 

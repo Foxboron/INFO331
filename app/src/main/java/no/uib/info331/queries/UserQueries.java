@@ -145,13 +145,11 @@ public class UserQueries {
 
 
 
-        Log.d("Error: ", Boolean.toString(error[0]));
         if(!error[0]){
             Call<User> refreshUserCall = apiService.getUserById(basic, currentUser.getID());
             refreshUserCall.enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    Log.d("RefreshUser", response.toString());
                     if (response.code() == 200) {
                         User refreshedUser = response.body();
                         refreshedUser.setPassword(currentUser.getPassword());

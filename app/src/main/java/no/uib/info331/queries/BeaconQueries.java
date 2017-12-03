@@ -35,7 +35,6 @@ public class BeaconQueries {
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
 
-        Log.d("TAG", credentials);
         final String prefKey = "searchBeaconByName";
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
