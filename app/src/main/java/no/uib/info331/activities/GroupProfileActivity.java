@@ -40,6 +40,8 @@ import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
 import no.uib.info331.models.messages.GroupScoreEvent;
 import no.uib.info331.models.messages.ScoreEvent;
+import no.uib.info331.models.messages.UserListEvent;
+import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.queries.StatsQueries;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
@@ -79,6 +81,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     User user;
     private DataManager dataManager = new DataManager();
     private StatsQueries statsQueries = new StatsQueries();
+    private GroupQueries groupQueries = new GroupQueries();
 
 
     @Override
@@ -130,36 +133,11 @@ public class GroupProfileActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 User user = userListViewAdapter.getItem(i);
-                if (user.getGroups() == null) {
-                    Log.d("User.groups", "null");
-                    String credentials = GroupProfileActivity.this.user.getUsername() + ":" + GroupProfileActivity.this.user.getPassword();
-                    final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                    final ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                    Call<User> call = apiService.getUserById(basic, user.getID());
-                    call.enqueue(new Callback<User>() {
-                        @Override
-                        public void onResponse(Call<User> call, Response<User> response) {
-                            if (response.code() == 200) {
-                                Gson gson = new Gson();
-                                String userStringObject = gson.toJson(response.body());
-                                Intent intent = new Intent(context, UserProfileActivity.class);
-                                intent.putExtra("profileUser", userStringObject);
-                                startActivity(intent);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<User> call, Throwable t) {
-                            Log.d("Whoops", "Fuck");
-                        }
-                    });
-                } else {
-                    Gson gson = new Gson();
-                    String userStringObject = gson.toJson(user);
-                    Intent intent = new Intent(context, UserProfileActivity.class);
-                    intent.putExtra("profileUser", userStringObject);
-                    startActivity(intent);
-                }
+                Gson gson = new Gson();
+                String userStringObject = gson.toJson(user);
+                Intent intent = new Intent(context, UserProfileActivity.class);
+                intent.putExtra("profileUser", userStringObject);
+                startActivity(intent);
             }
         });
 
@@ -248,7 +226,18 @@ public class GroupProfileActivity extends AppCompatActivity {
     }
 
     private void initListViewMemberList(List<User> usersInGroup) {
-        userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, usersInGroup);
+        if(usersInGroup == null) {
+           groupQueries.getUsersInGroup(currentGroup.getId(), getApplicationContext());
+
+        } else {
+            userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, usersInGroup);
+            listViewMemberList.setAdapter(userListViewAdapter);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUserListEvent(UserListEvent userListEvent) {
+        userListViewAdapter = new UserListViewAdapter(context, R.layout.list_element_search_members, userListEvent.getUserList());
         listViewMemberList.setAdapter(userListViewAdapter);
     }
 
