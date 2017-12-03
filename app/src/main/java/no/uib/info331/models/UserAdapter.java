@@ -50,7 +50,7 @@ public class UserAdapter extends ArrayAdapter<User> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.group_member_list_child, parent, false);
 
-            // Må konverteres til å finne usernavn
+            //TODO Må konverteres til å finne usernavn, What does this mean????
             viewHolder.grpName = (TextView) convertView.findViewById(R.id.group_member_list_username);
             viewHolder.info = (ImageView) convertView.findViewById(R.id.user_profile_pic);
 

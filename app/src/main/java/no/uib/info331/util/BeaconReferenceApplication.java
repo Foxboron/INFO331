@@ -180,7 +180,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         if (monitoringActivity != null) {
             monitoringActivity.logToDisplay("I have just switched from seeing/not seeing beacons: " + state);
         }
-        //sendNotification("I have just switched from seeing/not seeing beacons: " + state);
 
 
     }

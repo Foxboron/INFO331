@@ -31,7 +31,7 @@ public class BeaconQueries {
 
     public List<Beacon> getBeaconsByStringFromDb(final Context context, String query){
 
-        //username:password
+
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
 

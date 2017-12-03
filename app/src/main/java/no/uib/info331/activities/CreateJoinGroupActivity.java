@@ -38,7 +38,6 @@ import no.uib.info331.util.DataManager;
 public class CreateJoinGroupActivity extends AppCompatActivity {
 
     @BindView(R.id.textview_create_join_group_title) TextView textViewTitle;
-    //ButterKnife gui
     @BindView(R.id.cardview_choose_action) CardView cardChooseAction;
     @BindView(R.id.btn_skip_group_selection) Button btnSkipGroupSelection;
 
@@ -96,7 +95,6 @@ public class CreateJoinGroupActivity extends AppCompatActivity {
      */
     private void hideButtonIfUserHasGroup() {
         if(user.getGroups() != null){
-            //TODO: Find a better solution for this
             if (user.getGroups().size() > 0 ) {
                 btnSkipGroupSelection.setVisibility(View.GONE);
             }

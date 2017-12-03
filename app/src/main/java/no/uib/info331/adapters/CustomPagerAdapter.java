@@ -35,7 +35,6 @@ public class CustomPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup collection, int position, Object view) {
-        //collection.removeView((View) view);
     }
 
     @Override

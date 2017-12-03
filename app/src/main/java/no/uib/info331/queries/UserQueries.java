@@ -45,7 +45,6 @@ public class UserQueries {
      * @return The list of users where the username matches the query
      */
     public void getUsersByStringFromDb(final Context context, String query) {
-        //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
         final String basic =
@@ -85,7 +84,6 @@ public class UserQueries {
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        //username:password
         User signedInUser = dataManager.getSavedObjectFromSharedPref(CONTEXT, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
 
