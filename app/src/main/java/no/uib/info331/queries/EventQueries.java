@@ -60,7 +60,7 @@ public class EventQueries {
     }
 
     public void getLatestEvent(final Context context){
-        User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
+        final User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
         String credentials = signedInUser.getUsername() + ":" + signedInUser.getPassword();
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -70,7 +70,11 @@ public class EventQueries {
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
                 if (response.code() == 200) {
                     int latestIndex = response.body().size()-1;
-                    EventBus.getDefault().post(new EventEvent(response.body().get(latestIndex)));
+                    if(!response.body().isEmpty()){
+                        EventBus.getDefault().post(new EventEvent(response.body().get(latestIndex)));
+                    }else{
+                        System.out.println("There was no latest event");
+                    }
                 }
             }
 
