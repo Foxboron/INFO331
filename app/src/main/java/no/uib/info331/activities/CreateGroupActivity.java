@@ -106,8 +106,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     /**
      * Inits the listeners in the view for searchin and adding members
      */
-
-
+    
     private void initGui() {
         shortAnimTime = anim.getShortAnimTime(context);
         mediumAnimTime = anim.getMediumAnimTime(context);
@@ -144,8 +143,8 @@ public class CreateGroupActivity extends AppCompatActivity {
         listViewAddedBeaconsToGroup.setAdapter(listViewAdapterBeaconsAdded);
 
     }
-    private
-    void initListeners() {
+
+    private void initListeners() {
             /*
             *For showing the view for searching and adding members
             */
@@ -198,9 +197,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                                     long id) {
                 User user = listViewAdapterSearcedMembersAdded.getItem(position);
                 dialogManager.createUserProfileDialogForCreateGroup(user, CreateGroupActivity.this, getResources(), addedMembersUserListAdapter);
-
             }
-
         });
     }
 
@@ -208,8 +205,6 @@ public class CreateGroupActivity extends AppCompatActivity {
     public void onUserListEvent(UserListEvent userListEvent){
         initListViewMemberList(userListEvent.getUserList());
     }
-
-
 
     /**
      * ButterKnife annotation listener. Registers the group with name and the members that have been
@@ -270,8 +265,6 @@ public class CreateGroupActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     /**
      * Detects if the serach member view is open, then close it, if not; the super-method is executed.
