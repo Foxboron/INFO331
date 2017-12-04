@@ -1,5 +1,5 @@
 ReadProPlus+ readme
-========
+===================
 
 # LOG IN
 Starting the application the first time will launch the login page. If you have a profile, use your credentials to sign in to this profile. If you do not have a profile, or wish for a new profile, please press “REGISTER”.
