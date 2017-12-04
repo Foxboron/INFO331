@@ -6,12 +6,15 @@ import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import no.uib.info331.models.Beacon;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.BeaconListEvent;
 import no.uib.info331.util.ApiClient;
 import no.uib.info331.util.ApiInterface;
 import no.uib.info331.util.DataManager;
@@ -29,7 +32,7 @@ public class BeaconQueries {
     ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
     DataManager dataManager = new DataManager();
 
-    public List<Beacon> getBeaconsByStringFromDb(final Context context, String query){
+    public void getBeaconsByStringFromDb(final Context context, String query){
 
 
         User signedInUser = dataManager.getSavedObjectFromSharedPref(context, "currentlySignedInUser", new TypeToken<User>(){}.getType());
@@ -48,7 +51,7 @@ public class BeaconQueries {
                     for (Beacon beacon : response.body()) {
                         allBeacons.add(beacon);
                     }
-                    dataManager.storeObjectInSharedPref(context, prefKey, allBeacons);
+                    EventBus.getDefault().post(new BeaconListEvent(allBeacons));
                 }
             }
 
@@ -58,14 +61,5 @@ public class BeaconQueries {
 
             }
         });
-
-        Type type = new TypeToken<List<Beacon>>(){}.getType();
-
-        List<Beacon> result = dataManager.getSavedObjectFromSharedPref(context, prefKey, type);
-        dataManager.deleteSavedObjectFromSharedPref(context, prefKey);
-
-        return result;
-
-
     }
 }

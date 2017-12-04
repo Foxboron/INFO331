@@ -15,6 +15,10 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +27,7 @@ import butterknife.ButterKnife;
 import no.uib.info331.R;
 import no.uib.info331.adapters.BeaconListViewAdapter;
 import no.uib.info331.models.Beacon;
+import no.uib.info331.models.messages.BeaconListEvent;
 import no.uib.info331.queries.BeaconQueries;
 import no.uib.info331.util.DataManager;
 
@@ -60,22 +65,15 @@ public class AddBeaconToGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String query = String.valueOf(editTextSearchForBeacons.getText());
-                List<Beacon> beaconSearch = beaconQueries.getBeaconsByStringFromDb(context, query);
+                beaconQueries.getBeaconsByStringFromDb(context, query);
 
-                try {
-                    initListViewBeaconSearchList(beaconSearch);
-                } catch (Exception e){
-                    e.printStackTrace();
-                    Toast.makeText(context, getResources().getString(R.string.something_wrong), Toast.LENGTH_LONG).show();
+            }
+        });
 
-                }
-
-                btnAcceptRegisteredBeacons.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onBackPressed();
-                    }
-                });
+        btnAcceptRegisteredBeacons.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
 
@@ -91,6 +89,10 @@ public class AddBeaconToGroupActivity extends AppCompatActivity {
         });
 
     }
+     @Subscribe(threadMode = ThreadMode.MAIN)
+     public void onBeaconListEvent(BeaconListEvent beaconListEvent) {
+         initListViewBeaconSearchList(beaconListEvent.getBeaconList());
+     }
 
     private void initListViewBeaconSearchList(List<Beacon> beaconSearch) {
         listViewAdapterBeaconsSearchResult = new BeaconListViewAdapter(context, R.layout.list_element_beacon, beaconSearch);
@@ -127,4 +129,15 @@ public class AddBeaconToGroupActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
 }
