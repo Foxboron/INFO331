@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,10 +33,9 @@ import no.uib.info331.R;
 import no.uib.info331.adapters.BeaconListViewAdapter;
 import no.uib.info331.adapters.UserListViewAdapter;
 import no.uib.info331.models.Beacon;
-import no.uib.info331.models.Event;
 import no.uib.info331.models.Group;
-import no.uib.info331.models.Score;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.BackgroundBeaconEvent;
 import no.uib.info331.models.messages.GroupScoreEvent;
 import no.uib.info331.models.messages.ScoreEvent;
 import no.uib.info331.models.messages.UserListEvent;
@@ -173,6 +171,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                                             User refreshedUser = response.body();
                                             refreshedUser.setPassword(user.getPassword());
                                             dataManager.storeObjectInSharedPref(getApplicationContext(), "currentlySignedInUser", refreshedUser);
+                                            EventBus.getDefault().post(new BackgroundBeaconEvent(currentGroup.getBeacon()));
                                         }
                                     }
 

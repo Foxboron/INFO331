@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -16,11 +15,13 @@ import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Identifier;
-import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import no.uib.info331.activities.MonitoringActivity;
 import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.BackgroundBeaconEvent;
 import no.uib.info331.queries.EventQueries;
 
 /**
@@ -51,6 +53,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     public void onCreate() {
         super.onCreate();
+        EventBus.getDefault().register(this);
         beaconManager = org.altbeacon.beacon.BeaconManager.getInstanceForApplication(this);
 
         // By default the AndroidBeaconLibrary will only find AltBeacons.  If you wish to make it
@@ -208,5 +211,11 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         this.monitoringActivity = activity;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBackgroundBeaconEvent(BackgroundBeaconEvent backgroundBeaconEvent) {
+        Region region = new Region(backgroundBeaconEvent.getBeacon().getName(), Identifier.parse(backgroundBeaconEvent.getBeacon().getUUID()), Identifier.parse(backgroundBeaconEvent.getBeacon().getMajor()), Identifier.parse(backgroundBeaconEvent.getBeacon().getMinor()));
+        regionList.add(region);
+        onBeaconServiceConnect();
+    }
 
 }

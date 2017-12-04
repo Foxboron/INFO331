@@ -2,14 +2,12 @@ package no.uib.info331.queries;
 
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +15,7 @@ import no.uib.info331.R;
 import no.uib.info331.models.Beacon;
 import no.uib.info331.models.Group;
 import no.uib.info331.models.User;
+import no.uib.info331.models.messages.BackgroundBeaconEvent;
 import no.uib.info331.models.messages.GroupListEvent;
 import no.uib.info331.models.messages.UserListEvent;
 import no.uib.info331.util.ApiClient;
@@ -120,6 +119,8 @@ public class GroupQueries {
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 if (response.code() != 200){
                                     error[0] = true;
+                                } else {
+                                    EventBus.getDefault().post(new BackgroundBeaconEvent(beacon));
                                 }
                             }
 
