@@ -41,6 +41,8 @@ import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.DialogManager;
+import no.uib.info331.util.TextValidator;
+
 /**
  * Activity that lets the profileUser select members from db, give a name to a group and the creating it.
  *
@@ -87,7 +89,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     UserListViewAdapter addedMembersUserListAdapter;
     GroupQueries groupQueries = new GroupQueries();
     DialogManager dialogManager = new DialogManager();
-
+    TextValidator textValidator = new TextValidator();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,11 +217,23 @@ public class CreateGroupActivity extends AppCompatActivity {
      */
     @OnClick(R.id.btn_register_group_button)
     public void registerGroup(){
+        View focusView = null;
+        Boolean wait = false;
         String groupName = editTextCreateGroupName.getText().toString();
-        //TODO fix beacon stuff. Should only be able to select one beacon
-        groupQueries.registerGroupQuery(groupName, addedUsersToGroup, listBeaconsToAddToGroup.get(0), context);
-
-        userQueries.refreshUserQuery(context, getResources());
+        if(!textValidator.completeCheck(groupName)){
+            focusView = editTextCreateGroupName;
+            focusView.requestFocus();
+            wait = true;
+        }
+        if(!wait){
+            if(!listBeaconsToAddToGroup.isEmpty()){
+                groupQueries.registerGroupQuery(groupName, addedUsersToGroup, listBeaconsToAddToGroup.get(0), context);
+                userQueries.refreshUserQuery(context, getResources());
+            }else {
+                Intent i = new Intent(CreateGroupActivity.this, AddBeaconToGroupActivity.class);
+                startActivityForResult(i, 1);
+            }
+        }
     }
 
     /**
