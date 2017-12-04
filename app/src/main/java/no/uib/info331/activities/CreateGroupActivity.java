@@ -41,6 +41,8 @@ import no.uib.info331.queries.GroupQueries;
 import no.uib.info331.queries.UserQueries;
 import no.uib.info331.util.Animations;
 import no.uib.info331.util.DialogManager;
+import no.uib.info331.util.TextValidator;
+
 /**
  * Activity that lets the profileUser select members from db, give a name to a group and the creating it.
  *
@@ -87,7 +89,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     UserListViewAdapter addedMembersUserListAdapter;
     GroupQueries groupQueries = new GroupQueries();
     DialogManager dialogManager = new DialogManager();
-
+    TextValidator textValidator = new TextValidator();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +106,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     /**
      * Inits the listeners in the view for searchin and adding members
      */
-
-
+    
     private void initGui() {
         shortAnimTime = anim.getShortAnimTime(context);
         mediumAnimTime = anim.getMediumAnimTime(context);
@@ -142,8 +143,8 @@ public class CreateGroupActivity extends AppCompatActivity {
         listViewAddedBeaconsToGroup.setAdapter(listViewAdapterBeaconsAdded);
 
     }
-    private
-    void initListeners() {
+
+    private void initListeners() {
             /*
             *For showing the view for searching and adding members
             */
@@ -196,9 +197,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                                     long id) {
                 User user = listViewAdapterSearcedMembersAdded.getItem(position);
                 dialogManager.createUserProfileDialogForCreateGroup(user, CreateGroupActivity.this, getResources(), addedMembersUserListAdapter);
-
             }
-
         });
     }
 
@@ -207,19 +206,29 @@ public class CreateGroupActivity extends AppCompatActivity {
         initListViewMemberList(userListEvent.getUserList());
     }
 
-
-
     /**
      * ButterKnife annotation listener. Registers the group with name and the members that have been
      * inputted
      */
     @OnClick(R.id.btn_register_group_button)
     public void registerGroup(){
+        View focusView = null;
+        Boolean wait = false;
         String groupName = editTextCreateGroupName.getText().toString();
-        //TODO fix beacon stuff. Should only be able to select one beacon
-        groupQueries.registerGroupQuery(groupName, addedUsersToGroup, listBeaconsToAddToGroup.get(0), context);
-
-        userQueries.refreshUserQuery(context, getResources());
+        if(!textValidator.completeCheck(groupName)){
+            focusView = editTextCreateGroupName;
+            focusView.requestFocus();
+            wait = true;
+        }
+        if(!wait){
+            if(!listBeaconsToAddToGroup.isEmpty()){
+                groupQueries.registerGroupQuery(groupName, addedUsersToGroup, listBeaconsToAddToGroup.get(0), context);
+                userQueries.refreshUserQuery(context, getResources());
+            }else {
+                Intent i = new Intent(CreateGroupActivity.this, AddBeaconToGroupActivity.class);
+                startActivityForResult(i, 1);
+            }
+        }
     }
 
     /**
@@ -256,8 +265,6 @@ public class CreateGroupActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     /**
      * Detects if the serach member view is open, then close it, if not; the super-method is executed.
